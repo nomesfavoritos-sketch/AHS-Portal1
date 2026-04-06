@@ -134,7 +134,7 @@ export default function StudentProfile() {
             <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <FormLabel>Full Name</FormLabel>
+                  <label className="text-sm font-medium leading-none">Full Name</label>
                   <Input disabled value={user?.fullName || ""} className="bg-muted" />
                   <p className="text-xs text-muted-foreground">Changeable via support</p>
                 </div>
