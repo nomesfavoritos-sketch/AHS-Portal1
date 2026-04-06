@@ -1,0 +1,130 @@
+Build Phase 2 of AHS Portal.
+
+PHASE 2 GOAL:
+Implement the full student application workflow: profile completion, academic records, program selection, document uploads, challan generation, paid slip upload, and final submission.
+
+REQUIRED IN PHASE 2:
+
+1. Student profile wizard
+Create a premium multi-step student profile form with autosave draft support.
+
+Sections:
+- Personal Information
+  - full name
+  - father/husband/guardian name
+  - date of birth
+  - CNIC or B-Form number
+  - religion
+  - gender
+  - domicile district
+  - province
+  - permanent address
+  - present postal address
+  - contact number
+  - email
+  - guardian contact number
+  - passport-size photo
+
+- Quota Information
+  - Open Merit
+  - Minority Quota
+  - Disability Quota
+  - conditional fields for minority/disability details
+
+- Academic Information
+  - Matric/O-Level:
+    - board/university
+    - year of passing
+    - roll number
+    - total marks
+    - obtained marks
+    - percentage auto-calculated
+  - FSc/A-Level:
+    - board/university
+    - year of passing
+    - roll number
+    - total marks
+    - obtained marks
+    - percentage auto-calculated
+  - equivalence fields if needed
+
+2. Program application system
+- student can apply to one or multiple technologies/programs
+- create a separate application record for each program
+- each application should have a unique application number
+- each application should maintain its own status
+
+3. Programs
+Seed and display example allied health programs such as:
+- BS Medical Laboratory Technology
+- BS Medical Imaging Technology
+- BS Renal Dialysis Technology
+- BS Optometry & Orthotics Technology
+- BS Anesthesia Technology
+- BS Endoscopy Technology
+- BS Dental Technology
+- BS Orthotics & Prosthetics Technology
+
+4. Document uploads
+Implement secure uploads with preview for:
+- applicant photograph
+- CNIC/B-Form
+- father/guardian CNIC
+- matric certificate/result card
+- FSc certificate/result card
+- domicile
+- minority certificate if applicable
+- disability certificate if applicable
+- paid challan slip
+Allow file validation and replacement before final submission.
+
+5. Challan module
+- fee amount default Rs. 500 per technology/program
+- generate separate challan for each selected program
+- unique challan number
+- downloadable/printable challan PDF
+- include applicant info, application no, program, fee, due date, status
+- paid slip upload per application
+
+6. Application statuses
+Implement:
+- Draft
+- Challan Generated
+- Slip Uploaded
+- Submitted
+- Under Review
+
+7. Final review and submission
+- show full summary before submission
+- allow edit before final submission
+- lock application after final submission
+- no editing after final submission unless admin reopens it
+
+8. Student dashboard updates
+Show:
+- profile completion percentage
+- all applications
+- challan/payment status per program
+- document completion status
+- recent notices
+
+9. Validation
+- strong client and server validation
+- required documents must be complete before final submission
+- prevent invalid marks
+- prevent impossible dates
+- prevent duplicate CNIC where appropriate
+
+10. Deliverables
+- complete student admission workflow
+- polished multi-step UI
+- file upload and preview
+- challan PDF generation
+- final submission lock
+- seeded test data
+
+IMPORTANT:
+- write production-quality code
+- keep forms reusable and modular
+- use clean status badges
+- make the experience premium and easy for non-technical students

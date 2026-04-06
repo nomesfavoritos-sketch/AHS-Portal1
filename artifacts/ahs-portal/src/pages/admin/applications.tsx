@@ -19,7 +19,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Search, FileText, Filter, Eye, CheckCircle, XCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Application } from "@workspace/api-client-react/src/generated/api.schemas";
 
 export default function AdminApplications() {
   const { toast } = useToast();
@@ -60,7 +59,7 @@ export default function AdminApplications() {
         onSuccess: () => {
           toast({ title: `Application marked as ${status.replace('_', ' ')}` });
           setIsViewOpen(false);
-          queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey(queryParams) });
+          queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey() });
         },
         onError: (error) => {
           toast({
@@ -76,12 +75,14 @@ export default function AdminApplications() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "draft": return <Badge variant="secondary">Draft</Badge>;
-      case "submitted": return <Badge variant="default" className="bg-blue-500 hover:bg-blue-600">Submitted</Badge>;
+      case "challan_generated": return <Badge variant="outline" className="border-amber-500 text-amber-600">Challan Generated</Badge>;
+      case "slip_uploaded": return <Badge variant="default" className="bg-blue-500">Slip Uploaded</Badge>;
+      case "submitted": return <Badge variant="default" className="bg-blue-600">Submitted</Badge>;
       case "under_review": return <Badge variant="outline" className="border-amber-500 text-amber-600">Under Review</Badge>;
-      case "verified": return <Badge variant="default" className="bg-emerald-500 hover:bg-emerald-600">Verified</Badge>;
+      case "verified": return <Badge variant="default" className="bg-emerald-500">Verified</Badge>;
       case "rejected": return <Badge variant="destructive">Rejected</Badge>;
-      case "merit_listed": return <Badge variant="default" className="bg-purple-500 hover:bg-purple-600">Merit Listed</Badge>;
-      case "admitted": return <Badge variant="default" className="bg-green-600 hover:bg-green-700">Admitted</Badge>;
+      case "merit_listed": return <Badge variant="default" className="bg-purple-500">Merit Listed</Badge>;
+      case "admitted": return <Badge variant="default" className="bg-green-600">Admitted</Badge>;
       default: return <Badge variant="outline">{status}</Badge>;
     }
   };
@@ -124,10 +125,13 @@ export default function AdminApplications() {
                   <SelectContent>
                     <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="challan_generated">Challan Generated</SelectItem>
+                    <SelectItem value="slip_uploaded">Slip Uploaded</SelectItem>
                     <SelectItem value="submitted">Submitted</SelectItem>
                     <SelectItem value="under_review">Under Review</SelectItem>
                     <SelectItem value="verified">Verified</SelectItem>
                     <SelectItem value="rejected">Rejected</SelectItem>
+                    <SelectItem value="merit_listed">Merit Listed</SelectItem>
                     <SelectItem value="admitted">Admitted</SelectItem>
                   </SelectContent>
                 </Select>
@@ -237,34 +241,32 @@ export default function AdminApplications() {
               </div>
               
               <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0 justify-between items-center">
-                <div className="w-full sm:w-auto">
+                <div className="flex gap-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
                   {selectedApp.status === "submitted" && (
-                    <Button 
-                      variant="outline" 
-                      className="w-full sm:w-auto border-amber-500 text-amber-600 hover:bg-amber-50"
-                      onClick={() => handleStatusUpdate("under_review")}
-                      disabled={updateStatus.isPending}
-                    >
-                      Mark Under Review
+                    <Button variant="outline" className="border-amber-500 text-amber-600" onClick={() => handleStatusUpdate("under_review")} disabled={updateStatus.isPending}>
+                      Start Review
                     </Button>
                   )}
-                </div>
-                <div className="flex gap-2 w-full sm:w-auto">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1 sm:flex-none border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
-                    onClick={() => handleStatusUpdate("rejected")}
-                    disabled={updateStatus.isPending}
-                  >
-                    <XCircle className="mr-2 h-4 w-4" /> Reject
-                  </Button>
-                  <Button 
-                    className="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white"
-                    onClick={() => handleStatusUpdate("verified")}
-                    disabled={updateStatus.isPending}
-                  >
-                    <CheckCircle className="mr-2 h-4 w-4" /> Verify
-                  </Button>
+                  {selectedApp.status === "under_review" && (
+                    <>
+                      <Button variant="outline" className="border-red-500 text-red-600" onClick={() => handleStatusUpdate("rejected")} disabled={updateStatus.isPending}>
+                        Reject
+                      </Button>
+                      <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => handleStatusUpdate("verified")} disabled={updateStatus.isPending}>
+                        Verify
+                      </Button>
+                    </>
+                  )}
+                  {selectedApp.status === "verified" && (
+                    <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => handleStatusUpdate("merit_listed")} disabled={updateStatus.isPending}>
+                      Add to Merit List
+                    </Button>
+                  )}
+                  {selectedApp.status === "merit_listed" && (
+                    <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => handleStatusUpdate("admitted")} disabled={updateStatus.isPending}>
+                      Mark Admitted
+                    </Button>
+                  )}
                 </div>
               </DialogFooter>
             </div>

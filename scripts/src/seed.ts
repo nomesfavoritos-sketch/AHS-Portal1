@@ -21,11 +21,7 @@ async function seed() {
     if (existing.length === 0) {
       const passwordHash = await bcrypt.hash(u.password, 12);
       const [user] = await db.insert(usersTable).values({
-        email: u.email,
-        fullName: u.fullName,
-        role: u.role,
-        passwordHash,
-        isActive: true,
+        email: u.email, fullName: u.fullName, role: u.role, passwordHash, isActive: true,
       }).returning();
       console.log(`Created user: ${user.email} (${user.role})`);
       createdUsers.push({ id: user.id, email: user.email, role: user.role });
@@ -45,29 +41,42 @@ async function seed() {
         dateOfBirth: "2002-05-15",
         gender: "male",
         cnic: "36302-1234567-3",
-        address: "House 12, Street 3, Model Town",
-        city: "Multan",
-        domicile: "Punjab",
         religion: "Islam",
         nationality: "Pakistani",
-        matricMarks: 1050,
+        domicileDistrict: "Multan",
+        province: "Punjab",
+        permanentAddress: "House 12, Street 3, Model Town, Multan",
+        presentAddress: "House 12, Street 3, Model Town, Multan",
+        contactNumber: "0300-1234567",
+        guardianContactNumber: "0301-7654321",
+        quotaType: "open_merit",
+        matricBoard: "BISE Multan",
+        matricYear: 2020,
+        matricRoll: "123456",
         matricTotal: 1100,
-        interMarks: 980,
-        interTotal: 1100,
-        interYear: 2022,
+        matricMarks: 1050,
         interBoard: "BISE Multan",
+        interYear: 2022,
+        interRoll: "654321",
+        interTotal: 1100,
+        interMarks: 980,
+        completionPercentage: 100,
+        isComplete: true,
       });
       console.log(`Created student profile for ${u.email}`);
     }
   }
 
-  // Programs
+  // Programs — 8 Allied Health programs as specified
   const programs = [
-    { name: "Doctor of Pharmacy (Pharm-D)", code: "PHARMD", duration: "5 years", seats: 100, description: "A professional degree in pharmacy science", isActive: true },
-    { name: "BS Medical Lab Technology", code: "BSMLT", duration: "4 years", seats: 60, description: "Bachelor of Science in Medical Laboratory Technology", isActive: true },
-    { name: "BS Radiology & Medical Imaging", code: "BSRMI", duration: "4 years", seats: 40, description: "Bachelor of Science in Radiology and Imaging", isActive: true },
-    { name: "BS Physiotherapy", code: "BSPT", duration: "4 years", seats: 50, description: "Bachelor of Science in Physiotherapy", isActive: true },
-    { name: "BS Optometry", code: "BSOPT", duration: "4 years", seats: 30, description: "Bachelor of Science in Optometry", isActive: true },
+    { name: "BS Medical Laboratory Technology", code: "BSMLT", duration: "4 years", seats: 60, description: "Bachelor of Science in Medical Laboratory Technology", isActive: true },
+    { name: "BS Medical Imaging Technology", code: "BSMIT", duration: "4 years", seats: 40, description: "Bachelor of Science in Medical Imaging Technology (Radiology)", isActive: true },
+    { name: "BS Renal Dialysis Technology", code: "BSRDT", duration: "4 years", seats: 30, description: "Bachelor of Science in Renal Dialysis Technology", isActive: true },
+    { name: "BS Optometry & Orthotics Technology", code: "BSOOT", duration: "4 years", seats: 30, description: "Bachelor of Science in Optometry and Orthotics Technology", isActive: true },
+    { name: "BS Anesthesia Technology", code: "BSANT", duration: "4 years", seats: 25, description: "Bachelor of Science in Anesthesia Technology", isActive: true },
+    { name: "BS Endoscopy Technology", code: "BSEND", duration: "4 years", seats: 20, description: "Bachelor of Science in Endoscopy Technology", isActive: true },
+    { name: "BS Dental Technology", code: "BSDNT", duration: "4 years", seats: 25, description: "Bachelor of Science in Dental Technology", isActive: true },
+    { name: "BS Orthotics & Prosthetics Technology", code: "BSOPT", duration: "4 years", seats: 20, description: "Bachelor of Science in Orthotics and Prosthetics Technology", isActive: true },
   ];
 
   for (const p of programs) {
@@ -75,13 +84,17 @@ async function seed() {
     if (existing.length === 0) {
       const [prog] = await db.insert(programsTable).values(p).returning();
       console.log(`Created program: ${prog.name}`);
+    } else {
+      // Update seats/description if different
+      await db.update(programsTable).set({ name: p.name, seats: p.seats, description: p.description }).where(eq(programsTable.code, p.code));
+      console.log(`Updated program: ${p.name}`);
     }
   }
 
   // Quota Categories
   const quotas = [
     { name: "Open Merit", code: "OM", percentage: 60, description: "Open merit seats available to all candidates", isActive: true },
-    { name: "Special Persons", code: "SP", percentage: 2, description: "Seats reserved for special/disabled persons", isActive: true },
+    { name: "Special Persons / Disability", code: "SP", percentage: 2, description: "Seats reserved for special/disabled persons", isActive: true },
     { name: "Overseas Pakistanis", code: "OP", percentage: 5, description: "Seats for overseas Pakistanis", isActive: true },
     { name: "Minorities", code: "MIN", percentage: 3, description: "Seats reserved for minority communities", isActive: true },
     { name: "Sports", code: "SPT", percentage: 2, description: "Seats for outstanding sports persons", isActive: true },
@@ -119,26 +132,22 @@ async function seed() {
         {
           title: "Admissions Open for Session 2025-26",
           content: "Allied Health College, Nishtar Medical University announces the commencement of admissions for the session 2025-26. Eligible candidates are encouraged to apply online through the AHS Portal.",
-          category: "admission",
-          isActive: true,
-          createdBy: adminUser.id,
-          publishedAt: new Date(),
+          category: "admission", isActive: true, createdBy: adminUser.id, publishedAt: new Date(),
         },
         {
           title: "Last Date for Fee Submission",
-          content: "All admitted students must submit their admission fee by August 31, 2025. Late submissions will not be accepted.",
-          category: "payment",
-          isActive: true,
-          createdBy: adminUser.id,
-          publishedAt: new Date(),
+          content: "All admitted students must submit their admission fee by August 31, 2025. Challan can be generated from the student portal. Late submissions will not be accepted.",
+          category: "payment", isActive: true, createdBy: adminUser.id, publishedAt: new Date(),
         },
         {
           title: "Merit List Publication Date",
           content: "The first merit list for Session 2025-26 will be published on September 5, 2025. Candidates are advised to check their status on the portal.",
-          category: "merit",
-          isActive: true,
-          createdBy: adminUser.id,
-          publishedAt: new Date(),
+          category: "merit", isActive: true, createdBy: adminUser.id, publishedAt: new Date(),
+        },
+        {
+          title: "Required Documents for Submission",
+          content: "All applicants must upload: CNIC/B-Form, Father's CNIC, Matric Certificate, FSc Certificate, Domicile Certificate, and Paid Challan Slip before final submission.",
+          category: "admission", isActive: true, createdBy: adminUser.id, publishedAt: new Date(),
         },
       ]);
       console.log("Created sample notices");

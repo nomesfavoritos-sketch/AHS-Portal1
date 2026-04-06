@@ -14,6 +14,7 @@ import noticesRouter from "./notices";
 import auditLogsRouter from "./auditLogs";
 import dashboardRouter from "./dashboard";
 import joinedStudentsRouter from "./joinedStudents";
+import storageRouter from "./storage";
 
 const router: IRouter = Router();
 
@@ -32,5 +33,6 @@ router.use(noticesRouter);
 router.use(auditLogsRouter);
 router.use(dashboardRouter);
 router.use(joinedStudentsRouter);
+router.use(storageRouter);
 
 export default router;

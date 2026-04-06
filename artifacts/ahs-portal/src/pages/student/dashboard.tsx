@@ -1,8 +1,10 @@
 import { useGetStudentDashboardSummary, useGetMe } from "@workspace/api-client-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Loader2, FileText, CheckCircle, Clock, CreditCard, Bell, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { Progress } from "@/components/ui/progress";
 
 export default function StudentDashboard() {
   const { data: user } = useGetMe();
@@ -16,6 +18,9 @@ export default function StudentDashboard() {
     );
   }
 
+  // Assuming summary has profileCompletion or we fallback to 0
+  const completionPercent = (summary as any)?.profileCompletion || 0;
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -27,6 +32,28 @@ export default function StudentDashboard() {
           <Button>Submit New Application</Button>
         </Link>
       </div>
+
+      <Card className="bg-primary text-primary-foreground">
+        <CardContent className="pt-6">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="flex-1 w-full">
+              <h3 className="text-lg font-semibold mb-2">Profile Completion</h3>
+              <div className="flex justify-between text-sm mb-1">
+                <span className="opacity-80">Progress</span>
+                <span className="font-bold">{completionPercent}%</span>
+              </div>
+              <Progress value={completionPercent} className="h-2 bg-primary-foreground/20 [&>div]:bg-primary-foreground" />
+            </div>
+            <div className="flex-shrink-0">
+              <Link href="/student/profile">
+                <Button variant="secondary" className="w-full md:w-auto">
+                  {completionPercent < 100 ? "Complete Profile" : "Edit Profile"}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
@@ -98,21 +125,35 @@ export default function StudentDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CreditCard className="h-5 w-5" />
-              Fee Status
+              Action Items
             </CardTitle>
             <CardDescription>
-              Your recent fee challans and their payment status.
+              Links to pending tasks.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="text-sm text-muted-foreground py-8 text-center border rounded-md border-dashed">
-              No pending challans
-            </div>
-            <div className="mt-4 flex justify-center">
-              <Link href="/student/challans">
-                <Button variant="outline" size="sm">View All Challans</Button>
-              </Link>
-            </div>
+          <CardContent className="space-y-4">
+            <Link href="/student/documents" className="block">
+              <div className="p-3 border rounded-md hover:bg-muted transition-colors flex justify-between items-center cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-sm font-medium">Upload Documents</span>
+                </div>
+                <Badge variant={summary?.pendingDocuments ? "destructive" : "secondary"}>
+                  {summary?.pendingDocuments || 0} pending
+                </Badge>
+              </div>
+            </Link>
+            <Link href="/student/challans" className="block">
+              <div className="p-3 border rounded-md hover:bg-muted transition-colors flex justify-between items-center cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <CreditCard className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-sm font-medium">Pay Fee Challans</span>
+                </div>
+                <Badge variant={summary?.pendingPayments ? "destructive" : "secondary"}>
+                  {summary?.pendingPayments || 0} pending
+                </Badge>
+              </div>
+            </Link>
           </CardContent>
         </Card>
       </div>

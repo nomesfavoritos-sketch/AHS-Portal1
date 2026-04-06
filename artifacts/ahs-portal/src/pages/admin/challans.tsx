@@ -34,11 +34,30 @@ export default function AdminChallans() {
       {
         onSuccess: () => {
           toast({ title: "Challan verified successfully" });
-          queryClient.invalidateQueries({ queryKey: getListChallansQueryKey(queryParams) });
+          queryClient.invalidateQueries({ queryKey: getListChallansQueryKey() });
         },
         onError: (error) => {
           toast({
             title: "Verification failed",
+            description: error.error || "An error occurred",
+            variant: "destructive",
+          });
+        },
+      }
+    );
+  };
+
+  const handleReject = (id: number) => {
+    updateStatus.mutate(
+      { id, data: { status: "rejected", remarks: "Rejected by finance" } },
+      {
+        onSuccess: () => {
+          toast({ title: "Challan rejected successfully" });
+          queryClient.invalidateQueries({ queryKey: getListChallansQueryKey() });
+        },
+        onError: (error) => {
+          toast({
+            title: "Rejection failed",
             description: error.error || "An error occurred",
             variant: "destructive",
           });
@@ -52,6 +71,7 @@ export default function AdminChallans() {
       case "pending": return <Badge variant="secondary">Pending</Badge>;
       case "paid": return <Badge variant="default" className="bg-blue-500">Paid (Unverified)</Badge>;
       case "verified": return <Badge variant="default" className="bg-emerald-500">Verified</Badge>;
+      case "rejected": return <Badge variant="destructive">Rejected</Badge>;
       case "overdue": return <Badge variant="destructive">Overdue</Badge>;
       default: return <Badge variant="outline">{status}</Badge>;
     }
@@ -84,6 +104,7 @@ export default function AdminChallans() {
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="paid">Paid</SelectItem>
                   <SelectItem value="verified">Verified</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
                   <SelectItem value="overdue">Overdue</SelectItem>
                 </SelectContent>
               </Select>
@@ -126,15 +147,26 @@ export default function AdminChallans() {
                       </TableCell>
                       <TableCell className="text-right space-x-2">
                         {challan.status === "paid" && (
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="border-emerald-500 text-emerald-600 hover:bg-emerald-50"
-                            onClick={() => handleVerify(challan.id)}
-                            disabled={updateStatus.isPending}
-                          >
-                            <CheckCircle className="h-4 w-4 mr-2" /> Verify
-                          </Button>
+                          <>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="border-red-500 text-red-600 hover:bg-red-50"
+                              onClick={() => handleReject(challan.id)}
+                              disabled={updateStatus.isPending}
+                            >
+                              <XCircle className="h-4 w-4" /> 
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="border-emerald-500 text-emerald-600 hover:bg-emerald-50"
+                              onClick={() => handleVerify(challan.id)}
+                              disabled={updateStatus.isPending}
+                            >
+                              <CheckCircle className="h-4 w-4 mr-2" /> Verify
+                            </Button>
+                          </>
                         )}
                         {challan.status === "verified" && (
                           <span className="text-xs text-muted-foreground">Verified</span>

@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import bcrypt from "bcryptjs";
 import { db, usersTable, studentProfilesTable } from "@workspace/db";
-import { eq, ilike, and, count, sql } from "drizzle-orm";
+import { eq, ilike, and, count } from "drizzle-orm";
 import { CreateUserBody, UpdateUserBody } from "@workspace/api-zod";
 import { requireAuth, requireRoles } from "../middlewares/auth";
 
@@ -17,6 +17,61 @@ const formatUser = (user: typeof usersTable.$inferSelect) => ({
   createdAt: user.createdAt.toISOString(),
   updatedAt: user.updatedAt.toISOString(),
 });
+
+function calcCompletion(p: typeof studentProfilesTable.$inferSelect): number {
+  const personalFields = [
+    p.fatherName, p.dateOfBirth, p.gender, p.cnic, p.religion,
+    p.domicileDistrict, p.province, p.permanentAddress, p.contactNumber, p.guardianContactNumber,
+  ];
+  const academicFields = [
+    p.matricBoard, p.matricYear, p.matricRoll, p.matricTotal, p.matricMarks,
+    p.interBoard, p.interYear, p.interRoll, p.interTotal, p.interMarks,
+  ];
+  const allFields = [...personalFields, ...academicFields];
+  const filled = allFields.filter((f) => f !== null && f !== undefined && f !== "").length;
+  return Math.round((filled / allFields.length) * 100);
+}
+
+function formatProfile(profile: typeof studentProfilesTable.$inferSelect) {
+  const completion = calcCompletion(profile);
+  return {
+    id: profile.id,
+    userId: profile.userId,
+    fatherName: profile.fatherName ?? null,
+    dateOfBirth: profile.dateOfBirth ?? null,
+    gender: profile.gender ?? null,
+    cnic: profile.cnic ?? null,
+    religion: profile.religion ?? null,
+    nationality: profile.nationality ?? null,
+    domicileDistrict: profile.domicileDistrict ?? null,
+    province: profile.province ?? null,
+    permanentAddress: profile.permanentAddress ?? null,
+    presentAddress: profile.presentAddress ?? null,
+    contactNumber: profile.contactNumber ?? null,
+    guardianContactNumber: profile.guardianContactNumber ?? null,
+    photoPath: profile.photoPath ?? null,
+    address: profile.address ?? null,
+    city: profile.city ?? null,
+    domicile: profile.domicile ?? null,
+    quotaType: profile.quotaType ?? "open_merit",
+    minorityDetails: profile.minorityDetails ?? null,
+    disabilityDetails: profile.disabilityDetails ?? null,
+    matricBoard: profile.matricBoard ?? null,
+    matricYear: profile.matricYear ?? null,
+    matricRoll: profile.matricRoll ?? null,
+    matricTotal: profile.matricTotal ?? null,
+    matricMarks: profile.matricMarks ?? null,
+    interBoard: profile.interBoard ?? null,
+    interYear: profile.interYear ?? null,
+    interRoll: profile.interRoll ?? null,
+    interTotal: profile.interTotal ?? null,
+    interMarks: profile.interMarks ?? null,
+    isComplete: completion >= 80,
+    completionPercentage: completion,
+    createdAt: profile.createdAt.toISOString(),
+    updatedAt: profile.updatedAt.toISOString(),
+  };
+}
 
 router.get("/users", requireAuth, requireRoles("super_admin", "admission_admin"), async (req, res): Promise<void> => {
   const page = Number(req.query.page) || 1;
@@ -113,30 +168,11 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
   const userId = sess.userId as number;
   const [profile] = await db.select().from(studentProfilesTable).where(eq(studentProfilesTable.userId, userId));
   if (!profile) {
-    res.status(404).json({ error: "Profile not found" });
+    const [created] = await db.insert(studentProfilesTable).values({ userId }).returning();
+    res.json(formatProfile(created));
     return;
   }
-  res.json({
-    id: profile.id,
-    userId: profile.userId,
-    fatherName: profile.fatherName ?? null,
-    dateOfBirth: profile.dateOfBirth ?? null,
-    gender: profile.gender ?? null,
-    cnic: profile.cnic ?? null,
-    address: profile.address ?? null,
-    city: profile.city ?? null,
-    domicile: profile.domicile ?? null,
-    religion: profile.religion ?? null,
-    nationality: profile.nationality ?? null,
-    matricMarks: profile.matricMarks ?? null,
-    matricTotal: profile.matricTotal ?? null,
-    interMarks: profile.interMarks ?? null,
-    interTotal: profile.interTotal ?? null,
-    interYear: profile.interYear ?? null,
-    interBoard: profile.interBoard ?? null,
-    createdAt: profile.createdAt.toISOString(),
-    updatedAt: profile.updatedAt.toISOString(),
-  });
+  res.json(formatProfile(profile));
 });
 
 router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
@@ -144,53 +180,41 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
   const userId = sess.userId as number;
 
   const [existing] = await db.select().from(studentProfilesTable).where(eq(studentProfilesTable.userId, userId));
-  
+
   const updateData: Partial<typeof studentProfilesTable.$inferInsert> = {};
   const b = req.body;
-  if (b.fatherName !== undefined) updateData.fatherName = b.fatherName;
-  if (b.dateOfBirth !== undefined) updateData.dateOfBirth = b.dateOfBirth;
-  if (b.gender !== undefined) updateData.gender = b.gender;
-  if (b.cnic !== undefined) updateData.cnic = b.cnic;
-  if (b.address !== undefined) updateData.address = b.address;
-  if (b.city !== undefined) updateData.city = b.city;
-  if (b.domicile !== undefined) updateData.domicile = b.domicile;
-  if (b.religion !== undefined) updateData.religion = b.religion;
-  if (b.nationality !== undefined) updateData.nationality = b.nationality;
-  if (b.matricMarks !== undefined) updateData.matricMarks = b.matricMarks;
-  if (b.matricTotal !== undefined) updateData.matricTotal = b.matricTotal;
-  if (b.interMarks !== undefined) updateData.interMarks = b.interMarks;
-  if (b.interTotal !== undefined) updateData.interTotal = b.interTotal;
-  if (b.interYear !== undefined) updateData.interYear = b.interYear;
-  if (b.interBoard !== undefined) updateData.interBoard = b.interBoard;
+  const profileFields = [
+    "fatherName", "dateOfBirth", "gender", "cnic", "religion", "nationality",
+    "domicileDistrict", "province", "permanentAddress", "presentAddress",
+    "contactNumber", "guardianContactNumber", "photoPath",
+    "address", "city", "domicile",
+    "quotaType", "minorityDetails", "disabilityDetails",
+    "matricBoard", "matricYear", "matricRoll", "matricTotal", "matricMarks",
+    "interBoard", "interYear", "interRoll", "interTotal", "interMarks",
+  ] as const;
 
-  let profile;
+  for (const field of profileFields) {
+    if (b[field] !== undefined) {
+      (updateData as Record<string, unknown>)[field] = b[field];
+    }
+  }
+
+  let profile: typeof studentProfilesTable.$inferSelect;
   if (existing) {
     [profile] = await db.update(studentProfilesTable).set(updateData).where(eq(studentProfilesTable.userId, userId)).returning();
   } else {
     [profile] = await db.insert(studentProfilesTable).values({ userId, ...updateData }).returning();
   }
 
-  res.json({
-    id: profile.id,
-    userId: profile.userId,
-    fatherName: profile.fatherName ?? null,
-    dateOfBirth: profile.dateOfBirth ?? null,
-    gender: profile.gender ?? null,
-    cnic: profile.cnic ?? null,
-    address: profile.address ?? null,
-    city: profile.city ?? null,
-    domicile: profile.domicile ?? null,
-    religion: profile.religion ?? null,
-    nationality: profile.nationality ?? null,
-    matricMarks: profile.matricMarks ?? null,
-    matricTotal: profile.matricTotal ?? null,
-    interMarks: profile.interMarks ?? null,
-    interTotal: profile.interTotal ?? null,
-    interYear: profile.interYear ?? null,
-    interBoard: profile.interBoard ?? null,
-    createdAt: profile.createdAt.toISOString(),
-    updatedAt: profile.updatedAt.toISOString(),
-  });
+  const completion = calcCompletion(profile);
+  if (profile.completionPercentage !== completion || profile.isComplete !== (completion >= 80)) {
+    [profile] = await db.update(studentProfilesTable).set({
+      completionPercentage: completion,
+      isComplete: completion >= 80,
+    }).where(eq(studentProfilesTable.userId, userId)).returning();
+  }
+
+  res.json(formatProfile(profile));
 });
 
 export default router;

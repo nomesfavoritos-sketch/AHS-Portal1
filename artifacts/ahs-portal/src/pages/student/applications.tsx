@@ -9,19 +9,22 @@ import {
   useCreateApplication,
   useListSessions,
   useListPrograms,
-  useListQuotas
+  useListQuotas,
+  useListChallans,
+  useUpdateApplicationStatus
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, FileText } from "lucide-react";
+import { Loader2, Plus, FileText, CheckCircle, UploadCloud } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ObjectUploader } from "@workspace/object-storage-web";
 
 const applicationSchema = z.object({
   sessionId: z.coerce.number().min(1, "Session is required"),
@@ -35,12 +38,15 @@ export default function StudentApplications() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { data: applicationsData, isLoading } = useListApplications();
+  const { data: applicationsData, isLoading: isLoadingApps } = useListApplications();
   const { data: sessions } = useListSessions();
   const { data: programs } = useListPrograms();
   const { data: quotas } = useListQuotas();
+  const { data: challansData } = useListChallans();
   const createApplication = useCreateApplication();
+  const updateApplicationStatus = useUpdateApplicationStatus();
 
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationSchema),
@@ -72,11 +78,64 @@ export default function StudentApplications() {
     );
   };
 
+  const handleFinalSubmit = (appId: number) => {
+    setIsSubmitting(true);
+    updateApplicationStatus.mutate(
+      { id: appId, data: { status: "submitted" } },
+      {
+        onSuccess: () => {
+          toast({ title: "Application submitted successfully" });
+          queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey() });
+          setIsSubmitting(false);
+        },
+        onError: (error) => {
+          toast({
+            title: "Submission failed",
+            description: error.error || "An error occurred",
+            variant: "destructive",
+          });
+          setIsSubmitting(false);
+        }
+      }
+    );
+  };
+
+  const handleUploadComplete = async (result: any, challanId: number, appId: number) => {
+    const successful = result.successful?.[0];
+    if (successful) {
+      const objectPath = successful.response?.uploadURL?.split("?")[0]?.split("/").slice(-2).join("/") ?? "";
+      
+      try {
+        const response = await fetch(`${import.meta.env.BASE_URL}api/challans/${challanId}/paid-slip`, {
+          method: "POST",
+          body: JSON.stringify({ paidSlipPath: objectPath }),
+          headers: { "Content-Type": "application/json" },
+          credentials: "include"
+        });
+        
+        if (response.ok) {
+          toast({ title: "Paid slip uploaded successfully" });
+          queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey() });
+        } else {
+          throw new Error("Failed to update paid slip");
+        }
+      } catch (e: any) {
+        toast({
+          title: "Upload error",
+          description: e.message || "An error occurred",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "draft": return <Badge variant="secondary">Draft</Badge>;
-      case "submitted": return <Badge variant="default" className="bg-blue-500">Submitted</Badge>;
-      case "under_review": return <Badge variant="outline" className="border-amber-500 text-amber-600">Reviewing</Badge>;
+      case "challan_generated": return <Badge variant="outline" className="border-amber-500 text-amber-600">Challan Generated</Badge>;
+      case "slip_uploaded": return <Badge variant="default" className="bg-blue-500">Slip Uploaded</Badge>;
+      case "submitted": return <Badge variant="default" className="bg-blue-600">Submitted</Badge>;
+      case "under_review": return <Badge variant="outline" className="border-amber-500 text-amber-600">Under Review</Badge>;
       case "verified": return <Badge variant="default" className="bg-emerald-500">Verified</Badge>;
       case "rejected": return <Badge variant="destructive">Rejected</Badge>;
       case "merit_listed": return <Badge variant="default" className="bg-purple-500">Merit Listed</Badge>;
@@ -188,55 +247,107 @@ export default function StudentApplications() {
         </Dialog>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Application History
-          </CardTitle>
-          <CardDescription>Track the status of all your submitted applications.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="flex justify-center p-8">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      {isLoadingApps ? (
+        <div className="flex justify-center p-8">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : !applicationsData?.applications.length ? (
+        <Card>
+          <CardContent className="text-center p-12 text-muted-foreground">
+            You haven't submitted any applications yet.
+            <div className="mt-4">
+              <Button onClick={() => setIsCreateOpen(true)} disabled={openSessions.length === 0}>Start Application</Button>
             </div>
-          ) : !applicationsData?.applications.length ? (
-            <div className="text-center p-8 text-muted-foreground border rounded-lg border-dashed">
-              You haven't submitted any applications yet.
-            </div>
-          ) : (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>App No.</TableHead>
-                    <TableHead>Program</TableHead>
-                    <TableHead>Session</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {applicationsData.applications.map((app) => (
-                    <TableRow key={app.id}>
-                      <TableCell className="font-medium font-mono text-xs">{app.applicationNumber}</TableCell>
-                      <TableCell className="font-medium">{app.program.name}</TableCell>
-                      <TableCell className="text-sm">{app.session.name}</TableCell>
-                      <TableCell className="text-sm">
-                        {app.submittedAt ? format(new Date(app.submittedAt), "MMM d, yyyy") : "-"}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        {getStatusBadge(app.status)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-6">
+          {applicationsData.applications.map((app) => {
+            const challan = challansData?.find(c => c.applicationId === app.id);
+            
+            return (
+              <Card key={app.id}>
+                <CardHeader className="pb-3 border-b bg-muted/20">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-xl text-primary">{app.program.name}</CardTitle>
+                      <CardDescription className="mt-1">
+                        Application #{app.applicationNumber} • {app.session.name}
+                      </CardDescription>
+                    </div>
+                    <div>{getStatusBadge(app.status)}</div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2">Application Details</h4>
+                      <dl className="space-y-1 text-sm">
+                        <div className="flex justify-between"><dt className="text-muted-foreground">Status:</dt><dd className="font-medium">{app.status}</dd></div>
+                        <div className="flex justify-between"><dt className="text-muted-foreground">Submitted At:</dt><dd className="font-medium">{app.submittedAt ? format(new Date(app.submittedAt), "MMM d, yyyy") : "-"}</dd></div>
+                      </dl>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2">Workflow Actions</h4>
+                      
+                      {app.status === "challan_generated" && challan && (
+                        <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 p-4 rounded-md">
+                          <p className="text-sm text-amber-800 dark:text-amber-200 mb-3">
+                            Please pay PKR {challan.amount} and upload the paid slip to proceed.
+                          </p>
+                          <ObjectUploader
+                            maxNumberOfFiles={1}
+                            maxFileSize={5242880}
+                            buttonClassName="w-full"
+                            onGetUploadParameters={async (file) => {
+                              const res = await fetch(`${import.meta.env.BASE_URL}api/storage/uploads/request-url`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                credentials: "include",
+                                body: JSON.stringify({ name: file.name, size: file.size, contentType: file.type || "application/octet-stream" })
+                              });
+                              const data = await res.json();
+                              return { method: "PUT" as const, url: data.uploadURL, headers: { "Content-Type": file.type || "application/octet-stream" } };
+                            }}
+                            onComplete={(result) => handleUploadComplete(result, challan.id, app.id)}
+                          >
+                            <div className="flex items-center justify-center gap-2 h-10 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
+                              <UploadCloud className="h-4 w-4" /> Upload Paid Slip
+                            </div>
+                          </ObjectUploader>
+                        </div>
+                      )}
+
+                      {app.status === "slip_uploaded" && (
+                        <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 p-4 rounded-md">
+                          <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
+                            Your paid slip has been uploaded. You can now finally submit your application.
+                          </p>
+                          <Button 
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white" 
+                            onClick={() => handleFinalSubmit(app.id)}
+                            disabled={isSubmitting}
+                          >
+                            {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-2 h-4 w-4" />}
+                            Submit Application
+                          </Button>
+                        </div>
+                      )}
+
+                      {["submitted", "under_review", "verified", "rejected", "merit_listed", "admitted"].includes(app.status) && (
+                        <div className="text-sm text-muted-foreground p-4 border rounded-md text-center">
+                          Your application is currently: <strong>{app.status.replace("_", " ")}</strong>. <br/>
+                          No further action required at this stage.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

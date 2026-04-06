@@ -63,6 +63,25 @@ Session table: `session` (managed by connect-pg-simple, created manually).
 - `pnpm --filter @workspace/db run push` — push DB schema changes
 - `pnpm run typecheck` — full typecheck across all packages
 
+## Phase 2 Features (Object Storage + Full Student Workflow)
+
+- **Object Storage**: Provisioned via Replit Object Storage bucket. API server has presigned URL endpoint at `POST /api/storage/uploads/request-url`. Files stored as private objects with ACL control.
+- **Student Profile Wizard**: 4-step wizard (Personal Info → Classification & Quota → Academic Background → Review). Tracks 20 fields. `completionPercent` + `isComplete` computed from filled fields. ≥80% = complete, ≥50% required to submit application.
+- **Application Workflow**: draft → challan_generated → slip_uploaded → submitted → under_review → verified/rejected/merit_listed/admitted. Challan auto-generated at PKR 500 on application creation.
+- **Document Uploads**: Per-type upload cards using Uppy (`@workspace/object-storage-web`). 7 doc types: matricCertificate, intermediateCertificate, domicile, nidCopy, passportPhoto, medicalFitness, characterCertificate.
+- **Paid Slip Upload**: Student uploads bank receipt via `POST /api/challans/:id/paid-slip`, advancing application to `slip_uploaded`.
+- **Admin Reviews**: Status filter tabs on applications page, finance verification on challans, document verification officer flow, joined students management with `useMarkStudentJoined`.
+
+## Object Storage Library
+
+`@workspace/object-storage-web` provides:
+- `ObjectUploader` component — Uppy v5 modal triggered by button, calls presigned URL endpoint
+- `useUpload` hook — programmatic upload helper
+
+## Programs (8 AHS Programs)
+
+BSMLT, BSMIT (Radiology), BSRDT (Renal Dialysis), BSOOT (Optometry), BSANT (Anesthesia), BSEND (Endoscopy), BSDNT (Dental), BSOPT (Orthotics & Prosthetics)
+
 ## Merit Score Formula
 
 10% matric percentage + 40% inter percentage (additional fields TBD)

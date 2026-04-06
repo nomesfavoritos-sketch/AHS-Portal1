@@ -13,6 +13,8 @@ export const paymentChallansTable = pgTable("payment_challans", {
   paidAt: timestamp("paid_at", { withTimezone: true }),
   bankName: text("bank_name"),
   transactionRef: text("transaction_ref"),
+  paidSlipPath: text("paid_slip_path"),
+  paidSlipUploadedAt: timestamp("paid_slip_uploaded_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });
