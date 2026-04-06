@@ -1,0 +1,133 @@
+Create the full project foundation with a premium UI, strong database design, authentication, role-based access control, and admin/student dashboard shell.
+
+TECH STACK:
+- Next.js latest with TypeScript
+- Tailwind CSS
+- shadcn/ui
+- PostgreSQL
+- Prisma ORM
+- Zod validation
+- Secure auth with session-based login
+- Docker-ready if possible
+
+BRANDING:
+Product name: AHS Portal
+Organization: Allied Health College, Nishtar Medical University
+Design style: premium, elegant, modern, institutional, trustworthy, clean, white-space based, subtle gradients, card-based layouts, polished admin dashboard
+Theme: professional academic SaaS, not flashy
+Use a clean typography system, professional icons, accessible contrast, soft shadows, premium tables, and elegant form steps
+
+REQUIRED IN PHASE 1:
+
+1. Project foundation
+- clean folder structure
+- reusable layout system
+- responsive design
+- sidebar dashboard layout
+- top navbar
+- role-aware navigation
+- landing page shell
+- login page
+- register page
+- forgot password page
+
+2. Authentication
+- student signup
+- secure login
+- logout
+- hashed passwords
+- session management
+- forgot password flow scaffold
+- route protection
+- role-based access control
+
+3. Roles
+Implement these roles:
+- Super Admin
+- Admission Admin
+- Verification Officer
+- Finance Verifier
+- Student
+
+4. Database schema
+Design Prisma models for:
+- User
+- Role
+- StudentProfile
+- AdmissionSession
+- Program
+- QuotaCategory
+- Application
+- AcademicRecord
+- Document
+- PaymentChallan
+- MeritFormula
+- MeritList
+- VerificationDecision
+- JoinedStudent
+- Notice
+- AuditLog
+
+Do not build every full feature yet, but create a future-proof schema.
+
+5. Admin dashboard shell
+Create sidebar modules placeholders:
+- Dashboard
+- Sessions
+- Programs
+- Quotas
+- Students
+- Applications
+- Payments
+- Merit Lists
+- Verification Desk
+- Joined Students
+- Notices
+- Audit Logs
+- Settings
+
+6. Student dashboard shell
+Create a student dashboard with cards/placeholders for:
+- My Profile
+- My Applications
+- Challans
+- Documents
+- Merit Status
+- Notifications
+
+7. Audit logging foundation
+Add middleware/utilities to log critical actions like login, logout, and account creation.
+
+8. Seed data
+Seed:
+- one super admin
+- one admission admin
+- one verification officer
+- one finance verifier
+- one sample student
+- sample programs
+- sample quota categories
+
+9. UI quality
+- premium SaaS look
+- elegant tables/cards
+- mobile responsive
+- polished empty states
+- professional institutional styling
+
+10. Deliverables
+- working app
+- auth flow
+- RBAC
+- Prisma schema and migration
+- seeded demo accounts
+- dashboard shells
+- setup instructions in README
+
+IMPORTANT:
+- write clean, modular, production-minded code
+- no fake placeholder backend logic for auth
+- ensure protected routes
+- ensure code is easy to extend in later phases
+- at the end, show demo credentials and explain folder structure
+

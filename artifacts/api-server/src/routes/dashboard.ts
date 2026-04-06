@@ -1,0 +1,122 @@
+import { Router, type IRouter } from "express";
+import { db, applicationsTable, usersTable, programsTable, admissionSessionsTable, paymentChallansTable, verificationDecisionsTable, noticesTable, auditLogsTable, joinedStudentsTable } from "@workspace/db";
+import { eq, count, and } from "drizzle-orm";
+import { requireAuth } from "../middlewares/auth";
+
+const router: IRouter = Router();
+
+router.get("/dashboard/admin-summary", requireAuth, async (_req, res): Promise<void> => {
+  const [
+    totalApps,
+    pendingApps,
+    approvedApps,
+    rejectedApps,
+    totalStudents,
+    totalPrograms,
+    totalSessions,
+    activeSessionResult,
+    pendingPayments,
+    pendingVerifications,
+  ] = await Promise.all([
+    db.select({ count: count() }).from(applicationsTable),
+    db.select({ count: count() }).from(applicationsTable).where(eq(applicationsTable.status, "submitted")),
+    db.select({ count: count() }).from(applicationsTable).where(eq(applicationsTable.status, "admitted")),
+    db.select({ count: count() }).from(applicationsTable).where(eq(applicationsTable.status, "rejected")),
+    db.select({ count: count() }).from(usersTable).where(eq(usersTable.role, "student")),
+    db.select({ count: count() }).from(programsTable),
+    db.select({ count: count() }).from(admissionSessionsTable),
+    db.select({ name: admissionSessionsTable.name }).from(admissionSessionsTable).where(eq(admissionSessionsTable.isActive, true)).limit(1),
+    db.select({ count: count() }).from(paymentChallansTable).where(eq(paymentChallansTable.status, "pending")),
+    db.select({ count: count() }).from(verificationDecisionsTable).where(eq(verificationDecisionsTable.status, "pending")),
+  ]);
+
+  res.json({
+    totalApplications: Number(totalApps[0]?.count ?? 0),
+    pendingApplications: Number(pendingApps[0]?.count ?? 0),
+    approvedApplications: Number(approvedApps[0]?.count ?? 0),
+    rejectedApplications: Number(rejectedApps[0]?.count ?? 0),
+    totalStudents: Number(totalStudents[0]?.count ?? 0),
+    totalPrograms: Number(totalPrograms[0]?.count ?? 0),
+    totalSessions: Number(totalSessions[0]?.count ?? 0),
+    activeSession: activeSessionResult[0]?.name ?? null,
+    pendingPayments: Number(pendingPayments[0]?.count ?? 0),
+    pendingVerifications: Number(pendingVerifications[0]?.count ?? 0),
+  });
+});
+
+router.get("/dashboard/student-summary", requireAuth, async (req, res): Promise<void> => {
+  const sess = req.session as Record<string, unknown>;
+  const userId = sess.userId as number;
+
+  const [
+    totalApps,
+    pendingApps,
+    approvedApps,
+    pendingPayments,
+    activeNotices,
+  ] = await Promise.all([
+    db.select({ count: count() }).from(applicationsTable).where(eq(applicationsTable.userId, userId)),
+    db.select({ count: count() }).from(applicationsTable).where(and(eq(applicationsTable.userId, userId), eq(applicationsTable.status, "submitted"))),
+    db.select({ count: count() }).from(applicationsTable).where(and(eq(applicationsTable.userId, userId), eq(applicationsTable.status, "admitted"))),
+    db.select({ count: count() }).from(paymentChallansTable),
+    db.select({ count: count() }).from(noticesTable).where(eq(noticesTable.isActive, true)),
+  ]);
+
+  res.json({
+    totalApplications: Number(totalApps[0]?.count ?? 0),
+    pendingApplications: Number(pendingApps[0]?.count ?? 0),
+    approvedApplications: Number(approvedApps[0]?.count ?? 0),
+    pendingPayments: Number(pendingPayments[0]?.count ?? 0),
+    pendingDocuments: 0,
+    activeNotices: Number(activeNotices[0]?.count ?? 0),
+    meritRank: null,
+  });
+});
+
+router.get("/dashboard/application-stats", requireAuth, async (_req, res): Promise<void> => {
+  const programs = await db.select().from(programsTable);
+  const byProgram = await Promise.all(programs.map(async (p) => {
+    const [total, approved] = await Promise.all([
+      db.select({ count: count() }).from(applicationsTable).where(eq(applicationsTable.programId, p.id)),
+      db.select({ count: count() }).from(applicationsTable).where(and(eq(applicationsTable.programId, p.id), eq(applicationsTable.status, "admitted"))),
+    ]);
+    return {
+      programName: p.name,
+      count: Number(total[0]?.count ?? 0),
+      approved: Number(approved[0]?.count ?? 0),
+    };
+  }));
+
+  const statuses = ["draft", "submitted", "under_review", "verified", "rejected", "merit_listed", "admitted"];
+  const byStatus = await Promise.all(statuses.map(async (status) => {
+    const [result] = await db.select({ count: count() }).from(applicationsTable).where(eq(applicationsTable.status, status));
+    return { status, count: Number(result?.count ?? 0) };
+  }));
+
+  res.json({ byProgram, byStatus });
+});
+
+router.get("/dashboard/recent-activity", requireAuth, async (_req, res): Promise<void> => {
+  const logs = await db.select().from(auditLogsTable).orderBy(auditLogsTable.createdAt).limit(20);
+
+  const items = await Promise.all(logs.map(async (l) => {
+    let userName: string | null = null;
+    if (l.userId) {
+      const [user] = await db.select({ fullName: usersTable.fullName }).from(usersTable).where(eq(usersTable.id, l.userId));
+      userName = user?.fullName ?? null;
+    }
+    return {
+      id: l.id,
+      action: l.action,
+      description: `${l.action.replace(/_/g, " ")} on ${l.entityType}${l.entityId ? ` #${l.entityId}` : ""}`,
+      entityType: l.entityType,
+      userId: l.userId ?? null,
+      userName,
+      createdAt: l.createdAt.toISOString(),
+    };
+  }));
+
+  res.json(items);
+});
+
+export default router;

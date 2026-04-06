@@ -3,20 +3,48 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: AHS Portal API - Allied Health College, Nishtar Medical University
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: users
+    description: User management
+  - name: programs
+    description: Academic programs
+  - name: sessions
+    description: Admission sessions
+  - name: quotas
+    description: Quota categories
+  - name: applications
+    description: Student applications
+  - name: documents
+    description: Document management
+  - name: payments
+    description: Payment challans
+  - name: merit
+    description: Merit lists and formulas
+  - name: verification
+    description: Verification desk
+  - name: notices
+    description: Notices and announcements
+  - name: audit
+    description: Audit logs
+  - name: dashboard
+    description: Dashboard summaries
+  - name: students
+    description: Joined students
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +52,1075 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # AUTH
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login with credentials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new student account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterBody"
+      responses:
+        "201":
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "409":
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout current session
+      responses:
+        "200":
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current authenticated user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/forgot-password:
+    post:
+      operationId: forgotPassword
+      tags: [auth]
+      summary: Request password reset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordBody"
+      responses:
+        "200":
+          description: Reset email sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # USERS (Admin)
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users
+      parameters:
+        - name: role
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: search
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: page
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: limit
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a new user (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserBody"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # PROGRAMS
+  /programs:
+    get:
+      operationId: listPrograms
+      tags: [programs]
+      summary: List all programs
+      responses:
+        "200":
+          description: Programs list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Program"
+
+    post:
+      operationId: createProgram
+      tags: [programs]
+      summary: Create a program
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProgramBody"
+      responses:
+        "201":
+          description: Created program
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Program"
+
+  /programs/{id}:
+    get:
+      operationId: getProgram
+      tags: [programs]
+      summary: Get program by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Program
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Program"
+
+    patch:
+      operationId: updateProgram
+      tags: [programs]
+      summary: Update program
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProgramBody"
+      responses:
+        "200":
+          description: Updated program
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Program"
+
+    delete:
+      operationId: deleteProgram
+      tags: [programs]
+      summary: Delete program
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ADMISSION SESSIONS
+  /sessions:
+    get:
+      operationId: listSessions
+      tags: [sessions]
+      summary: List admission sessions
+      responses:
+        "200":
+          description: Sessions list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdmissionSession"
+
+    post:
+      operationId: createSession
+      tags: [sessions]
+      summary: Create admission session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSessionBody"
+      responses:
+        "201":
+          description: Created session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmissionSession"
+
+  /sessions/{id}:
+    get:
+      operationId: getSession
+      tags: [sessions]
+      summary: Get session by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmissionSession"
+
+    patch:
+      operationId: updateSession
+      tags: [sessions]
+      summary: Update session
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSessionBody"
+      responses:
+        "200":
+          description: Updated session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdmissionSession"
+
+  # QUOTA CATEGORIES
+  /quotas:
+    get:
+      operationId: listQuotas
+      tags: [quotas]
+      summary: List quota categories
+      responses:
+        "200":
+          description: Quotas list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/QuotaCategory"
+
+    post:
+      operationId: createQuota
+      tags: [quotas]
+      summary: Create quota category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuotaBody"
+      responses:
+        "201":
+          description: Created quota
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuotaCategory"
+
+  /quotas/{id}:
+    patch:
+      operationId: updateQuota
+      tags: [quotas]
+      summary: Update quota
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuotaBody"
+      responses:
+        "200":
+          description: Updated quota
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuotaCategory"
+
+    delete:
+      operationId: deleteQuota
+      tags: [quotas]
+      summary: Delete quota
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # APPLICATIONS
+  /applications:
+    get:
+      operationId: listApplications
+      tags: [applications]
+      summary: List applications
+      parameters:
+        - name: sessionId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: programId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: status
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: search
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: page
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: limit
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Applications list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationListResponse"
+
+    post:
+      operationId: createApplication
+      tags: [applications]
+      summary: Submit a new application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateApplicationBody"
+      responses:
+        "201":
+          description: Application created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  /applications/{id}:
+    get:
+      operationId: getApplication
+      tags: [applications]
+      summary: Get application by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+    patch:
+      operationId: updateApplication
+      tags: [applications]
+      summary: Update application
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateApplicationBody"
+      responses:
+        "200":
+          description: Updated application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  /applications/{id}/status:
+    patch:
+      operationId: updateApplicationStatus
+      tags: [applications]
+      summary: Update application status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStatusBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  # STUDENT PROFILE
+  /profile:
+    get:
+      operationId: getMyProfile
+      tags: [users]
+      summary: Get current student profile
+      responses:
+        "200":
+          description: Student profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentProfile"
+
+    patch:
+      operationId: updateMyProfile
+      tags: [users]
+      summary: Update student profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileBody"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentProfile"
+
+  # PAYMENT CHALLANS
+  /challans:
+    get:
+      operationId: listChallans
+      tags: [payments]
+      summary: List challans
+      parameters:
+        - name: applicationId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: status
+          in: query
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Challans list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentChallan"
+
+    post:
+      operationId: createChallan
+      tags: [payments]
+      summary: Generate a payment challan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateChallanBody"
+      responses:
+        "201":
+          description: Challan created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentChallan"
+
+  /challans/{id}:
+    get:
+      operationId: getChallan
+      tags: [payments]
+      summary: Get challan by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Challan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentChallan"
+
+    patch:
+      operationId: updateChallanStatus
+      tags: [payments]
+      summary: Update challan status (verify payment)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStatusBody"
+      responses:
+        "200":
+          description: Updated challan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentChallan"
+
+  # DOCUMENTS
+  /documents:
+    get:
+      operationId: listDocuments
+      tags: [documents]
+      summary: List documents for an application
+      parameters:
+        - name: applicationId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Documents list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+
+    post:
+      operationId: uploadDocument
+      tags: [documents]
+      summary: Upload a document
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDocumentBody"
+      responses:
+        "201":
+          description: Document uploaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /documents/{id}:
+    delete:
+      operationId: deleteDocument
+      tags: [documents]
+      summary: Delete document
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # MERIT LISTS
+  /merit-lists:
+    get:
+      operationId: listMeritLists
+      tags: [merit]
+      summary: List merit lists
+      parameters:
+        - name: sessionId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: programId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Merit lists
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MeritList"
+
+    post:
+      operationId: createMeritList
+      tags: [merit]
+      summary: Generate merit list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMeritListBody"
+      responses:
+        "201":
+          description: Merit list generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeritList"
+
+  /merit-lists/{id}:
+    get:
+      operationId: getMeritList
+      tags: [merit]
+      summary: Get merit list with entries
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Merit list with entries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeritListWithEntries"
+
+  # VERIFICATION
+  /verifications:
+    get:
+      operationId: listVerifications
+      tags: [verification]
+      summary: List verification decisions
+      parameters:
+        - name: applicationId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: status
+          in: query
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Verifications list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VerificationDecision"
+
+    post:
+      operationId: createVerification
+      tags: [verification]
+      summary: Submit verification decision
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVerificationBody"
+      responses:
+        "201":
+          description: Verification created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerificationDecision"
+
+  # NOTICES
+  /notices:
+    get:
+      operationId: listNotices
+      tags: [notices]
+      summary: List notices
+      parameters:
+        - name: active
+          in: query
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Notices list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notice"
+
+    post:
+      operationId: createNotice
+      tags: [notices]
+      summary: Create a notice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNoticeBody"
+      responses:
+        "201":
+          description: Notice created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notice"
+
+  /notices/{id}:
+    patch:
+      operationId: updateNotice
+      tags: [notices]
+      summary: Update notice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNoticeBody"
+      responses:
+        "200":
+          description: Updated notice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notice"
+
+    delete:
+      operationId: deleteNotice
+      tags: [notices]
+      summary: Delete notice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # AUDIT LOGS
+  /audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags: [audit]
+      summary: List audit logs
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: action
+          in: query
+          schema:
+            type: ["string", "null"]
+        - name: page
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: limit
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Audit logs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogListResponse"
+
+  # DASHBOARD SUMMARIES (wow endpoints)
+  /dashboard/admin-summary:
+    get:
+      operationId: getAdminDashboardSummary
+      tags: [dashboard]
+      summary: Get admin dashboard summary stats
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDashboardSummary"
+
+  /dashboard/student-summary:
+    get:
+      operationId: getStudentDashboardSummary
+      tags: [dashboard]
+      summary: Get student dashboard summary
+      responses:
+        "200":
+          description: Student dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentDashboardSummary"
+
+  /dashboard/application-stats:
+    get:
+      operationId: getApplicationStats
+      tags: [dashboard]
+      summary: Get application statistics by program/status
+      responses:
+        "200":
+          description: Application stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationStats"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Get recent activity feed
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  # JOINED STUDENTS
+  /joined-students:
+    get:
+      operationId: listJoinedStudents
+      tags: [students]
+      summary: List joined students
+      parameters:
+        - name: programId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: sessionId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: search
+          in: query
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Joined students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/JoinedStudent"
+
+    post:
+      operationId: markStudentJoined
+      tags: [students]
+      summary: Mark student as joined
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateJoinedStudentBody"
+      responses:
+        "201":
+          description: Student marked as joined
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JoinedStudent"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +1128,779 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required: [message]
+
+    # AUTH
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required: [email, password]
+
+    RegisterBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        fullName:
+          type: string
+        phone:
+          type: ["string", "null"]
+      required: [email, password, fullName]
+
+    ForgotPasswordBody:
+      type: object
+      properties:
+        email:
+          type: string
+      required: [email]
+
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        fullName:
+          type: string
+        role:
+          type: string
+        createdAt:
+          type: string
+      required: [id, email, fullName, role, createdAt]
+
+    # USERS
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        fullName:
+          type: string
+        role:
+          type: string
+        phone:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required: [id, email, fullName, role, isActive, createdAt, updatedAt]
+
+    CreateUserBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        fullName:
+          type: string
+        role:
+          type: string
+        phone:
+          type: ["string", "null"]
+      required: [email, password, fullName, role]
+
+    UpdateUserBody:
+      type: object
+      properties:
+        fullName:
+          type: ["string", "null"]
+        role:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        isActive:
+          type: ["boolean", "null"]
+
+    UserListResponse:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [users, total, page, limit]
+
+    # STUDENT PROFILE
+    StudentProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        fatherName:
+          type: ["string", "null"]
+        dateOfBirth:
+          type: ["string", "null"]
+        gender:
+          type: ["string", "null"]
+        cnic:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        city:
+          type: ["string", "null"]
+        domicile:
+          type: ["string", "null"]
+        religion:
+          type: ["string", "null"]
+        nationality:
+          type: ["string", "null"]
+        matricMarks:
+          type: ["integer", "null"]
+        matricTotal:
+          type: ["integer", "null"]
+        interMarks:
+          type: ["integer", "null"]
+        interTotal:
+          type: ["integer", "null"]
+        interYear:
+          type: ["integer", "null"]
+        interBoard:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required: [id, userId, createdAt, updatedAt]
+
+    UpdateProfileBody:
+      type: object
+      properties:
+        fatherName:
+          type: ["string", "null"]
+        dateOfBirth:
+          type: ["string", "null"]
+        gender:
+          type: ["string", "null"]
+        cnic:
+          type: ["string", "null"]
+        address:
+          type: ["string", "null"]
+        city:
+          type: ["string", "null"]
+        domicile:
+          type: ["string", "null"]
+        religion:
+          type: ["string", "null"]
+        nationality:
+          type: ["string", "null"]
+        matricMarks:
+          type: ["integer", "null"]
+        matricTotal:
+          type: ["integer", "null"]
+        interMarks:
+          type: ["integer", "null"]
+        interTotal:
+          type: ["integer", "null"]
+        interYear:
+          type: ["integer", "null"]
+        interBoard:
+          type: ["string", "null"]
+
+    # PROGRAMS
+    Program:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        code:
+          type: string
+        duration:
+          type: string
+        seats:
+          type: integer
+        description:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+      required: [id, name, code, duration, seats, isActive, createdAt]
+
+    CreateProgramBody:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        duration:
+          type: string
+        seats:
+          type: integer
+        description:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+      required: [name, code, duration, seats, isActive]
+
+    # ADMISSION SESSIONS
+    AdmissionSession:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        year:
+          type: integer
+        startDate:
+          type: string
+        endDate:
+          type: string
+        isActive:
+          type: boolean
+        status:
+          type: string
+        createdAt:
+          type: string
+      required: [id, name, year, startDate, endDate, isActive, status, createdAt]
+
+    CreateSessionBody:
+      type: object
+      properties:
+        name:
+          type: string
+        year:
+          type: integer
+        startDate:
+          type: string
+        endDate:
+          type: string
+        isActive:
+          type: boolean
+        status:
+          type: string
+      required: [name, year, startDate, endDate, isActive, status]
+
+    # QUOTA CATEGORIES
+    QuotaCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        code:
+          type: string
+        percentage:
+          type: number
+        description:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+      required: [id, name, code, percentage, isActive, createdAt]
+
+    CreateQuotaBody:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        percentage:
+          type: number
+        description:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+      required: [name, code, percentage, isActive]
+
+    # APPLICATIONS
+    Application:
+      type: object
+      properties:
+        id:
+          type: integer
+        applicationNumber:
+          type: string
+        userId:
+          type: integer
+        sessionId:
+          type: integer
+        programId:
+          type: integer
+        quotaId:
+          type: ["integer", "null"]
+        status:
+          type: string
+        remarks:
+          type: ["string", "null"]
+        submittedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+        program:
+          $ref: "#/components/schemas/Program"
+        session:
+          $ref: "#/components/schemas/AdmissionSession"
+      required: [id, applicationNumber, userId, sessionId, programId, status, createdAt, updatedAt, user, program, session]
+
+    CreateApplicationBody:
+      type: object
+      properties:
+        sessionId:
+          type: integer
+        programId:
+          type: integer
+        quotaId:
+          type: ["integer", "null"]
+      required: [sessionId, programId]
+
+    UpdateApplicationBody:
+      type: object
+      properties:
+        programId:
+          type: ["integer", "null"]
+        quotaId:
+          type: ["integer", "null"]
+        remarks:
+          type: ["string", "null"]
+
+    UpdateStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+        remarks:
+          type: ["string", "null"]
+      required: [status]
+
+    ApplicationListResponse:
+      type: object
+      properties:
+        applications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Application"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [applications, total, page, limit]
+
+    # DOCUMENTS
+    Document:
+      type: object
+      properties:
+        id:
+          type: integer
+        applicationId:
+          type: integer
+        docType:
+          type: string
+        fileName:
+          type: string
+        fileUrl:
+          type: string
+        status:
+          type: string
+        uploadedAt:
+          type: string
+      required: [id, applicationId, docType, fileName, fileUrl, status, uploadedAt]
+
+    CreateDocumentBody:
+      type: object
+      properties:
+        applicationId:
+          type: integer
+        docType:
+          type: string
+        fileName:
+          type: string
+        fileUrl:
+          type: string
+      required: [applicationId, docType, fileName, fileUrl]
+
+    # PAYMENT CHALLANS
+    PaymentChallan:
+      type: object
+      properties:
+        id:
+          type: integer
+        challanNumber:
+          type: string
+        applicationId:
+          type: integer
+        amount:
+          type: number
+        dueDate:
+          type: string
+        status:
+          type: string
+        paidAt:
+          type: ["string", "null"]
+        bankName:
+          type: ["string", "null"]
+        transactionRef:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required: [id, challanNumber, applicationId, amount, dueDate, status, createdAt]
+
+    CreateChallanBody:
+      type: object
+      properties:
+        applicationId:
+          type: integer
+        amount:
+          type: number
+        dueDate:
+          type: string
+        bankName:
+          type: ["string", "null"]
+      required: [applicationId, amount, dueDate]
+
+    # MERIT LISTS
+    MeritList:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        sessionId:
+          type: integer
+        programId:
+          type: integer
+        publishedAt:
+          type: ["string", "null"]
+        isPublished:
+          type: boolean
+        totalEntries:
+          type: integer
+        createdAt:
+          type: string
+      required: [id, name, sessionId, programId, isPublished, totalEntries, createdAt]
+
+    MeritListEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        meritListId:
+          type: integer
+        applicationId:
+          type: integer
+        rank:
+          type: integer
+        meritScore:
+          type: number
+        status:
+          type: string
+        application:
+          $ref: "#/components/schemas/Application"
+      required: [id, meritListId, applicationId, rank, meritScore, status, application]
+
+    MeritListWithEntries:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        sessionId:
+          type: integer
+        programId:
+          type: integer
+        publishedAt:
+          type: ["string", "null"]
+        isPublished:
+          type: boolean
+        totalEntries:
+          type: integer
+        createdAt:
+          type: string
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/MeritListEntry"
+      required: [id, name, sessionId, programId, isPublished, totalEntries, createdAt, entries]
+
+    CreateMeritListBody:
+      type: object
+      properties:
+        name:
+          type: string
+        sessionId:
+          type: integer
+        programId:
+          type: integer
+      required: [name, sessionId, programId]
+
+    # VERIFICATION
+    VerificationDecision:
+      type: object
+      properties:
+        id:
+          type: integer
+        applicationId:
+          type: integer
+        officerId:
+          type: integer
+        status:
+          type: string
+        remarks:
+          type: ["string", "null"]
+        verifiedAt:
+          type: string
+        createdAt:
+          type: string
+      required: [id, applicationId, officerId, status, verifiedAt, createdAt]
+
+    CreateVerificationBody:
+      type: object
+      properties:
+        applicationId:
+          type: integer
+        status:
+          type: string
+        remarks:
+          type: ["string", "null"]
+      required: [applicationId, status]
+
+    # NOTICES
+    Notice:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        category:
+          type: string
+        isActive:
+          type: boolean
+        publishedAt:
+          type: ["string", "null"]
+        expiresAt:
+          type: ["string", "null"]
+        createdBy:
+          type: integer
+        createdAt:
+          type: string
+      required: [id, title, content, category, isActive, createdBy, createdAt]
+
+    CreateNoticeBody:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        category:
+          type: string
+        isActive:
+          type: boolean
+        expiresAt:
+          type: ["string", "null"]
+      required: [title, content, category, isActive]
+
+    # AUDIT LOGS
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: ["integer", "null"]
+        action:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: ["integer", "null"]
+        details:
+          type: ["string", "null"]
+        ipAddress:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required: [id, action, entityType, createdAt]
+
+    AuditLogListResponse:
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLog"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [logs, total, page, limit]
+
+    # DASHBOARD SUMMARIES
+    AdminDashboardSummary:
+      type: object
+      properties:
+        totalApplications:
+          type: integer
+        pendingApplications:
+          type: integer
+        approvedApplications:
+          type: integer
+        rejectedApplications:
+          type: integer
+        totalStudents:
+          type: integer
+        totalPrograms:
+          type: integer
+        totalSessions:
+          type: integer
+        activeSession:
+          type: ["string", "null"]
+        pendingPayments:
+          type: integer
+        pendingVerifications:
+          type: integer
+      required: [totalApplications, pendingApplications, approvedApplications, rejectedApplications, totalStudents, totalPrograms, totalSessions, pendingPayments, pendingVerifications]
+
+    StudentDashboardSummary:
+      type: object
+      properties:
+        totalApplications:
+          type: integer
+        pendingApplications:
+          type: integer
+        approvedApplications:
+          type: integer
+        pendingPayments:
+          type: integer
+        pendingDocuments:
+          type: integer
+        activeNotices:
+          type: integer
+        meritRank:
+          type: ["integer", "null"]
+      required: [totalApplications, pendingApplications, approvedApplications, pendingPayments, pendingDocuments, activeNotices]
+
+    ApplicationStats:
+      type: object
+      properties:
+        byProgram:
+          type: array
+          items:
+            type: object
+            properties:
+              programName:
+                type: string
+              count:
+                type: integer
+              approved:
+                type: integer
+            required: [programName, count, approved]
+        byStatus:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+              count:
+                type: integer
+            required: [status, count]
+      required: [byProgram, byStatus]
+
+    ActivityItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        action:
+          type: string
+        description:
+          type: string
+        entityType:
+          type: string
+        userId:
+          type: ["integer", "null"]
+        userName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required: [id, action, description, entityType, createdAt]
+
+    # JOINED STUDENTS
+    JoinedStudent:
+      type: object
+      properties:
+        id:
+          type: integer
+        applicationId:
+          type: integer
+        userId:
+          type: integer
+        sessionId:
+          type: integer
+        programId:
+          type: integer
+        rollNumber:
+          type: ["string", "null"]
+        joinedAt:
+          type: string
+        createdAt:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+        program:
+          $ref: "#/components/schemas/Program"
+      required: [id, applicationId, userId, sessionId, programId, joinedAt, createdAt, user, program]
+
+    CreateJoinedStudentBody:
+      type: object
+      properties:
+        applicationId:
+          type: integer
+        rollNumber:
+          type: ["string", "null"]
+      required: [applicationId]

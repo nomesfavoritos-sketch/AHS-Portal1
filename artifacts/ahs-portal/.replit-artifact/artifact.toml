@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "AHS Portal"
+version = "1.0.0"
+id = "artifacts/ahs-portal"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22651
+
+[services.development]
+run = "pnpm --filter @workspace/ahs-portal run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/ahs-portal", "run", "build" ]
+publicDir = "artifacts/ahs-portal/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22651"
+BASE_PATH = "/"
