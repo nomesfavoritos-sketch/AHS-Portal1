@@ -30,6 +30,7 @@ app.use(
     },
   }),
 );
+app.set("trust proxy", 1);
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -44,8 +45,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       httpOnly: true,
+      sameSite: "none",
       maxAge: 24 * 60 * 60 * 1000,
     },
   }),

@@ -32,6 +32,10 @@ router.post("/auth/login", async (req, res): Promise<void> => {
   sess.userId = user.id;
   sess.userRole = user.role;
 
+  await new Promise<void>((resolve, reject) =>
+    req.session.save((err) => (err ? reject(err) : resolve()))
+  );
+
   await logAudit({
     userId: user.id,
     action: "login",
@@ -78,6 +82,10 @@ router.post("/auth/register", async (req, res): Promise<void> => {
   const sess = req.session as Record<string, unknown>;
   sess.userId = user.id;
   sess.userRole = user.role;
+
+  await new Promise<void>((resolve, reject) =>
+    req.session.save((err) => (err ? reject(err) : resolve()))
+  );
 
   await logAudit({
     userId: user.id,
