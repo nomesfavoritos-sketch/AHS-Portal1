@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { Link } from "wouter";
 import { motion, useInView, animate } from "framer-motion";
 import { useListNotices, useListPrograms } from "@workspace/api-client-react";
@@ -7,7 +7,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import {
   ArrowRight, CheckCircle, FileText, CreditCard, ClipboardCheck, Award, Users,
   GraduationCap, Search, Bell, Phone, Mail, MapPin, Microscope, Eye, Heart,
-  Activity, Smile, Bone, Shield, Star, Zap, Globe, BookOpen, FlaskConical, ChevronRight
+  Activity, Smile, Bone, Shield, Star, Zap, Globe, BookOpen, FlaskConical, ChevronRight,
+  Menu, X
 } from "lucide-react";
 import { format } from "date-fns";
 import universityPhoto from "@assets/jjjlllji_1775576930917.webp";
@@ -147,9 +148,11 @@ export default function Home() {
   const { data: notices } = useListNotices({ active: "true" } as any);
   const { data: programs } = useListPrograms();
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 20);
+    const fn = () => { setScrolled(window.scrollY > 20); };
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
   }, []);
@@ -167,12 +170,12 @@ export default function Home() {
         initial={{ y: -70, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className={`px-6 lg:px-16 py-3 flex items-center justify-between fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+        className={`px-4 sm:px-6 lg:px-16 py-3 flex items-center justify-between fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
           scrolled ? "bg-white shadow-sm border-b border-slate-200/80" : "bg-white border-b border-slate-200/40"
         }`}
       >
         <div className="flex items-center gap-2.5">
-          <img src={nmuLogo} alt="NMU Logo" className="h-10 w-10 object-contain" />
+          <img src={nmuLogo} alt="NMU Logo" className="h-9 w-9 object-contain" />
           <div>
             <span className="font-extrabold text-[13px] tracking-tight block leading-tight" style={{ color: G }}>AHS Portal</span>
             <span className="text-[10px] text-slate-500 leading-tight block">Nishtar Medical University</span>
@@ -190,45 +193,81 @@ export default function Home() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <a href="tel:+926-61-9200174" className="hidden lg:flex items-center gap-1.5 text-[12px] font-medium text-slate-600">
             <Phone className="h-3.5 w-3.5" style={{ color: G }} />
             061-920-0174
           </a>
           <Link href="/login">
-            <Button variant="ghost" size="sm" className="text-[13px] font-medium text-slate-700">Sign In</Button>
+            <Button variant="ghost" size="sm" className="hidden sm:inline-flex text-[13px] font-medium text-slate-700">Sign In</Button>
           </Link>
           <Link href="/register">
-            <Button size="sm" className="text-[13px] font-semibold px-5 rounded-lg text-white" style={{ background: G }}>
+            <Button size="sm" className="text-[12px] sm:text-[13px] font-semibold px-3 sm:px-5 rounded-lg text-white" style={{ background: G }}>
               Apply Now
             </Button>
           </Link>
+          {/* Hamburger – mobile only */}
+          <button
+            className="lg:hidden ml-1 p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
+            onClick={() => setMobileOpen(o => !o)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </motion.header>
+
+      {/* Mobile menu drawer */}
+      {mobileOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="fixed top-[56px] inset-x-0 z-40 bg-white border-b border-slate-200 shadow-lg lg:hidden"
+        >
+          <nav className="flex flex-col px-4 py-4 gap-1">
+            {[["Programs", "#programs"], ["How to Apply", "#how-to-apply"], ["Notices", "#notices"], ["FAQ", "#faq"], ["Merit Search", "/merit-search"]].map(([label, href]) => (
+              href.startsWith("#") ? (
+                <a key={label} href={href} onClick={closeMobile} className="px-3 py-2.5 rounded-lg text-[14px] font-medium text-slate-700 hover:bg-slate-50 hover:text-[#01411C] transition-colors">
+                  {label}
+                </a>
+              ) : (
+                <Link key={label} href={href}>
+                  <span onClick={closeMobile} className="block px-3 py-2.5 rounded-lg text-[14px] font-medium text-slate-700 hover:bg-slate-50 hover:text-[#01411C] transition-colors cursor-pointer">
+                    {label}
+                  </span>
+                </Link>
+              )
+            ))}
+            <div className="mt-3 pt-3 border-t border-slate-100 flex flex-col gap-2">
+              <Link href="/login"><Button onClick={closeMobile} variant="outline" className="w-full justify-center text-[13px]">Sign In</Button></Link>
+              <Link href="/register"><Button onClick={closeMobile} className="w-full justify-center text-[13px] text-white" style={{ background: G }}>Apply Now</Button></Link>
+            </div>
+          </nav>
+        </motion.div>
+      )}
 
       <main className="flex-1 pt-16">
 
         {/* ══════ HERO ══════ */}
         <section className="relative overflow-hidden" style={{ background: CREAM }}>
-          {/* decorative dots */}
-          <div className="absolute top-12 left-8 grid grid-cols-5 gap-2.5 pointer-events-none" aria-hidden>
+          {/* decorative dots — hidden on mobile */}
+          <div className="absolute top-10 left-6 grid grid-cols-5 gap-2 pointer-events-none hidden sm:grid" aria-hidden>
             {Array.from({ length: 25 }).map((_, i) => (
               <span key={i} className="h-1.5 w-1.5 rounded-full" style={{ background: "rgba(1,65,28,0.12)" }} />
             ))}
           </div>
-          <Star4 size={36} className="absolute top-20 right-[44%] opacity-70" />
-          <Star4 size={20} className="absolute top-40 right-[42%] opacity-50" />
+          <Star4 size={28} className="absolute top-16 right-[44%] opacity-60 hidden lg:block" />
+          <Star4 size={18} className="absolute top-32 right-[42%] opacity-40 hidden lg:block" />
 
-          <div className="max-w-7xl mx-auto px-6 lg:px-16 grid lg:grid-cols-2 min-h-[88vh] items-center gap-0">
+          {/* ── DESKTOP: side-by-side ── */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 hidden lg:grid lg:grid-cols-2 min-h-[72vh] items-center gap-0">
 
             {/* LEFT — copy */}
-            <motion.div
-              initial="hidden" animate="show" variants={stagger}
-              className="py-24 lg:py-0 lg:pr-12 flex flex-col z-10"
-            >
-              {/* live badge */}
-              <motion.div variants={fadeUp} className="mb-6">
-                <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold border" style={{ background: YL, color: "#854D0E", borderColor: "#FDE68A" }}>
+            <motion.div initial="hidden" animate="show" variants={stagger} className="py-10 lg:py-0 lg:pr-12 flex flex-col z-10">
+              <motion.div variants={fadeUp} className="mb-5">
+                <span className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold border" style={{ background: YL, color: "#854D0E", borderColor: "#FDE68A" }}>
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: Y }} />
                     <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: Y }} />
@@ -237,30 +276,29 @@ export default function Home() {
                 </span>
               </motion.div>
 
-              <motion.h1 variants={fadeUp} className="text-5xl md:text-6xl font-black tracking-tight leading-[1.07] mb-6 text-slate-900">
+              <motion.h1 variants={fadeUp} className="text-[2.4rem] xl:text-[2.8rem] font-black tracking-tight leading-[1.1] mb-4 text-slate-900">
                 Begin Your Career<br />
                 <span style={{ color: G }}>in Allied Health</span><br />
                 Sciences
               </motion.h1>
 
-              <motion.p variants={fadeUp} className="text-[15px] text-slate-500 leading-relaxed mb-8 max-w-[460px]">
+              <motion.p variants={fadeUp} className="text-[14px] text-slate-500 leading-relaxed mb-7 max-w-[420px]">
                 Official admissions portal for Allied Health College, Nishtar Medical University, Multan — the premier institution for Allied Health Sciences in southern Punjab.
               </motion.p>
 
-              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 mb-10">
+              <motion.div variants={fadeUp} className="flex flex-row gap-3 mb-7">
                 <Link href="/register">
-                  <Button size="lg" className="h-12 px-8 text-[15px] font-semibold gap-2 rounded-xl text-white shadow-lg" style={{ background: G, boxShadow: "0 8px 24px rgba(1,65,28,0.30)" }}>
+                  <Button size="default" className="h-11 px-7 text-[14px] font-semibold gap-2 rounded-xl text-white shadow-md" style={{ background: G, boxShadow: "0 6px 20px rgba(1,65,28,0.28)" }}>
                     Start Application <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href="/merit-search">
-                  <Button size="lg" variant="outline" className="h-12 px-8 text-[15px] font-semibold gap-2 rounded-xl border-slate-300">
-                    <Search className="h-4 w-4" /> Check Merit Status
+                  <Button size="default" variant="outline" className="h-11 px-7 text-[14px] font-semibold gap-2 rounded-xl border-slate-300">
+                    <Search className="h-4 w-4" /> Merit Status
                   </Button>
                 </Link>
               </motion.div>
 
-              {/* pill tags */}
               <motion.div variants={stagger} className="flex flex-wrap gap-2">
                 {[
                   { icon: GraduationCap, label: "8 BSc Programs" },
@@ -268,8 +306,8 @@ export default function Home() {
                   { icon: Star, label: "NMU Affiliated" },
                   { icon: Zap, label: "Merit-Based" },
                 ].map(({ icon: Icon, label }) => (
-                  <motion.div key={label} variants={scaleIn} className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-600">
-                    <Icon className="h-3.5 w-3.5" style={{ color: G }} />
+                  <motion.div key={label} variants={scaleIn} className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-medium text-slate-600">
+                    <Icon className="h-3 w-3" style={{ color: G }} />
                     {label}
                   </motion.div>
                 ))}
@@ -281,61 +319,92 @@ export default function Home() {
               initial={{ opacity: 0, x: 60 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="relative hidden lg:flex items-end justify-end h-full min-h-[88vh]"
+              className="relative flex items-end justify-end h-full min-h-[72vh]"
             >
-              {/* green panel behind image */}
-              <div className="absolute inset-0 rounded-bl-[80px]" style={{ background: `linear-gradient(160deg, ${G} 0%, ${GA} 100%)` }} />
-
-              {/* campus photo */}
-              <div className="relative w-full h-full rounded-bl-[80px] overflow-hidden">
-                <img
-                  src={universityPhoto}
-                  alt="Nishtar Medical University Campus"
-                  className="w-full h-full object-cover object-center"
-                  style={{ mixBlendMode: "luminosity", opacity: 0.55 }}
-                />
-                {/* green tint on photo */}
+              <div className="absolute inset-0 rounded-bl-[64px]" style={{ background: `linear-gradient(160deg, ${G} 0%, ${GA} 100%)` }} />
+              <div className="relative w-full h-full rounded-bl-[64px] overflow-hidden">
+                <img src={universityPhoto} alt="NMU Campus" className="w-full h-full object-cover object-center" style={{ mixBlendMode: "luminosity", opacity: 0.55 }} />
                 <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, rgba(1,65,28,0.20) 0%, rgba(1,65,28,0.55) 100%)` }} />
               </div>
-
               {/* floating stat cards */}
-              <div className="absolute bottom-10 left-[-28px] flex flex-col gap-3">
-                {[
-                  { label: "Programs", value: 8, suffix: "" },
-                  { label: "Seats Available", value: 320, suffix: "" },
-                ].map(({ label, value, suffix }) => (
-                  <motion.div
-                    key={label}
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.7, delay: 0.5 }}
-                    className="bg-white rounded-2xl px-5 py-3.5 shadow-2xl flex items-center gap-3"
-                    style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.18)" }}
-                  >
-                    <p className="text-3xl font-black" style={{ color: G }}>
-                      <AnimatedCounter to={value} suffix={suffix} />
-                    </p>
-                    <p className="text-xs font-semibold text-slate-500 leading-tight max-w-[70px]">{label}</p>
+              <div className="absolute bottom-8 left-[-24px] flex flex-col gap-3">
+                {[{ label: "Programs", value: 8, suffix: "" }, { label: "Seats Available", value: 320, suffix: "" }].map(({ label, value, suffix }) => (
+                  <motion.div key={label} initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: 0.5 }} className="bg-white rounded-xl px-4 py-3 shadow-xl flex items-center gap-3" style={{ boxShadow: "0 6px 24px rgba(0,0,0,0.16)" }}>
+                    <p className="text-2xl font-black" style={{ color: G }}><AnimatedCounter to={value} suffix={suffix} /></p>
+                    <p className="text-[11px] font-semibold text-slate-500 leading-tight max-w-[60px]">{label}</p>
                   </motion.div>
                 ))}
               </div>
+              <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.7 }} className="absolute top-7 right-6 bg-white rounded-xl px-4 py-3 shadow-xl">
+                <p className="text-[11px] font-bold text-slate-500 mb-0.5">Students Enrolled</p>
+                <p className="text-xl font-black" style={{ color: G }}><AnimatedCounter to={1200} suffix="+" /></p>
+              </motion.div>
+              <Star4 size={24} className="absolute top-14 left-6 opacity-80" />
+              <Star4 size={16} className="absolute top-24 left-12 opacity-50" />
+            </motion.div>
+          </div>
 
-              {/* top right badge */}
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.7 }}
-                className="absolute top-8 right-8 bg-white rounded-2xl px-4 py-3 shadow-xl"
-              >
-                <p className="text-xs font-bold text-slate-500 mb-0.5">Students Enrolled</p>
-                <p className="text-2xl font-black" style={{ color: G }}>
-                  <AnimatedCounter to={1200} suffix="+" />
-                </p>
+          {/* ── MOBILE: stacked layout ── */}
+          <div className="lg:hidden">
+            {/* Mobile copy */}
+            <motion.div initial="hidden" animate="show" variants={stagger} className="px-4 sm:px-6 pt-7 pb-6 flex flex-col">
+              <motion.div variants={fadeUp} className="mb-4">
+                <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-bold border" style={{ background: YL, color: "#854D0E", borderColor: "#FDE68A" }}>
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: Y }} />
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: Y }} />
+                  </span>
+                  Admissions Open — Session 2025–26
+                </span>
               </motion.div>
 
-              {/* yellow star decoration on panel */}
-              <Star4 size={28} className="absolute top-16 left-8 opacity-80" />
-              <Star4 size={18} className="absolute top-28 left-14 opacity-50" />
+              <motion.h1 variants={fadeUp} className="text-[2rem] sm:text-[2.3rem] font-black tracking-tight leading-[1.12] mb-3 text-slate-900">
+                Begin Your Career<br />
+                <span style={{ color: G }}>in Allied Health</span><br />
+                Sciences
+              </motion.h1>
+
+              <motion.p variants={fadeUp} className="text-[13px] text-slate-500 leading-relaxed mb-5">
+                Official admissions portal for Allied Health College, Nishtar Medical University, Multan.
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-2.5 mb-5">
+                <Link href="/register">
+                  <Button className="w-full sm:w-auto h-11 px-6 text-[14px] font-semibold gap-2 rounded-xl text-white" style={{ background: G }}>
+                    Start Application <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/merit-search">
+                  <Button variant="outline" className="w-full sm:w-auto h-11 px-6 text-[14px] font-semibold gap-2 rounded-xl border-slate-300">
+                    <Search className="h-4 w-4" /> Merit Status
+                  </Button>
+                </Link>
+              </motion.div>
+
+              <motion.div variants={stagger} className="flex flex-wrap gap-2">
+                {[{ icon: GraduationCap, label: "8 BSc Programs" }, { icon: Shield, label: "HEC Recognized" }, { icon: Star, label: "NMU Affiliated" }].map(({ icon: Icon, label }) => (
+                  <motion.div key={label} variants={scaleIn} className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-medium text-slate-600">
+                    <Icon className="h-3 w-3" style={{ color: G }} />
+                    {label}
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            {/* Mobile photo strip */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.3 }} className="relative h-52 sm:h-64 overflow-hidden mx-4 sm:mx-6 mb-2 rounded-2xl">
+              <div className="absolute inset-0 rounded-2xl" style={{ background: `linear-gradient(160deg, ${G} 0%, ${GA} 100%)` }} />
+              <img src={universityPhoto} alt="NMU Campus" className="w-full h-full object-cover object-center rounded-2xl" style={{ mixBlendMode: "luminosity", opacity: 0.55 }} />
+              <div className="absolute inset-0 rounded-2xl" style={{ background: `linear-gradient(180deg, rgba(1,65,28,0.15) 0%, rgba(1,65,28,0.50) 100%)` }} />
+              {/* mobile inline stats */}
+              <div className="absolute bottom-4 left-4 right-4 flex gap-2">
+                {[{ label: "Programs", value: 8 }, { label: "Seats", value: 320 }, { label: "Students", value: 1200, suffix: "+" }].map(({ label, value, suffix = "" }) => (
+                  <div key={label} className="bg-white/95 rounded-xl px-3 py-2 flex-1 text-center shadow-lg">
+                    <p className="text-[18px] font-black leading-none" style={{ color: G }}><AnimatedCounter to={value} suffix={suffix} /></p>
+                    <p className="text-[10px] font-semibold text-slate-500 mt-0.5">{label}</p>
+                  </div>
+                ))}
+              </div>
             </motion.div>
           </div>
         </section>
