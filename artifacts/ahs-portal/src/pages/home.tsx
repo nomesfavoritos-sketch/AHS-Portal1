@@ -8,7 +8,7 @@ import {
   ArrowRight, CheckCircle, FileText, CreditCard, ClipboardCheck, Award, Users,
   GraduationCap, Search, Bell, Phone, Mail, MapPin, Microscope, Eye, Heart,
   Activity, Smile, Bone, Shield, Star, Zap, Globe, BookOpen, FlaskConical, ChevronRight,
-  Menu, X, Syringe, Scan, Droplets, Camera, Accessibility, TestTubes
+  Menu, X, Syringe, ScanLine, HeartPulse, Camera, PersonStanding, Accessibility
 } from "lucide-react";
 import { format } from "date-fns";
 import universityPhoto from "@assets/jjjlllji_1775576930917.webp";
@@ -85,14 +85,14 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 /* ─── Program icons ─── */
 const PROGRAM_ICONS: Record<string, React.ElementType> = {
-  BSMLT: TestTubes,      // Medical Lab Technology  — test tubes / lab work
-  BSMIT: Scan,           // Medical Imaging Technology — scanning / X-ray
-  BSRDT: Droplets,       // Renal Dialysis Technology — fluid / blood filtration
-  BSOOT: Eye,            // Optometry — eye
-  BSANT: Syringe,        // Anesthesia Technology — injection / needle
-  BSEND: Camera,         // Endoscopy Technology — camera inside body
-  BSDNT: Smile,          // Dental Technology — smile / teeth
-  BSOPT: Accessibility,  // Orthotics & Prosthetics — mobility / limbs
+  BSMLT: Microscope,       // Medical Lab Technology   — microscope / specimens
+  BSMIT: ScanLine,         // Medical Imaging Technology — scan / X-ray beam
+  BSRDT: HeartPulse,       // Renal Dialysis Technology — vitals / pulse monitoring
+  BSOOT: Eye,              // Optometry                — eye examination
+  BSANT: Syringe,          // Anesthesia Technology    — injection / needle
+  BSEND: Camera,           // Endoscopy Technology     — camera inside body
+  BSDNT: Smile,            // Dental Technology        — smile / teeth
+  BSOPT: PersonStanding,   // Orthotics & Prosthetics  — mobility / standing
 };
 const FALLBACK_PROGRAMS = [
   { code: "BSMLT", name: "Medical Lab Technology", id: 1 },
@@ -658,7 +658,7 @@ export default function Home() {
                       {/* badges */}
                       <div className="flex gap-1 mt-auto">
                         <span className="text-[9px] sm:text-[10px] bg-slate-50 border border-slate-100 rounded-full px-2 py-0.5 text-slate-500 font-semibold">4 Yrs</span>
-                        <span className="text-[9px] sm:text-[10px] bg-slate-50 border border-slate-100 rounded-full px-2 py-0.5 text-slate-500 font-semibold">BSc</span>
+                        <span className="text-[9px] sm:text-[10px] bg-slate-50 border border-slate-100 rounded-full px-2 py-0.5 text-slate-500 font-semibold">BS</span>
                       </div>
                     </div>
                   </motion.div>
