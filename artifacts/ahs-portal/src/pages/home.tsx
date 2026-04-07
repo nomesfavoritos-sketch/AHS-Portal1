@@ -7,9 +7,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import {
   ArrowRight, CheckCircle, FileText, CreditCard, ClipboardCheck, Award, Users,
   GraduationCap, Search, Bell, Phone, Mail, MapPin, Microscope, Eye, Heart,
-  Activity, Smile, Bone, Building2, Shield, Star, Zap, Globe, BookOpen, FlaskConical
+  Activity, Smile, Bone, Shield, Star, Zap, Globe, BookOpen, FlaskConical
 } from "lucide-react";
 import { format } from "date-fns";
+import universityPhoto from "@assets/DJI_0541_1775576288929.JPG";
+import nmuLogo from "@assets/logo_(1)_1775576288927.webp";
 
 /* ─── Pakistan Institutional Green Palette ─── */
 // Primary: #01411C (flag green)
@@ -139,9 +141,7 @@ export default function Home() {
       >
         {/* Logo */}
         <div className="flex items-center gap-2.5">
-          <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #01411C, #16a34a)" }}>
-            <Building2 className="h-5 w-5 text-white" />
-          </div>
+          <img src={nmuLogo} alt="NMU Logo" className="h-10 w-10 object-contain drop-shadow-sm" />
           <div>
             <span className="font-extrabold text-[13px] tracking-tight block leading-tight" style={{ color: "#01411C" }}>AHS Portal</span>
             <span className="text-[10px] text-slate-500 leading-tight block">Nishtar Medical University</span>
@@ -184,26 +184,39 @@ export default function Home() {
       <main className="flex-1 pt-16">
 
         {/* ══════ HERO ══════ */}
-        <section className="relative min-h-[92vh] flex items-center overflow-hidden" style={{ background: "linear-gradient(150deg, #01411C 0%, #02591f 40%, #016624 70%, #01411C 100%)" }}>
-          {/* Subtle geometric pattern */}
-          <div className="absolute inset-0 opacity-[0.06]" style={{
-            backgroundImage: "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)",
-            backgroundSize: "80px 80px"
-          }} />
-          {/* Top edge fade */}
-          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/10 to-transparent" />
-          {/* Bottom fade */}
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white to-transparent" />
-          {/* Soft glow orb */}
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-10 pointer-events-none" style={{ background: "radial-gradient(circle, #4ade80, transparent 70%)" }} />
+        <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+          {/* University aerial photo background */}
+          <div className="absolute inset-0">
+            <img
+              src={universityPhoto}
+              alt="Nishtar Medical University, Multan"
+              className="w-full h-full object-cover object-center"
+              style={{ filter: "brightness(0.45) saturate(0.7)" }}
+            />
+          </div>
+          {/* Green tint overlay for institutional feel */}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(150deg, rgba(1,65,28,0.78) 0%, rgba(2,89,31,0.70) 45%, rgba(1,65,28,0.60) 100%)" }} />
+          {/* Bottom fade to white */}
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
+          {/* Subtle vignette on edges */}
+          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.35) 100%)" }} />
 
           <div className="relative max-w-7xl mx-auto px-6 lg:px-12 py-28 w-full">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
 
               {/* Left: Copy */}
               <motion.div initial="hidden" animate="show" variants={staggerContainer}>
-                {/* Govt badge */}
-                <motion.div variants={fadeUp} className="mb-7">
+                {/* Institution branding row */}
+                <motion.div variants={fadeUp} className="flex items-center gap-3 mb-7">
+                  <img src={nmuLogo} alt="NMU Logo" className="h-16 w-16 object-contain drop-shadow-lg" style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.4))" }} />
+                  <div>
+                    <p className="text-white font-bold text-sm leading-tight">Allied Health College</p>
+                    <p className="text-white/60 text-xs leading-tight">Nishtar Medical University, Multan</p>
+                  </div>
+                </motion.div>
+
+                {/* Live badge */}
+                <motion.div variants={fadeUp} className="mb-6">
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold text-white/90">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-80" />
@@ -651,9 +664,7 @@ export default function Home() {
       <footer className="border-t border-slate-200 bg-white py-8 px-6 lg:px-12">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #01411C, #16a34a)" }}>
-              <Building2 className="h-4 w-4 text-white" />
-            </div>
+            <img src={nmuLogo} alt="NMU Logo" className="h-10 w-10 object-contain" />
             <div>
               <span className="font-extrabold text-[13px] block leading-tight" style={{ color: "#01411C" }}>Allied Health College</span>
               <span className="text-[11px] text-slate-500">Nishtar Medical University, Multan</span>
