@@ -14,7 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, ArrowRight, ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { Loader2, ArrowRight, ArrowLeft, Plus, Trash2, ChevronsUpDown, Check } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
@@ -117,6 +119,7 @@ export default function StudentProfile() {
   const updateProfile = useUpdateMyProfile();
 
   const [step, setStep] = useState(1);
+  const [districtOpen, setDistrictOpen] = useState(false);
   const totalSteps = 4;
 
   const form = useForm<ProfileFormValues>({
@@ -281,14 +284,34 @@ export default function StudentProfile() {
                       <FormField control={form.control} name="domicile"
                         render={({ field }) => (
                           <FormItem><FormLabel>Domicile District</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl><SelectTrigger><SelectValue placeholder="Select district" /></SelectTrigger></FormControl>
-                              <SelectContent>
-                                {PUNJAB_DISTRICTS.map((d) => (
-                                  <SelectItem key={d} value={d}>{d}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                            <Popover open={districtOpen} onOpenChange={setDistrictOpen}>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <button type="button" className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                    <span className={field.value ? "text-foreground" : "text-muted-foreground"}>
+                                      {field.value || "Select district"}
+                                    </span>
+                                    <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+                                  </button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-[280px] p-0" align="start">
+                                <Command>
+                                  <CommandInput placeholder="Search district..." />
+                                  <CommandList>
+                                    <CommandEmpty>No district found.</CommandEmpty>
+                                    <CommandGroup>
+                                      {PUNJAB_DISTRICTS.map((d) => (
+                                        <CommandItem key={d} value={d} onSelect={() => { field.onChange(d); setDistrictOpen(false); }}>
+                                          <Check className={`mr-2 h-4 w-4 ${field.value === d ? "opacity-100" : "opacity-0"}`} />
+                                          {d}
+                                        </CommandItem>
+                                      ))}
+                                    </CommandGroup>
+                                  </CommandList>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
                           </FormItem>
                         )} />
                       <FormField control={form.control} name="nationality"
