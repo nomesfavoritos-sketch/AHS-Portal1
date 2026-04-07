@@ -232,7 +232,22 @@ export default function StudentProfile() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Domicile District</FormLabel>
-                            <FormControl><Input {...field} /></FormControl>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl><SelectTrigger><SelectValue placeholder="Select district" /></SelectTrigger></FormControl>
+                              <SelectContent>
+                                {[
+                                  "Attock","Bahawalnagar","Bahawalpur","Bhakkar","Chakwal",
+                                  "Chiniot","Dera Ghazi Khan","Faisalabad","Gujranwala","Gujrat",
+                                  "Hafizabad","Jhang","Jhelum","Kasur","Khanewal","Khushab",
+                                  "Lahore","Layyah","Lodhran","Mandi Bahauddin","Mianwali",
+                                  "Multan","Muzaffargarh","Nankana Sahib","Narowal","Okara",
+                                  "Pakpattan","Rahim Yar Khan","Rajanpur","Rawalpindi","Sahiwal",
+                                  "Sargodha","Sheikhupura","Sialkot","Toba Tek Singh","Vehari",
+                                ].map((d) => (
+                                  <SelectItem key={d} value={d}>{d}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </FormItem>
                         )}
                       />
