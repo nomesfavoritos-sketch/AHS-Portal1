@@ -58,9 +58,16 @@ export default function Register() {
           setLocation("/student/dashboard");
         },
         onError: (error) => {
+          const apiError = error as unknown as { status?: number; data?: { error?: string } };
+          let description = "There was a problem creating your account.";
+          if (apiError.status === 409) {
+            description = "An account with this email already exists. Please sign in instead.";
+          } else if (apiError.data?.error) {
+            description = apiError.data.error;
+          }
           toast({
             title: "Registration failed",
-            description: error.error || "There was a problem creating your account.",
+            description,
             variant: "destructive",
           });
         },
