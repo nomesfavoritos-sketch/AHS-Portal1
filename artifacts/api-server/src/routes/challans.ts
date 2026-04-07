@@ -62,6 +62,7 @@ router.patch("/challans/:id", requireAuth, requireAdminRole, async (req, res): P
   }
   if (parsed.data.bankName) updateData.bankName = parsed.data.bankName;
   if (parsed.data.transactionRef) updateData.transactionRef = parsed.data.transactionRef;
+  if ((parsed.data as any).remarks) (updateData as any).remarks = (parsed.data as any).remarks;
 
   const [challan] = await db.update(paymentChallansTable).set(updateData).where(eq(paymentChallansTable.id, id)).returning();
   if (!challan) { res.status(404).json({ error: "Challan not found" }); return; }

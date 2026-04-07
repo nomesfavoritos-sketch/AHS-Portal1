@@ -17,6 +17,7 @@ import joinedStudentsRouter from "./joinedStudents";
 import storageRouter from "./storage";
 import settingsRouter from "./settings";
 import seatMatrixRouter from "./seatMatrix";
+import verificationDeskRouter from "./verificationDesk";
 
 const router: IRouter = Router();
 
@@ -38,5 +39,6 @@ router.use(joinedStudentsRouter);
 router.use(storageRouter);
 router.use(settingsRouter);
 router.use(seatMatrixRouter);
+router.use(verificationDeskRouter);
 
 export default router;

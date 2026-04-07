@@ -1,0 +1,101 @@
+Build Phase 4 of AHS Portal.
+
+PHASE 4 GOAL:
+Implement finance verification, document verification desk, joining decisions, and joined students management.
+
+REQUIRED IN PHASE 4:
+
+1. Payment verification module
+Finance/Admin users can:
+- view uploaded paid challan slips
+- verify or reject payment
+- add remarks
+- filter by session, program, date, status
+
+Payment statuses:
+- Pending
+- Slip Uploaded
+- Verified
+- Rejected
+
+2. Verification desk
+Create a dedicated verification module for shortlisted/selected students.
+
+Features:
+- search by CNIC or application number
+- open candidate verification page
+- show student profile and academic data
+- show uploaded documents with preview
+- show payment status
+- show application/program info
+- show merit list context
+
+3. Verification checklist
+Include checklist items such as:
+- applicant name matches documents
+- CNIC/B-Form matches
+- domicile matches
+- Matric marks match uploaded document
+- FSc marks match uploaded document
+- quota certificate valid if applicable
+- challan/payment verified
+- all mandatory documents present
+
+Each item can be marked:
+- Verified
+- Missing
+- Mismatch
+
+Add remarks per item.
+
+4. Decision engine
+Allow overall decision:
+- Accept Joining
+- Reject Joining
+- Send Back for Clarification
+
+Rules:
+- Accept Joining only if all mandatory items are verified
+- show verified count like 5/6 or 6/6
+- preserve full decision history with officer name and timestamp
+
+5. Joined students module
+- automatically add accepted candidates to Joined Students
+- list by discipline/program
+- search/filter/export
+- show joining date and verifier
+- allow remove action only with strong confirmation and audit log
+
+6. Joined student removal
+- remove only by authorized role
+- store reason
+- log who removed, when, why
+- optionally free seat for next candidate
+
+7. Student-side visibility
+Student sees updated status:
+- Selected for Verification
+- Verification Pending
+- Joined
+- Rejected
+- Clarification Required
+
+8. Printables
+Generate printable:
+- verification sheet
+- joining confirmation sheet
+- rejection reason sheet if needed
+
+9. Deliverables
+- finance verifier workflow
+- verification desk
+- checklist UI
+- joining decision system
+- joined students module
+- removal audit log
+
+IMPORTANT:
+- make this module highly professional and safe
+- show document previews elegantly
+- preserve complete audit trail
+- avoid accidental approvals/rejections

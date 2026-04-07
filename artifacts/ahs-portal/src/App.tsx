@@ -24,6 +24,7 @@ import AdminApplications from "@/pages/admin/applications";
 import AdminChallans from "@/pages/admin/challans";
 import AdminMeritLists from "@/pages/admin/merit-lists";
 import AdminVerification from "@/pages/admin/verification";
+import AdminVerificationDesk from "@/pages/admin/verification-desk";
 import AdminStudents from "@/pages/admin/students";
 import AdminAuditLogs from "@/pages/admin/audit-logs";
 import AdminSettings from "@/pages/admin/settings";
@@ -68,11 +69,12 @@ function Router() {
               <Route path="/admin/applications" component={AdminApplications} />
               <Route path="/admin/challans" component={AdminChallans} />
               <Route path="/admin/merit-lists" component={AdminMeritLists} />
+              <Route path="/admin/verification/:applicationId" component={AdminVerificationDesk} />
               <Route path="/admin/verification" component={AdminVerification} />
               <Route path="/admin/students" component={AdminStudents} />
               <Route path="/admin/audit-logs" component={AdminAuditLogs} />
               <Route path="/admin/settings" component={AdminSettings} />
-              
+
               {/* Fallback for unimplemented admin routes */}
               <Route path="/admin/:page">
                 {({ page }) => (
@@ -99,7 +101,7 @@ function Router() {
               <Route path="/student/documents" component={StudentDocuments} />
               <Route path="/student/merit" component={StudentMerit} />
               <Route path="/student/notices" component={StudentNotices} />
-              
+
               {/* Fallback for unimplemented student routes */}
               <Route path="/student/:page">
                 {({ page }) => (

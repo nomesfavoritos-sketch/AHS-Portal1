@@ -1,22 +1,22 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { useGetMe, useLogout } from "@workspace/api-client-react";
+import { useGetMe } from "@workspace/api-client-react";
 import { TopHeader } from "./top-header";
-import { 
-  LayoutDashboard, 
-  CalendarDays, 
-  GraduationCap, 
-  PieChart, 
-  FileText, 
-  CreditCard, 
-  ListOrdered, 
-  CheckSquare, 
-  Users, 
-  Bell, 
-  History, 
-  Settings, 
+import {
+  LayoutDashboard,
+  CalendarDays,
+  GraduationCap,
+  PieChart,
+  FileText,
+  CreditCard,
+  ListOrdered,
+  ClipboardList,
+  Users,
+  Bell,
+  History,
+  Settings,
   UserCog,
-  Loader2
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,19 +29,84 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const { data: user, isLoading } = useGetMe();
 
   const navigation = [
-    { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard, roles: ["super_admin", "admission_admin", "verification_officer", "finance_verifier"] },
-    { name: "Sessions", href: "/admin/sessions", icon: CalendarDays, roles: ["super_admin", "admission_admin"] },
-    { name: "Programs", href: "/admin/programs", icon: GraduationCap, roles: ["super_admin", "admission_admin"] },
-    { name: "Quotas", href: "/admin/quotas", icon: PieChart, roles: ["super_admin", "admission_admin"] },
-    { name: "Applications", href: "/admin/applications", icon: FileText, roles: ["super_admin", "admission_admin", "verification_officer"] },
-    { name: "Challans", href: "/admin/challans", icon: CreditCard, roles: ["super_admin", "finance_verifier"] },
-    { name: "Merit Lists", href: "/admin/merit-lists", icon: ListOrdered, roles: ["super_admin", "admission_admin"] },
-    { name: "Verification", href: "/admin/verification", icon: CheckSquare, roles: ["super_admin", "verification_officer"] },
-    { name: "Students", href: "/admin/students", icon: Users, roles: ["super_admin", "admission_admin"] },
-    { name: "Notices", href: "/admin/notices", icon: Bell, roles: ["super_admin", "admission_admin"] },
-    { name: "Audit Logs", href: "/admin/audit-logs", icon: History, roles: ["super_admin"] },
-    { name: "Users", href: "/admin/users", icon: UserCog, roles: ["super_admin"] },
-    { name: "Settings", href: "/admin/settings", icon: Settings, roles: ["super_admin", "admission_admin"] },
+    {
+      name: "Dashboard",
+      href: "/admin/dashboard",
+      icon: LayoutDashboard,
+      roles: ["super_admin", "admission_admin", "verification_officer", "finance_verifier"],
+    },
+    {
+      name: "Sessions",
+      href: "/admin/sessions",
+      icon: CalendarDays,
+      roles: ["super_admin", "admission_admin"],
+    },
+    {
+      name: "Programs",
+      href: "/admin/programs",
+      icon: GraduationCap,
+      roles: ["super_admin", "admission_admin"],
+    },
+    {
+      name: "Quotas",
+      href: "/admin/quotas",
+      icon: PieChart,
+      roles: ["super_admin", "admission_admin"],
+    },
+    {
+      name: "Applications",
+      href: "/admin/applications",
+      icon: FileText,
+      roles: ["super_admin", "admission_admin", "verification_officer"],
+    },
+    {
+      name: "Payment Verification",
+      href: "/admin/challans",
+      icon: CreditCard,
+      roles: ["super_admin", "finance_verifier"],
+    },
+    {
+      name: "Merit Lists",
+      href: "/admin/merit-lists",
+      icon: ListOrdered,
+      roles: ["super_admin", "admission_admin"],
+    },
+    {
+      name: "Verification Desk",
+      href: "/admin/verification",
+      icon: ClipboardList,
+      roles: ["super_admin", "admission_admin", "verification_officer"],
+    },
+    {
+      name: "Joined Students",
+      href: "/admin/students",
+      icon: Users,
+      roles: ["super_admin", "admission_admin"],
+    },
+    {
+      name: "Notices",
+      href: "/admin/notices",
+      icon: Bell,
+      roles: ["super_admin", "admission_admin"],
+    },
+    {
+      name: "Audit Logs",
+      href: "/admin/audit-logs",
+      icon: History,
+      roles: ["super_admin"],
+    },
+    {
+      name: "Users",
+      href: "/admin/users",
+      icon: UserCog,
+      roles: ["super_admin"],
+    },
+    {
+      name: "Settings",
+      href: "/admin/settings",
+      icon: Settings,
+      roles: ["super_admin", "admission_admin"],
+    },
   ];
 
   if (isLoading) {
@@ -52,7 +117,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     );
   }
 
-  const filteredNav = navigation.filter(item => user && item.roles.includes(user.role));
+  const filteredNav = navigation.filter(
+    (item) => user && item.roles.includes(user.role)
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-muted/40">
@@ -62,10 +129,15 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           <nav className="flex flex-col gap-1 p-4 h-full overflow-y-auto">
             <div className="mb-6 px-2">
               <h2 className="text-lg font-bold text-primary">AHS Portal</h2>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mt-1">Administration</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mt-1">
+                Administration
+              </p>
             </div>
             {filteredNav.map((item) => {
-              const isActive = location === item.href || location.startsWith(item.href + "/");
+              const isActive =
+                location === item.href ||
+                (item.href !== "/admin/verification" && location.startsWith(item.href + "/")) ||
+                (item.href === "/admin/verification" && location.startsWith("/admin/verification"));
               return (
                 <Link
                   key={item.name}
@@ -84,9 +156,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             })}
           </nav>
         </aside>
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
-        </main>
+        <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>
   );

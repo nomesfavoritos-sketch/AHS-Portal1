@@ -13,3 +13,5 @@ export * from "./auditLogs";
 export * from "./joinedStudents";
 export * from "./systemSettings";
 export * from "./seatMatrix";
+export * from "./verificationChecklists";
+export * from "./joiningDecisions";

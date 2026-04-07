@@ -13,7 +13,12 @@ export const joinedStudentsTable = pgTable("joined_students", {
   sessionId: integer("session_id").notNull().references(() => admissionSessionsTable.id),
   programId: integer("program_id").notNull().references(() => programsTable.id),
   rollNumber: text("roll_number"),
+  verifiedById: integer("verified_by_id").references(() => usersTable.id),
+  verifierName: text("verifier_name"),
   joinedAt: timestamp("joined_at", { withTimezone: true }).notNull().defaultNow(),
+  removedAt: timestamp("removed_at", { withTimezone: true }),
+  removedById: integer("removed_by_id").references(() => usersTable.id),
+  removalReason: text("removal_reason"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

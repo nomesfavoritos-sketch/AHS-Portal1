@@ -32,9 +32,9 @@ pnpm workspace monorepo using TypeScript.
 | finance_verifier | finance@ahscollege.edu.pk / Admin@1234 |
 | student | student@ahscollege.edu.pk / Student@1234 |
 
-## Database Schema (15 tables)
+## Database Schema (17 tables)
 
-`users`, `programs`, `sessions` (+ correctionWindowStart/End, meritPublicationDate, joiningDeadline), `quotas`, `studentProfiles`, `applications` (+ meritScore/Raw/Breakdown, **joiningIntentAt**), `documents`, `challans`, `meritLists` (+ quotaId, listNumber, versionNumber, isFrozen, frozenAt, eligibilityFilters), `meritListEntries` (+ matricScore, fscScore, meritScoreRaw/Normalized, meritBreakdown), `verifications`, `notices`, `auditLogs`, `joinedStudents`, **`systemSettings`**, **`programSeatMatrix`**
+`users`, `programs`, `sessions`, `quotas`, `studentProfiles`, `applications` (+ meritScore/Raw/Breakdown, joiningIntentAt), `documents`, `challans` (+ remarks), `meritLists`, `meritListEntries`, `verifications`, `notices`, `auditLogs`, `joinedStudents` (+ verifiedById, verifierName, removedAt, removedById, removalReason), `systemSettings`, `programSeatMatrix`, **`verificationChecklists`**, **`joiningDecisions`**
 
 Session table: `session` (managed by connect-pg-simple, created manually).
 
@@ -58,7 +58,13 @@ Session table: `session` (managed by connect-pg-simple, created manually).
 - `/api/settings` — GET/PATCH system settings (merit formula keys)
 - `/api/seat-matrix` — CRUD seat allocation per program+session
 - `/api/verifications`, `/api/notices`, `/api/audit-logs`, `/api/joined-students`
+- `DELETE /api/joined-students/:id` — soft-remove joined student (requires reason ≥10 chars + "REMOVE" confirmation in UI)
 - `POST /api/applications/:id/joining-intent` — student confirms joining intent (sets joiningIntentAt timestamp)
+- `GET /api/verification-desk` — list applications eligible for joining verification (search by name/CNIC/app number)
+- `GET /api/verification-desk/:id` — full candidate detail (profile, documents, challans, merit, checklist)
+- `GET|PUT /api/verification-desk/:id/checklist` — get or save 8-item verification checklist per application
+- `POST /api/verification-desk/:id/decision` — submit joining decision (accept_joining/reject_joining/send_back); auto-inserts joined_students on accept
+- `GET /api/verification-desk/:id/decisions` — decision history with officer names
 - `GET /api/dashboard/admin-summary` — 13 stats: totalApplications, pendingApplications, approvedApplications, rejectedApplications, totalStudents, totalPrograms, totalSessions, activeSession, pendingPayments, pendingVerifications, **joiningIntents**, **meritListedCount**, **totalJoined**
 - `GET /api/dashboard/student-summary` — includes profileCompletion, meritRank, meritScore, joiningIntentConfirmed, joiningIntentAt, applicationStatuses
 
@@ -111,6 +117,16 @@ All weights stored in `system_settings` table and editable via `/admin/settings`
 - **Student Joining Intent**: Students on merit-listed/admitted applications can click "Confirm Intent to Join" button (on `/student/merit`). Records `joiningIntentAt` timestamp on the application. Admin dashboard "Joining Intents" card reflects count. Audit log entry created.
 - **Student Merit Enhancements**: "Confirm Intent to Join" shown per merit entry if `status === "selected"`. Toast notification on success. Banner displayed if already confirmed.
 - **Dashboard API Improvements**: Recent activity now sorted newest-first. Student summary returns `profileCompletion`, `meritRank`, `meritScore`, `joiningIntentConfirmed`, `joiningIntentAt`, `applicationStatuses[]`. Admin summary returns `joiningIntents`, `meritListedCount`, `totalJoined`.
+
+## Phase 5 Features (Verification Desk + Finance Verification + Joined Students Management)
+
+- **Verification Desk** (`/admin/verification`): Queue list of applications eligible for joining verification. Shows applicant name, app number, CNIC, program, merit score, joining intent status, checklist progress bar (8 items), and last decision badge. Clickable cards navigate to per-candidate page.
+- **Per-Candidate Verification Page** (`/admin/verification/:applicationId`): Full detail view: personal profile, academic data, documents with preview links, challan payment cards with slip viewer, merit list rank. 8-item checklist (Name, CNIC, Domicile, Matric Marks, FSc Marks, Quota, Payment, Documents) — each item has status selector (Pending/Verified/Missing/Mismatch) and optional remarks. Checklist auto-initialised from `DEFAULT_CHECKLIST_ITEMS`. Save checklist + submit decision (Accept/Reject/Send Back) with guards.
+- **Joining Decisions**: `accept_joining` requires all non-quota mandatory items verified; auto-inserts to `joined_students`. `reject_joining`/`send_back` require remarks. Decision history dialog shows all past decisions with officer names and timestamps.
+- **Finance/Challan Page** (`/admin/challans`): Rebuilt with 4 stat cards, slip preview modal (renders `/api${paidSlipPath}` as image), verify/reject dialogs with remarks field, status filter + search.
+- **Joined Students** (`/admin/students`): 3 stat cards (Total, Desk Verified, No Roll No.). Program/session filters, name/email search. Export CSV button. Per-row "Remove" opens a dialog requiring ≥10-char reason + "REMOVE" typed confirmation. Soft-delete sets `removedAt`, reverts application to rejected.
+- **Checklist Schema**: `verificationChecklists` (JSONB items per application), `joiningDecisions` (decision history). `joinedStudents` extended with `verifiedById`, `verifierName`, `removedAt`, `removedById`, `removalReason`. `payment_challans` extended with `remarks`.
+- **Sidebar Updates**: "Payment Verification" (was Challans), "Verification Desk" (was Verification), "Joined Students" (was Students).
 
 ## Theme / Design
 

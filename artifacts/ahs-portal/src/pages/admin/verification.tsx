@@ -1,231 +1,216 @@
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { 
-  useListVerifications,
-  useCreateVerification,
-  getListVerificationsQueryKey,
-  useListDocuments,
-  useListApplications
-} from "@workspace/api-client-react";
-import { format } from "date-fns";
+import { Link } from "wouter";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, CheckSquare, FileUp } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, Search, ClipboardList, ChevronRight, CheckCircle, Clock, AlertCircle, XCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
+interface CandidateRow {
+  applicationId: number;
+  applicationNumber: string;
+  status: string;
+  submittedAt: string | null;
+  meritScore: number | null;
+  joiningIntentAt: string | null;
+  user: { fullName?: string; email?: string } | null;
+  program: { name?: string; code?: string } | null;
+  cnic: string | null;
+  verifiedCount: number;
+  totalItems: number;
+  latestDecision: string | null;
+}
+
+function getStatusBadge(status: string) {
+  const map: Record<string, JSX.Element> = {
+    submitted: <Badge variant="secondary">Submitted</Badge>,
+    under_review: <Badge className="bg-amber-500 hover:bg-amber-600 text-white">Under Review</Badge>,
+    verified: <Badge className="bg-blue-500 hover:bg-blue-600 text-white">Verified</Badge>,
+    merit_listed: <Badge className="bg-purple-500 hover:bg-purple-600 text-white">Merit Listed</Badge>,
+    admitted: <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white">Admitted</Badge>,
+    selected_for_verification: <Badge className="bg-cyan-500 hover:bg-cyan-600 text-white">For Verification</Badge>,
+    clarification_required: <Badge className="bg-orange-500 hover:bg-orange-600 text-white">Clarification Reqd.</Badge>,
+    rejected: <Badge variant="destructive">Rejected</Badge>,
+  };
+  return map[status] ?? <Badge variant="outline">{status}</Badge>;
+}
+
+function getDecisionBadge(decision: string | null) {
+  if (!decision) return null;
+  const map: Record<string, JSX.Element> = {
+    accept_joining: <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">Accepted</Badge>,
+    reject_joining: <Badge className="bg-red-100 text-red-800 border-red-200">Rejected</Badge>,
+    send_back: <Badge className="bg-amber-100 text-amber-800 border-amber-200">Sent Back</Badge>,
+  };
+  return map[decision] ?? null;
+}
+
+function ChecklistProgress({ verified, total }: { verified: number; total: number }) {
+  const pct = total > 0 ? Math.round((verified / total) * 100) : 0;
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all ${
+            pct === 100 ? "bg-emerald-500" : pct >= 50 ? "bg-amber-500" : "bg-muted-foreground/30"
+          }`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <span className="text-xs text-muted-foreground whitespace-nowrap">
+        {verified}/{total}
+      </span>
+    </div>
+  );
+}
 
 export default function AdminVerification() {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  
-  const [statusFilter, setStatusFilter] = useState<string>("under_review");
-  const [selectedAppId, setSelectedAppId] = useState<number | null>(null);
-  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
-  const [remarks, setRemarks] = useState("");
-  const [decisionStatus, setDecisionStatus] = useState<string>("approved");
-  
-  const { data: appsData, isLoading: isLoadingApps } = useListApplications({ status: statusFilter });
-  const { data: documentsData, isLoading: isLoadingDocs } = useListDocuments({ applicationId: selectedAppId || 0 });
-  const createVerification = useCreateVerification();
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
-  const handleOpenVerify = (appId: number) => {
-    setSelectedAppId(appId);
-    setRemarks("");
-    setDecisionStatus("approved");
-    setIsVerifyOpen(true);
-  };
+  const params = new URLSearchParams();
+  if (statusFilter !== "all") params.set("status", statusFilter);
+  if (search) params.set("search", search);
 
-  const handleVerifySubmit = () => {
-    if (!selectedAppId) return;
-    
-    createVerification.mutate(
-      { data: { applicationId: selectedAppId, status: decisionStatus, remarks: remarks || null } },
-      {
-        onSuccess: () => {
-          toast({ title: `Application marked as ${decisionStatus} successfully` });
-          setIsVerifyOpen(false);
-          queryClient.invalidateQueries({ queryKey: getListVerificationsQueryKey() });
-          // Note: In a real app we'd also invalidate applications list
-        },
-        onError: (error) => {
-          toast({
-            title: "Action failed",
-            description: error.error || "An error occurred",
-            variant: "destructive",
-          });
-        },
-      }
-    );
-  };
+  const { data, isLoading, error } = useQuery<CandidateRow[]>({
+    queryKey: ["verification-desk", statusFilter, search],
+    queryFn: async () => {
+      const res = await fetch(`/api/verification-desk?${params.toString()}`);
+      if (!res.ok) throw new Error("Failed to load verification queue");
+      return res.json();
+    },
+    staleTime: 15_000,
+  });
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "submitted": return <Badge variant="secondary">Submitted</Badge>;
-      case "under_review": return <Badge variant="outline" className="border-amber-500 text-amber-600">Under Review</Badge>;
-      default: return <Badge variant="outline">{status}</Badge>;
-    }
-  };
+  const candidates = data ?? [];
+  const pendingCount = candidates.filter((c) => !c.latestDecision).length;
+  const acceptedCount = candidates.filter((c) => c.latestDecision === "accept_joining").length;
+  const rejectedCount = candidates.filter((c) => c.latestDecision === "reject_joining").length;
+  const sentBackCount = candidates.filter((c) => c.latestDecision === "send_back").length;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Document Verification</h1>
-          <p className="text-muted-foreground">Review student documents and academic details.</p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Verification Desk</h1>
+        <p className="text-muted-foreground">
+          Review applicant documents, verify checklist items, and issue joining decisions.
+        </p>
+      </div>
+
+      {/* Summary */}
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
+        {[
+          { label: "Awaiting Decision", count: pendingCount, icon: Clock, cls: "text-amber-600" },
+          { label: "Accepted", count: acceptedCount, icon: CheckCircle, cls: "text-emerald-600" },
+          { label: "Rejected", count: rejectedCount, icon: XCircle, cls: "text-red-600" },
+          { label: "Sent Back", count: sentBackCount, icon: AlertCircle, cls: "text-orange-600" },
+        ].map(({ label, count, icon: Icon, cls }) => (
+          <Card key={label}>
+            <CardContent className="pt-4 pb-3 flex items-start gap-3">
+              <Icon className={`h-5 w-5 mt-0.5 ${cls}`} />
+              <div>
+                <div className={`text-2xl font-bold ${cls}`}>{count}</div>
+                <div className="text-xs text-muted-foreground">{label}</div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Card>
-        <CardHeader className="pb-3">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <CardTitle className="flex items-center gap-2">
-              <CheckSquare className="h-5 w-5" />
-              Verification Queue
-            </CardTitle>
-            
-            <div className="flex items-center gap-2">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Status Filter" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="submitted">Submitted</SelectItem>
-                  <SelectItem value="under_review">Under Review</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ClipboardList className="h-5 w-5" />
+            Verification Queue
+          </CardTitle>
+          <CardDescription>
+            All applications eligible for joining verification. Click a candidate to open the full verification desk.
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          {isLoadingApps ? (
-            <div className="flex justify-center p-8">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <CardContent className="space-y-4">
+          {/* Filters */}
+          <div className="flex gap-3 flex-col sm:flex-row">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by name, CNIC, or application number..."
+                className="pl-9"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
-          ) : !appsData?.applications.length ? (
-            <div className="text-center p-8 text-muted-foreground border rounded-lg border-dashed">
-              No applications in this queue.
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Eligible</SelectItem>
+                <SelectItem value="submitted">Submitted</SelectItem>
+                <SelectItem value="under_review">Under Review</SelectItem>
+                <SelectItem value="verified">Verified</SelectItem>
+                <SelectItem value="merit_listed">Merit Listed</SelectItem>
+                <SelectItem value="admitted">Admitted</SelectItem>
+                <SelectItem value="selected_for_verification">For Verification</SelectItem>
+                <SelectItem value="clarification_required">Clarification Reqd.</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : error ? (
+            <div className="text-center py-10 text-destructive text-sm border rounded border-dashed border-destructive/30">
+              Failed to load verification queue.
+            </div>
+          ) : candidates.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground text-sm border rounded border-dashed">
+              <ClipboardList className="h-8 w-8 mx-auto mb-2 opacity-30" />
+              No candidates found
             </div>
           ) : (
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>App ID</TableHead>
-                    <TableHead>Applicant</TableHead>
-                    <TableHead>Program</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {appsData.applications.map((app) => (
-                    <TableRow key={app.id}>
-                      <TableCell className="font-medium font-mono text-xs">{app.applicationNumber}</TableCell>
-                      <TableCell>{app.user.fullName}</TableCell>
-                      <TableCell className="text-sm">{app.program.name}</TableCell>
-                      <TableCell className="text-center">
-                        {getStatusBadge(app.status)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => handleOpenVerify(app.id)}
-                        >
-                          Review Docs
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <div className="space-y-2">
+              {candidates.map((c) => (
+                <Link key={c.applicationId} href={`/admin/verification/${c.applicationId}`}>
+                  <div className="border rounded-lg p-4 hover:bg-muted/30 transition-colors cursor-pointer group">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-sm">{c.user?.fullName ?? "—"}</span>
+                          <span className="font-mono text-xs text-muted-foreground">
+                            {c.applicationNumber}
+                          </span>
+                          {getStatusBadge(c.status)}
+                          {getDecisionBadge(c.latestDecision)}
+                        </div>
+                        <div className="mt-1 text-xs text-muted-foreground flex flex-wrap gap-3">
+                          {c.program?.name && <span>{c.program.name}</span>}
+                          {c.cnic && <span>CNIC: {c.cnic}</span>}
+                          {c.meritScore != null && (
+                            <span>Merit Score: {Number(c.meritScore).toFixed(2)}</span>
+                          )}
+                          {c.joiningIntentAt && (
+                            <span className="text-emerald-600">Intent confirmed</span>
+                          )}
+                        </div>
+                        <div className="mt-2 max-w-xs">
+                          <ChecklistProgress verified={c.verifiedCount} total={c.totalItems} />
+                        </div>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground mt-1 group-hover:text-foreground transition-colors shrink-0" />
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </div>
           )}
         </CardContent>
       </Card>
-
-      <Dialog open={isVerifyOpen} onOpenChange={setIsVerifyOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Verification Review</DialogTitle>
-            <DialogDescription>
-              Review documents for Application #{selectedAppId}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-6 py-4">
-            
-            <div className="border rounded-md overflow-hidden">
-              <Table>
-                <TableHeader className="bg-muted">
-                  <TableRow>
-                    <TableHead>Document</TableHead>
-                    <TableHead>Uploaded At</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoadingDocs ? (
-                    <TableRow><TableCell colSpan={3} className="text-center py-4"><Loader2 className="h-5 w-5 animate-spin mx-auto" /></TableCell></TableRow>
-                  ) : !documentsData?.length ? (
-                    <TableRow><TableCell colSpan={3} className="text-center py-4 text-muted-foreground">No documents uploaded.</TableCell></TableRow>
-                  ) : documentsData.map(doc => (
-                    <TableRow key={doc.id}>
-                      <TableCell className="font-medium capitalize">{doc.docType.replace('_', ' ')}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{format(new Date(doc.uploadedAt), "MMM d, yyyy")}</TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="outline" size="sm" asChild>
-                          <a href={doc.fileUrl} target="_blank" rel="noreferrer">
-                            <FileUp className="h-4 w-4 mr-2" /> View
-                          </a>
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-
-            <div className="space-y-4 pt-4 border-t">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Decision</label>
-                <Select value={decisionStatus} onValueChange={setDecisionStatus}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select decision" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="approved">Verify Documents (Approve)</SelectItem>
-                    <SelectItem value="rejected">Reject Documents</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Remarks (Required for rejection)</label>
-                <Textarea 
-                  placeholder="Reason for rejection or verification notes..." 
-                  value={remarks}
-                  onChange={(e) => setRemarks(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsVerifyOpen(false)}>Cancel</Button>
-            <Button 
-              onClick={handleVerifySubmit} 
-              disabled={createVerification.isPending || (decisionStatus === "rejected" && !remarks)}
-              variant={decisionStatus === "rejected" ? "destructive" : "default"}
-            >
-              {createVerification.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Submit Decision
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
