@@ -27,6 +27,7 @@ import AdminVerification from "@/pages/admin/verification";
 import AdminVerificationDesk from "@/pages/admin/verification-desk";
 import AdminStudents from "@/pages/admin/students";
 import AdminAuditLogs from "@/pages/admin/audit-logs";
+import AdminReports from "@/pages/admin/reports";
 import AdminSettings from "@/pages/admin/settings";
 
 import StudentDashboard from "@/pages/student/dashboard";
@@ -73,6 +74,7 @@ function Router() {
               <Route path="/admin/verification" component={AdminVerification} />
               <Route path="/admin/students" component={AdminStudents} />
               <Route path="/admin/audit-logs" component={AdminAuditLogs} />
+              <Route path="/admin/reports" component={AdminReports} />
               <Route path="/admin/settings" component={AdminSettings} />
 
               {/* Fallback for unimplemented admin routes */}

@@ -2,7 +2,12 @@
 
 ## Overview
 
-Full-stack admissions management system for Allied Health College, Nishtar Medical University (Pakistan). Manages the complete admissions lifecycle: programs, sessions, quota categories, applications, payment challans, document uploads, merit lists, verification desk, joined students, notices, and audit logs.
+Full-stack admissions management system for Allied Health College, Nishtar Medical University (Pakistan). Manages the complete admissions lifecycle: programs, sessions, quota categories, applications, payment challans, document uploads, merit lists, verification desk, joined students, notices, audit logs, reports analytics, and an institutional settings panel.
+
+**Completed Phases:**
+- Phase 1–5: Core infrastructure, auth, all admin CRUD (programs, sessions, quotas, applications, challans, merit lists, verification desk, joined students, notices, users)
+- Phase 6: Student application pages with all 11 statuses; admin pipeline actions including "Route to Verification Desk"
+- Phase 7: Landing page (home.tsx) with live programs/notices from API; Reports page with KPI cards, BarChart, PieChart, CSV export; Audit Logs with user names, date range, entityType, action filters, pagination; Settings page extended with Fee & Payment and Institution Branding sections; Reports API (`GET /api/reports/summary`) with aggregated stats by program/status/quota/session/joined
 
 pnpm workspace monorepo using TypeScript.
 

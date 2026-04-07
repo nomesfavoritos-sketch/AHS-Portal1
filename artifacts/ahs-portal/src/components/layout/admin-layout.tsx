@@ -17,6 +17,7 @@ import {
   Settings,
   UserCog,
   Loader2,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -87,6 +88,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       name: "Notices",
       href: "/admin/notices",
       icon: Bell,
+      roles: ["super_admin", "admission_admin"],
+    },
+    {
+      name: "Reports",
+      href: "/admin/reports",
+      icon: BarChart3,
       roles: ["super_admin", "admission_admin"],
     },
     {

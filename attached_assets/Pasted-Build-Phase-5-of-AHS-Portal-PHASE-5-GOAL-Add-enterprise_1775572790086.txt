@@ -1,0 +1,107 @@
+Build Phase 5 of AHS Portal.
+
+PHASE 5 GOAL:
+Add enterprise polish, audit logs, reports, notices/timelines, admin settings, and deployment readiness.
+
+REQUIRED IN PHASE 5:
+
+1. Notices and timelines module
+Admin can publish:
+- admission notices
+- important dates
+- scrutiny dates
+- amendment/correction dates
+- joining deadlines
+- merit publication dates
+
+Display these elegantly on:
+- public landing page
+- student dashboard
+- admin dashboard
+
+2. Reports and analytics
+Build reports for:
+- applicants by program
+- applicants by quota
+- paid vs unpaid applications
+- verified vs rejected
+- merit cutoffs
+- joined students by discipline
+- session-wise summaries
+
+Allow export to CSV/Excel/PDF where practical.
+
+3. Audit logs
+Create a full audit log viewer for admins.
+Track:
+- logins
+- profile updates
+- application submission
+- challan generation
+- payment verification
+- merit generation
+- merit publication
+- verification decisions
+- joined student removal
+Add filters by user, action, date.
+
+4. Settings module
+Admin-manageable settings for:
+- institution branding
+- logo
+- fee amount per application
+- merit formula weights
+- quota definitions
+- file upload limits
+- active session
+- public merit visibility
+
+5. Public landing page completion
+Build a premium landing page with:
+- hero section
+- admission process steps
+- programs list
+- eligibility criteria
+- notices
+- timeline
+- FAQ
+- contact/help section
+- login/register CTAs
+- merit status link
+
+6. UX polish
+- loading states
+- empty states
+- confirmations
+- success/error toasts
+- responsive refinements
+- accessibility improvements
+- premium visual polish across all pages
+
+7. Testing and quality
+- seed realistic demo data
+- fix broken flows
+- ensure protected routes
+- ensure all roles behave correctly
+- validate PDF generation
+- validate exports
+- validate audit logs
+
+8. Deployment readiness
+- .env.example
+- README with setup instructions
+- Prisma migration steps
+- seed instructions
+- production notes
+- optional Docker setup
+
+9. Final deliverables
+- completed working platform
+- polished UI
+- demo credentials
+- deployment-ready project
+- clear documentation
+
+IMPORTANT:
+- this final phase should make the platform feel enterprise-grade
+- focus on reliability, polish, clean UX, and admin confidence
