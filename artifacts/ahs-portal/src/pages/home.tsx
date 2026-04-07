@@ -630,23 +630,30 @@ export default function Home() {
                   <motion.div
                     key={(program as any).code ?? i}
                     variants={scaleIn}
-                    whileHover={{ y: -6, boxShadow: "0 16px 48px rgba(1,65,28,0.12)" }}
+                    whileHover={{ y: -4, boxShadow: "0 12px 36px rgba(1,65,28,0.10)" }}
                     transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                    className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/80 hover:border-green-200 flex flex-col gap-3 sm:gap-4 transition-all duration-200 group cursor-pointer"
+                    className="bg-white rounded-xl border border-slate-100 flex flex-col overflow-hidden transition-all duration-200 group cursor-pointer shadow-sm hover:border-green-100"
                   >
-                    <div className="h-12 w-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200" style={{ background: `rgba(1,65,28,0.08)` }}>
-                      <Icon className="h-6 w-6" style={{ color: G }} />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-[14px] text-slate-900 mb-1 leading-snug">{program.name}</h3>
-                      <p className="text-xs font-bold font-mono mb-3" style={{ color: G }}>{(program as any).code}</p>
-                      <div className="flex gap-2">
-                        <span className="text-[11px] border border-slate-200 rounded-full px-2.5 py-0.5 text-slate-500 font-medium">4 Years</span>
-                        <span className="text-[11px] border border-slate-200 rounded-full px-2.5 py-0.5 text-slate-500 font-medium">BSc</span>
+                    {/* green accent top bar */}
+                    <div className="h-0.5 w-full" style={{ background: `linear-gradient(90deg, ${G}, ${GA})` }} />
+                    <div className="p-3 sm:p-4 flex flex-col gap-2.5 flex-1">
+                      {/* icon + arrow row */}
+                      <div className="flex items-start justify-between">
+                        <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: `rgba(1,65,28,0.07)` }}>
+                          <Icon className="h-4 w-4" style={{ color: G }} />
+                        </div>
+                        <ChevronRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-green-600 group-hover:translate-x-0.5 transition-all duration-200 mt-0.5" />
                       </div>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs font-semibold mt-auto" style={{ color: G }}>
-                      Learn more <ChevronRight className="h-3.5 w-3.5" />
+                      {/* name */}
+                      <div>
+                        <h3 className="font-bold text-[12px] sm:text-[13px] text-slate-900 leading-snug mb-0.5">{program.name}</h3>
+                        <p className="text-[10px] font-bold tracking-widest uppercase" style={{ color: GA }}>{(program as any).code}</p>
+                      </div>
+                      {/* badges */}
+                      <div className="flex gap-1 mt-auto">
+                        <span className="text-[9px] sm:text-[10px] bg-slate-50 border border-slate-100 rounded-full px-2 py-0.5 text-slate-500 font-semibold">4 Yrs</span>
+                        <span className="text-[9px] sm:text-[10px] bg-slate-50 border border-slate-100 rounded-full px-2 py-0.5 text-slate-500 font-semibold">BSc</span>
+                      </div>
                     </div>
                   </motion.div>
                 );
