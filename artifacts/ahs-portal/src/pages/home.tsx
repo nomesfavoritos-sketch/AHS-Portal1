@@ -546,8 +546,8 @@ export default function Home() {
         </section>
 
         {/* ══════ ABOUT STRIP ══════ */}
-        <section className="py-20 px-6 lg:px-16 bg-white">
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+        <section className="py-12 lg:py-20 px-4 sm:px-6 lg:px-16 bg-white">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             {/* left — image (hidden on mobile) */}
             <Reveal className="hidden lg:block">
               <div className="relative rounded-3xl overflow-hidden h-[400px]">
@@ -604,9 +604,9 @@ export default function Home() {
         </section>
 
         {/* ══════ PROGRAMS ══════ */}
-        <section id="programs" className="py-20 px-6 lg:px-16" style={{ background: "#F8FAF8" }}>
+        <section id="programs" className="py-12 lg:py-20 px-4 sm:px-6 lg:px-16" style={{ background: "#F8FAF8" }}>
           <div className="max-w-7xl mx-auto">
-            <Reveal className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
+            <Reveal className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 lg:mb-12 gap-4">
               <div>
                 <SectionLabel>Our Programs</SectionLabel>
                 <h2 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900">
@@ -656,14 +656,14 @@ export default function Home() {
         </section>
 
         {/* ══════ HOW TO APPLY ══════ */}
-        <section id="how-to-apply" className="py-20 px-6 lg:px-16 bg-white relative overflow-hidden">
+        <section id="how-to-apply" className="py-12 lg:py-20 px-4 sm:px-6 lg:px-16 bg-white relative overflow-hidden">
           {/* background pattern */}
           <div className="absolute right-0 top-0 bottom-0 w-1/3 pointer-events-none" style={{ background: "rgba(1,65,28,0.02)" }} aria-hidden />
           <Star4 size={48} className="absolute right-16 top-20 opacity-20" />
           <Star4 size={28} className="absolute right-32 bottom-16 opacity-15" />
 
           <div className="max-w-7xl mx-auto">
-            <Reveal className="text-center mb-14">
+            <Reveal className="text-center mb-8 lg:mb-14">
               <SectionLabel>Application Process</SectionLabel>
               <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-4 text-slate-900">
                 Six Steps to <span style={{ color: G }}>Admission</span>
@@ -712,9 +712,9 @@ export default function Home() {
         </section>
 
         {/* ══════ ELIGIBILITY ══════ */}
-        <section className="py-20 px-6 lg:px-16" style={{ background: "#F8FAF8" }}>
+        <section className="py-12 lg:py-20 px-4 sm:px-6 lg:px-16" style={{ background: "#F8FAF8" }}>
           <div className="max-w-7xl mx-auto">
-            <Reveal className="text-center mb-14">
+            <Reveal className="text-center mb-8 lg:mb-14">
               <SectionLabel>Eligibility</SectionLabel>
               <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-4 text-slate-900">
                 Admission <span style={{ color: G }}>Requirements</span>
@@ -759,10 +759,10 @@ export default function Home() {
         </section>
 
         {/* ══════ NOTICES ══════ */}
-        <section id="notices" className="py-20 px-6 lg:px-16 bg-white">
+        <section id="notices" className="py-12 lg:py-20 px-4 sm:px-6 lg:px-16 bg-white">
           <div className="max-w-7xl mx-auto">
             <Reveal>
-              <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 lg:mb-12 gap-4">
                 <div>
                   <SectionLabel>Latest Updates</SectionLabel>
                   <h2 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900">
@@ -816,7 +816,7 @@ export default function Home() {
         </section>
 
         {/* ══════ MERIT SEARCH CTA ══════ */}
-        <section className="py-20 px-6 lg:px-16 relative overflow-hidden" style={{ background: G }}>
+        <section className="py-12 lg:py-20 px-4 sm:px-6 lg:px-16 relative overflow-hidden" style={{ background: G }}>
           <Star4 size={64} className="absolute right-20 top-8 opacity-15" />
           <Star4 size={36} className="absolute right-36 bottom-8 opacity-10" />
           <Star4 size={24} className="absolute left-16 top-1/2 -translate-y-1/2 opacity-10" />
@@ -842,9 +842,9 @@ export default function Home() {
         </section>
 
         {/* ══════ FAQ ══════ */}
-        <section id="faq" className="py-20 px-6 lg:px-16" style={{ background: "#F8FAF8" }}>
+        <section id="faq" className="py-12 lg:py-20 px-4 sm:px-6 lg:px-16" style={{ background: "#F8FAF8" }}>
           <div className="max-w-3xl mx-auto">
-            <Reveal className="text-center mb-14">
+            <Reveal className="text-center mb-8 lg:mb-14">
               <SectionLabel>FAQ</SectionLabel>
               <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-4 text-slate-900">
                 Frequently Asked <span style={{ color: G }}>Questions</span>
@@ -872,9 +872,9 @@ export default function Home() {
         </section>
 
         {/* ══════ CONTACT ══════ */}
-        <section className="py-20 px-6 lg:px-16 bg-white">
+        <section className="py-12 lg:py-20 px-4 sm:px-6 lg:px-16 bg-white">
           <div className="max-w-7xl mx-auto">
-            <Reveal className="text-center mb-14">
+            <Reveal className="text-center mb-8 lg:mb-14">
               <SectionLabel>Contact</SectionLabel>
               <h2 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900">
                 Get in <span style={{ color: G }}>Touch</span>
@@ -895,7 +895,7 @@ export default function Home() {
                   variants={scaleIn}
                   whileHover={{ y: -5 }}
                   transition={{ type: "spring", stiffness: 280 }}
-                  className="text-center bg-white border border-slate-200/80 rounded-2xl p-8 hover:shadow-md hover:border-green-200 transition-all duration-200"
+                  className="text-center bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-8 hover:shadow-md hover:border-green-200 transition-all duration-200"
                 >
                   <div className="h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: "rgba(1,65,28,0.08)" }}>
                     <Icon className="h-6 w-6" style={{ color: G }} />
@@ -909,11 +909,11 @@ export default function Home() {
         </section>
 
         {/* ══════ NEWSLETTER STRIP ══════ */}
-        <section className="py-16 px-6 lg:px-16" style={{ background: DARK }}>
-          <div className="max-w-5xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div>
-              <Star4 size={24} className="mb-3 opacity-60" />
-              <h3 className="text-3xl font-black text-white leading-snug">
+        <section className="py-10 lg:py-16 px-4 sm:px-6 lg:px-16" style={{ background: DARK }}>
+          <div className="max-w-5xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8">
+            <div className="text-center lg:text-left">
+              <Star4 size={20} className="mb-2 opacity-60 inline-block lg:block" />
+              <h3 className="text-xl lg:text-3xl font-black text-white leading-snug">
                 Stay Informed on<br />
                 <span style={{ color: Y }}>Admissions Updates</span>
               </h3>
@@ -938,10 +938,10 @@ export default function Home() {
 
       {/* ── FOOTER ── */}
       <footer style={{ background: DARK }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-16 pt-14 pb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 pt-10 pb-6 lg:pt-14 lg:pb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-10 mb-8 lg:mb-10">
             {/* brand */}
-            <div className="md:col-span-1">
+            <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2.5 mb-4">
                 <img src={nmuLogo} alt="NMU Logo" className="h-11 w-11 object-contain" />
                 <div>
