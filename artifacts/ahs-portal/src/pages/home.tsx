@@ -622,7 +622,7 @@ export default function Home() {
             <motion.div
               initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
               variants={stagger}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+              className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
             >
               {displayPrograms.map((program, i) => {
                 const Icon = PROGRAM_ICONS[(program as any).code] ?? Microscope;
@@ -632,7 +632,7 @@ export default function Home() {
                     variants={scaleIn}
                     whileHover={{ y: -6, boxShadow: "0 16px 48px rgba(1,65,28,0.12)" }}
                     transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                    className="bg-white rounded-2xl p-6 border border-slate-200/80 hover:border-green-200 flex flex-col gap-4 transition-all duration-200 group cursor-pointer"
+                    className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/80 hover:border-green-200 flex flex-col gap-3 sm:gap-4 transition-all duration-200 group cursor-pointer"
                   >
                     <div className="h-12 w-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200" style={{ background: `rgba(1,65,28,0.08)` }}>
                       <Icon className="h-6 w-6" style={{ color: G }} />
@@ -723,7 +723,7 @@ export default function Home() {
             <motion.div
               initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
               variants={stagger}
-              className="grid md:grid-cols-2 gap-5"
+              className="grid grid-cols-2 gap-3 sm:gap-5"
             >
               {[
                 { title: "Academic Requirement", icon: BookOpen, items: ["FSc (Pre-Medical) with minimum 50% marks", "Matric (Science subjects) with minimum 50% marks", "From an HEC-recognized institution"] },
@@ -736,18 +736,18 @@ export default function Home() {
                   variants={scaleIn}
                   whileHover={{ y: -4 }}
                   transition={{ type: "spring", stiffness: 280 }}
-                  className="bg-white border border-slate-200/80 rounded-2xl p-7 hover:shadow-md hover:border-green-200 transition-all duration-200"
+                  className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-7 hover:shadow-md hover:border-green-200 transition-all duration-200"
                 >
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(1,65,28,0.08)" }}>
-                      <Icon className="h-5 w-5" style={{ color: G }} />
+                  <div className="flex items-center gap-2 mb-3 sm:mb-5">
+                    <div className="h-8 w-8 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(1,65,28,0.08)" }}>
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: G }} />
                     </div>
-                    <h3 className="font-bold text-[15px] text-slate-900">{title}</h3>
+                    <h3 className="font-bold text-[12px] sm:text-[15px] text-slate-900 leading-snug">{title}</h3>
                   </div>
-                  <ul className="space-y-3">
+                  <ul className="space-y-2 sm:space-y-3">
                     {items.map(item => (
-                      <li key={item} className="flex items-start gap-2.5 text-[13px] text-slate-600">
-                        <CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: GA }} />
+                      <li key={item} className="flex items-start gap-1.5 sm:gap-2.5 text-[11px] sm:text-[13px] text-slate-600">
+                        <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 mt-0.5 flex-shrink-0" style={{ color: GA }} />
                         {item}
                       </li>
                     ))}
