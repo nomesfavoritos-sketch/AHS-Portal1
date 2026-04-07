@@ -8,7 +8,7 @@ import {
   ArrowRight, CheckCircle, FileText, CreditCard, ClipboardCheck, Award, Users,
   GraduationCap, Search, Bell, Phone, Mail, MapPin, Microscope, Eye, Heart,
   Activity, Smile, Bone, Shield, Star, Zap, Globe, BookOpen, FlaskConical, ChevronRight,
-  Menu, X
+  Menu, X, Syringe, Scan, Droplets, Camera, Accessibility, TestTubes
 } from "lucide-react";
 import { format } from "date-fns";
 import universityPhoto from "@assets/jjjlllji_1775576930917.webp";
@@ -85,8 +85,14 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 /* ─── Program icons ─── */
 const PROGRAM_ICONS: Record<string, React.ElementType> = {
-  BSMLT: Microscope, BSMIT: Eye, BSRDT: Activity, BSOOT: Globe,
-  BSANT: Heart, BSEND: FlaskConical, BSDNT: Smile, BSOPT: Bone,
+  BSMLT: TestTubes,      // Medical Lab Technology  — test tubes / lab work
+  BSMIT: Scan,           // Medical Imaging Technology — scanning / X-ray
+  BSRDT: Droplets,       // Renal Dialysis Technology — fluid / blood filtration
+  BSOOT: Eye,            // Optometry — eye
+  BSANT: Syringe,        // Anesthesia Technology — injection / needle
+  BSEND: Camera,         // Endoscopy Technology — camera inside body
+  BSDNT: Smile,          // Dental Technology — smile / teeth
+  BSOPT: Accessibility,  // Orthotics & Prosthetics — mobility / limbs
 };
 const FALLBACK_PROGRAMS = [
   { code: "BSMLT", name: "Medical Lab Technology", id: 1 },
@@ -639,8 +645,8 @@ export default function Home() {
                     <div className="p-3 sm:p-4 flex flex-col gap-2.5 flex-1">
                       {/* icon + arrow row */}
                       <div className="flex items-start justify-between">
-                        <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: `rgba(1,65,28,0.07)` }}>
-                          <Icon className="h-4 w-4" style={{ color: G }} />
+                        <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: `rgba(1,65,28,0.07)` }}>
+                          <Icon className="h-5 w-5" style={{ color: G }} />
                         </div>
                         <ChevronRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-green-600 group-hover:translate-x-0.5 transition-all duration-200 mt-0.5" />
                       </div>
