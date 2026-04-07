@@ -10,7 +10,7 @@ import {
   Activity, Smile, Bone, Shield, Star, Zap, Globe, BookOpen, FlaskConical
 } from "lucide-react";
 import { format } from "date-fns";
-import universityPhoto from "@assets/DJI_0541_1775576288929.JPG";
+import universityPhoto from "@assets/jjjlllji_1775576930917.webp";
 import nmuLogo from "@assets/logo_(1)_1775576288927.webp";
 
 /* ─── Pakistan Institutional Green Palette ─── */
@@ -191,15 +191,15 @@ export default function Home() {
               src={universityPhoto}
               alt="Nishtar Medical University, Multan"
               className="w-full h-full object-cover object-center"
-              style={{ filter: "brightness(0.45) saturate(0.7)" }}
+              style={{ filter: "brightness(0.6) saturate(0.85)" }}
             />
           </div>
-          {/* Green tint overlay for institutional feel */}
-          <div className="absolute inset-0" style={{ background: "linear-gradient(150deg, rgba(1,65,28,0.78) 0%, rgba(2,89,31,0.70) 45%, rgba(1,65,28,0.60) 100%)" }} />
+          {/* Lighter green tint overlay */}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(150deg, rgba(1,65,28,0.58) 0%, rgba(2,89,31,0.40) 55%, rgba(1,65,28,0.28) 100%)" }} />
           {/* Bottom fade to white */}
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
-          {/* Subtle vignette on edges */}
-          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.35) 100%)" }} />
+          {/* Left darkening for text legibility only */}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.28) 0%, transparent 50%)" }} />
 
           <div className="relative max-w-7xl mx-auto px-6 lg:px-12 py-28 w-full">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -273,26 +273,32 @@ export default function Home() {
               {/* Right: Stat Cards */}
               <motion.div initial="hidden" animate="show" variants={staggerContainer} className="hidden lg:grid grid-cols-2 gap-4">
                 {[
-                  { label: "Programs Offered", value: 8, suffix: "", bg: "rgba(255,255,255,0.08)", border: "rgba(255,255,255,0.15)", numColor: "white", icon: GraduationCap },
-                  { label: "Years Established", value: 15, suffix: "+", bg: "rgba(255,255,255,0.06)", border: "rgba(255,255,255,0.12)", numColor: "#86efac", icon: Star },
-                  { label: "Students Enrolled", value: 1200, suffix: "+", bg: "rgba(255,255,255,0.06)", border: "rgba(255,255,255,0.12)", numColor: "#86efac", icon: Users },
-                  { label: "Seats Available", value: 320, suffix: "", bg: "rgba(255,255,255,0.08)", border: "rgba(255,255,255,0.15)", numColor: "white", icon: Award },
-                ].map(({ label, value, suffix, bg, border, numColor, icon: Icon }, i) => (
+                  { label: "Programs Offered", value: 8, suffix: "", icon: GraduationCap },
+                  { label: "Years Established", value: 15, suffix: "+", icon: Star },
+                  { label: "Students Enrolled", value: 1200, suffix: "+", icon: Users },
+                  { label: "Seats Available", value: 320, suffix: "", icon: Award },
+                ].map(({ label, value, suffix, icon: Icon }) => (
                   <motion.div
                     key={label}
                     variants={scaleIn}
                     whileHover={{ y: -5, scale: 1.02 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="rounded-2xl p-6 flex flex-col gap-3 backdrop-blur-sm"
-                    style={{ background: bg, border: `1px solid ${border}` }}
+                    className="rounded-2xl p-6 flex flex-col gap-3"
+                    style={{
+                      background: "rgba(0,0,0,0.40)",
+                      backdropFilter: "blur(20px)",
+                      WebkitBackdropFilter: "blur(20px)",
+                      border: "1.5px solid rgba(255,255,255,0.20)",
+                      boxShadow: "0 8px 32px rgba(0,0,0,0.40)",
+                    }}
                   >
-                    <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(255,255,255,0.1)" }}>
-                      <Icon className="h-5 w-5 text-emerald-300" />
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(255,255,255,0.12)" }}>
+                      <Icon className="h-5 w-5 text-emerald-400" />
                     </div>
-                    <p className="text-4xl font-black" style={{ color: numColor }}>
+                    <p className="text-4xl font-black text-white">
                       <AnimatedCounter to={value} suffix={suffix} />
                     </p>
-                    <p className="text-white/50 text-xs font-medium">{label}</p>
+                    <p className="text-white/70 text-xs font-semibold tracking-wide uppercase">{label}</p>
                   </motion.div>
                 ))}
               </motion.div>
