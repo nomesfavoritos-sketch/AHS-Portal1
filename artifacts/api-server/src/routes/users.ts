@@ -19,17 +19,18 @@ const formatUser = (user: typeof usersTable.$inferSelect) => ({
 });
 
 function calcCompletion(p: typeof studentProfilesTable.$inferSelect): number {
-  const personalFields = [
+  const stringFields = [
     p.fatherName, p.dateOfBirth, p.gender, p.cnic, p.religion,
-    p.domicileDistrict, p.province, p.permanentAddress, p.contactNumber, p.guardianContactNumber,
+    p.domicileDistrict, p.matricBoard, p.interBoard,
   ];
-  const academicFields = [
-    p.matricBoard, p.matricYear, p.matricRoll, p.matricTotal, p.matricMarks,
-    p.interBoard, p.interYear, p.interRoll, p.interTotal, p.interMarks,
+  const numericFields = [
+    p.matricYear, p.matricTotal, p.matricMarks,
+    p.interYear, p.interTotal, p.interMarks,
   ];
-  const allFields = [...personalFields, ...academicFields];
-  const filled = allFields.filter((f) => f !== null && f !== undefined && f !== "").length;
-  return Math.round((filled / allFields.length) * 100);
+  const strFilled = stringFields.filter((f) => f !== null && f !== undefined && f !== "").length;
+  const numFilled = numericFields.filter((f) => f !== null && f !== undefined && Number(f) > 0).length;
+  const total = stringFields.length + numericFields.length;
+  return Math.round(((strFilled + numFilled) / total) * 100);
 }
 
 function formatProfile(profile: typeof studentProfilesTable.$inferSelect) {

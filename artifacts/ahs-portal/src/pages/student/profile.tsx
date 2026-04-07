@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -171,6 +171,19 @@ export default function StudentProfile() {
   const nextStep = () => { if (step < totalSteps) setStep(step + 1); };
   const prevStep = () => { if (step > 1) setStep(step - 1); };
 
+  const watched = useWatch({
+    control: form.control,
+    name: ["fatherName","dateOfBirth","gender","cnic","religion","domicile","matricBoard","interBoard","matricYear","matricTotal","matricMarks","interYear","interTotal","interMarks"],
+  });
+  const livePercent = (() => {
+    const [fatherName,dateOfBirth,gender,cnic,religion,domicile,matricBoard,interBoard,matricYear,matricTotal,matricMarks,interYear,interTotal,interMarks] = watched;
+    const strFields = [fatherName,dateOfBirth,gender,cnic,religion,domicile,matricBoard,interBoard];
+    const numFields = [matricYear,matricTotal,matricMarks,interYear,interTotal,interMarks];
+    const strFilled = strFields.filter((f) => f && f !== "").length;
+    const numFilled = numFields.filter((f) => Number(f) > 0).length;
+    return Math.round(((strFilled + numFilled) / (strFields.length + numFields.length)) * 100);
+  })();
+
   if (isLoading) {
     return (
       <div className="flex h-[50vh] w-full items-center justify-center">
@@ -178,8 +191,6 @@ export default function StudentProfile() {
       </div>
     );
   }
-
-  const stepPercent = Math.round((step / totalSteps) * 100);
 
   const STEPS = [
     { n: 1, label: "Personal Info" },
@@ -196,9 +207,9 @@ export default function StudentProfile() {
         <div className="mt-4 p-4 border rounded-md bg-muted/30">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">Profile Completion</span>
-            <span className="text-sm font-bold">{stepPercent}%</span>
+            <span className="text-sm font-bold">{livePercent}%</span>
           </div>
-          <Progress value={stepPercent} className="h-2" />
+          <Progress value={livePercent} className="h-2" />
         </div>
       </div>
 

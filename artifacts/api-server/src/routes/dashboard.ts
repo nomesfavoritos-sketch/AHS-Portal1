@@ -70,7 +70,7 @@ router.get("/dashboard/student-summary", requireAuth, async (req, res): Promise<
     db.select({ count: count() }).from(applicationsTable).where(and(eq(applicationsTable.userId, userId), eq(applicationsTable.status, "submitted"))),
     db.select({ count: count() }).from(applicationsTable).where(and(eq(applicationsTable.userId, userId), eq(applicationsTable.status, "admitted"))),
     db.select({ count: count() }).from(noticesTable).where(eq(noticesTable.isActive, true)),
-    db.select({ completionPercentage: studentProfilesTable.completionPercentage }).from(studentProfilesTable).where(eq(studentProfilesTable.userId, userId)).limit(1),
+    db.select().from(studentProfilesTable).where(eq(studentProfilesTable.userId, userId)).limit(1),
     db.select({ joiningIntentAt: applicationsTable.joiningIntentAt, id: applicationsTable.id }).from(applicationsTable)
       .where(and(eq(applicationsTable.userId, userId), sql`joining_intent_at IS NOT NULL`)).limit(1),
   ]);
@@ -98,7 +98,15 @@ router.get("/dashboard/student-summary", requireAuth, async (req, res): Promise<
     pendingPayments: Number(pendingChallans[0]?.count ?? 0),
     pendingDocuments: 0,
     activeNotices: Number(activeNotices[0]?.count ?? 0),
-    profileCompletion: Number(profileResult[0]?.completionPercentage ?? 0),
+    profileCompletion: (() => {
+      const p = profileResult[0];
+      if (!p) return 0;
+      const strFields = [p.fatherName, p.dateOfBirth, p.gender, p.cnic, p.religion, p.domicileDistrict, p.matricBoard, p.interBoard];
+      const numFields = [p.matricYear, p.matricTotal, p.matricMarks, p.interYear, p.interTotal, p.interMarks];
+      const strFilled = strFields.filter((f) => f !== null && f !== undefined && f !== "").length;
+      const numFilled = numFields.filter((f) => f !== null && f !== undefined && Number(f) > 0).length;
+      return Math.round(((strFilled + numFilled) / (strFields.length + numFields.length)) * 100);
+    })(),
     meritRank: bestRank,
     meritScore: bestScore,
     joiningIntentConfirmed: joiningIntentApp.length > 0,
