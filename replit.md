@@ -128,6 +128,14 @@ All weights stored in `system_settings` table and editable via `/admin/settings`
 - **Checklist Schema**: `verificationChecklists` (JSONB items per application), `joiningDecisions` (decision history). `joinedStudents` extended with `verifiedById`, `verifierName`, `removedAt`, `removedById`, `removalReason`. `payment_challans` extended with `remarks`.
 - **Sidebar Updates**: "Payment Verification" (was Challans), "Verification Desk" (was Verification), "Joined Students" (was Students).
 
+## Phase 6 Features (Student UX Polish + Admin Applications Pipeline)
+
+- **Student Applications Page**: Context-aware action panels for every status. `challan_generated` → pay + upload slip. `slip_uploaded` → final submit button. `merit_listed` → purple alert with link to merit page. `selected_for_verification` → sky blue alert with physical verification instructions (docs to bring, hours). `clarification_required` → orange alert with contact info. `admitted` → green congratulations alert. `rejected` → red alert with next-session suggestion.
+- **Student Dashboard Timeline**: Extended to 7 steps: Draft → Submitted → Under Review → Verified → Merit Listed → Verification Desk → Admitted. `STEP_INDEX` maps all statuses (including `challan_generated`, `slip_uploaded`, `clarification_required`) to the correct step. `clarification_required` renders the Under Review step in orange with a `!` indicator. Inline contextual alert banners for clarification, selected_for_verification. Separate top-level banners for Admitted (green, PartyPopper), Clarification (orange), Selected for Verification (sky blue).
+- **Admin Applications Pipeline**: `PIPELINE_ACTIONS` map drives all status transitions: submitted → start review / reject; under_review → reject / verify; verified → reject / add to merit list; merit_listed → **Route to Verification Desk** (sets `selected_for_verification`) / mark admitted; selected_for_verification → send back (clarification); clarification_required → restore to under_review / reject. Actions requiring remarks show a warning icon. Status filter includes all 11 statuses. Table row has "Desk" shortcut link for `selected_for_verification` and `admitted` rows.
+- **API Bug Fix**: `verificationDesk.ts` merit list entries query now uses `applicationId` instead of the non-existent `userId` column — fixing 500 errors on the per-candidate verification desk page.
+- **Sidebar enhancements**: Status badge record in all status-bearing components covers all 11 statuses consistently.
+
 ## Theme / Design
 
 Deep navy institutional palette (primary: `222 47% 11%`), Plus Jakarta Sans font, clean and professional. Light mode only.

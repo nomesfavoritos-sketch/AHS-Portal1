@@ -30,7 +30,7 @@ async function buildCandidateDetail(applicationId: number) {
     meritListName: meritListsTable.name,
   }).from(meritListEntriesTable)
     .innerJoin(meritListsTable, eq(meritListEntriesTable.meritListId, meritListsTable.id))
-    .where(eq(meritListEntriesTable.userId, app.userId));
+    .where(eq(meritListEntriesTable.applicationId, applicationId));
 
   const [joiningDecision] = await db.select().from(joiningDecisionsTable)
     .where(eq(joiningDecisionsTable.applicationId, app.id))
