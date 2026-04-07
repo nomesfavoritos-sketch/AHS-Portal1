@@ -11,10 +11,8 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const [, setLocation] = useLocation();
   const { data: user, isLoading, isError } = useGetMe({
-    query: {
-      retry: false,
-    },
-  });
+    query: { retry: false },
+  } as any);
 
   useEffect(() => {
     if (isLoading) return;

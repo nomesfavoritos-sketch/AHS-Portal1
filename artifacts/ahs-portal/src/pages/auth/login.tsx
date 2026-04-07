@@ -3,7 +3,8 @@ import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useLogin, useGetMe } from "@workspace/api-client-react";
+import { useLogin, useGetMe, getGetMeQueryKey } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,11 +23,12 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function Login() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const loginMutation = useLogin();
   
   const { data: user, isLoading: isLoadingUser } = useGetMe({
     query: { retry: false }
-  });
+  } as any);
 
   useEffect(() => {
     if (user) {
@@ -51,6 +53,7 @@ export default function Login() {
       { data },
       {
         onSuccess: (user) => {
+          queryClient.setQueryData(getGetMeQueryKey(), user);
           toast({
             title: "Login successful",
             description: "Welcome back to AHS Portal.",
