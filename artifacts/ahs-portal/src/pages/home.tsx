@@ -520,19 +520,22 @@ export default function Home() {
           <motion.div
             initial="hidden" whileInView="show" viewport={{ once: true }}
             variants={stagger}
-            className="max-w-5xl mx-auto px-6 lg:px-16 py-5 flex flex-wrap items-center justify-center gap-0"
+            className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-16 py-6 grid grid-cols-2 lg:flex lg:flex-row lg:items-center lg:justify-center gap-0"
           >
             {[
               { icon: GraduationCap, label: "8 Programs", sub: "Allied Health Sciences" },
               { icon: Award, label: "320 Seats", sub: "Per Admission Session" },
               { icon: Shield, label: "HEC Recognized", sub: "Fully Accredited" },
               { icon: BookOpen, label: "Established 2022", sub: "Nishtar Medical University" },
-            ].map(({ icon: Icon, label, sub }, i, arr) => (
+            ].map(({ icon: Icon, label, sub }, i) => (
               <motion.div
                 key={label}
                 variants={fadeUp}
-                className="flex flex-col items-center text-center px-10 py-2"
-                style={{ borderRight: i < arr.length - 2 ? "1px solid rgba(255,255,255,0.20)" : "none" }}
+                className={[
+                  "flex flex-col items-center text-center px-4 py-4 lg:px-10 lg:py-2",
+                  i < 2 ? "border-b border-white/10 lg:border-b-0" : "",
+                  i < 2 ? "lg:border-r lg:border-white/20" : "",
+                ].join(" ")}
               >
                 <Icon className="h-5 w-5 mb-1.5" style={{ color: Y }} />
                 <p className="text-white font-bold text-[13px] leading-tight">{label}</p>
