@@ -91,9 +91,9 @@ router.post("/applications", requireAuth, async (req, res): Promise<void> => {
 
   // Block if profile is not sufficiently complete
   const [profile] = await db.select().from(studentProfilesTable).where(eq(studentProfilesTable.userId, userId));
-  if (!profile || (profile.completionPercentage ?? 0) < 80) {
+  if (!profile || (profile.completionPercentage ?? 0) < 100) {
     res.status(400).json({
-      error: "Your profile must be at least 80% complete before you can submit an application. Please complete your profile first.",
+      error: "Your profile must be 100% complete before you can submit an application. Please complete your profile first.",
     });
     return;
   }
@@ -218,8 +218,8 @@ router.post("/applications/:id/submit", requireAuth, async (req, res): Promise<v
   }
 
   const [profile] = await db.select().from(studentProfilesTable).where(eq(studentProfilesTable.userId, userId));
-  if (!profile || (profile.completionPercentage ?? 0) < 80) {
-    res.status(400).json({ error: "Your profile must be at least 80% complete before submitting. Please complete your profile first." });
+  if (!profile || (profile.completionPercentage ?? 0) < 100) {
+    res.status(400).json({ error: "Your profile must be 100% complete before submitting. Please complete your profile first." });
     return;
   }
 

@@ -216,7 +216,7 @@ export default function StudentApplications() {
   const createApplication = useCreateApplication();
 
   const profilePct = (profileData as any)?.completionPercentage ?? 0;
-  const profileComplete = profilePct >= 80;
+  const profileComplete = profilePct >= 100;
 
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationSchema),
@@ -307,7 +307,7 @@ export default function StudentApplications() {
           <UserCheck className="h-4 w-4 text-amber-600" />
           <AlertTitle className="text-amber-800">Profile Incomplete — {profilePct}% done</AlertTitle>
           <AlertDescription className="text-amber-700 text-sm">
-            Your profile must be at least <strong>80% complete</strong> before you can start or submit an application.
+            Your profile must be <strong>100% complete</strong> before you can start or submit an application.
             Please go to <strong>My Profile</strong> and fill in your personal details, academic records, and upload your photo.
           </AlertDescription>
         </Alert>
@@ -323,7 +323,7 @@ export default function StudentApplications() {
           <DialogTrigger asChild>
             <Button
               disabled={openSessions.length === 0 || !profileComplete}
-              title={!profileComplete ? `Complete your profile to at least 80% (currently ${profilePct}%)` : undefined}
+              title={!profileComplete ? `Complete your profile to 100% before applying (currently ${profilePct}%)` : undefined}
             >
               <Plus className="mr-2 h-4 w-4" />
               New Application
