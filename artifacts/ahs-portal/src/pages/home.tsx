@@ -420,8 +420,7 @@ export default function Home() {
               { icon: GraduationCap, label: "8 Programs", sub: "Allied Health Sciences" },
               { icon: Award, label: "320 Seats", sub: "Per Admission Session" },
               { icon: Shield, label: "HEC Recognized", sub: "Fully Accredited" },
-              { icon: BookOpen, label: "Established 2009", sub: "Nishtar Medical University" },
-              { icon: Users, label: "1,200+ Alumni", sub: "Across Pakistan" },
+              { icon: BookOpen, label: "Established 2022", sub: "Nishtar Medical University" },
             ].map(({ icon: Icon, label, sub }) => (
               <motion.div key={label} variants={fadeUp} className="flex items-center gap-3 px-8 py-1.5">
                 <Icon className="h-5 w-5 flex-shrink-0" style={{ color: Y }} />
