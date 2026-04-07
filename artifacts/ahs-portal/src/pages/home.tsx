@@ -135,7 +135,7 @@ function DotGrid({ className = "" }: { className?: string }) {
   return (
     <div className={`absolute pointer-events-none ${className}`} aria-hidden>
       {Array.from({ length: 20 }).map((_, i) => (
-        <span key={i} className="inline-block m-1.5 h-1.5 w-1.5 rounded-full" style={{ background: "rgba(1,65,28,0.18)" }} />
+        <span key={i} className="inline-block m-1.5 h-1.5 w-1.5 rounded-full" style={{ background: "rgba(234,179,8,0.55)" }} />
       ))}
     </div>
   );
@@ -425,11 +425,11 @@ export default function Home() {
                     <motion.div
                       animate={{ y: [0, -7, 0] }}
                       transition={{ duration: 3.5 + floatDelay, repeat: Infinity, ease: "easeInOut", delay: floatDelay }}
-                      className="bg-white rounded-xl px-4 py-3 shadow-xl flex items-center gap-3"
-                      style={{ boxShadow: "0 8px 28px rgba(0,0,0,0.18)" }}
+                      className="rounded-xl px-4 py-3 shadow-xl flex items-center gap-3"
+                      style={{ background: "#FEF9C3", boxShadow: "0 8px 28px rgba(234,179,8,0.25)" }}
                     >
                       <p className="text-2xl font-black" style={{ color: G }}><AnimatedCounter to={value} suffix={suffix} /></p>
-                      <p className="text-[11px] font-semibold text-slate-500 leading-tight max-w-[60px]">{label}</p>
+                      <p className="text-[11px] font-semibold text-slate-600 leading-tight max-w-[60px]">{label}</p>
                     </motion.div>
                   </motion.div>
                 ))}
@@ -445,10 +445,10 @@ export default function Home() {
                 <motion.div
                   animate={{ y: [0, 6, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="bg-white rounded-xl px-4 py-3 shadow-xl"
-                  style={{ boxShadow: "0 8px 28px rgba(0,0,0,0.18)" }}
+                  className="rounded-xl px-4 py-3 shadow-xl"
+                  style={{ background: "#FEF9C3", boxShadow: "0 8px 28px rgba(234,179,8,0.25)" }}
                 >
-                  <p className="text-[11px] font-bold text-slate-500 mb-0.5">Students Enrolled</p>
+                  <p className="text-[11px] font-bold text-slate-600 mb-0.5">Students Enrolled</p>
                   <p className="text-xl font-black" style={{ color: G }}><AnimatedCounter to={1200} suffix="+" /></p>
                 </motion.div>
               </motion.div>
