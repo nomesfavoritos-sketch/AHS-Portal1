@@ -101,12 +101,10 @@ const profileSchema = z.object({
   matricTotal: z.coerce.number().optional().or(z.literal(0)),
   matricYear: z.coerce.number().optional().or(z.literal(0)),
   matricBoard: z.string().optional().or(z.literal("")),
-  matricRoll: z.string().optional().or(z.literal("")),
   interMarks: z.coerce.number().optional().or(z.literal(0)),
   interTotal: z.coerce.number().optional().or(z.literal(0)),
   interYear: z.coerce.number().optional().or(z.literal(0)),
   interBoard: z.string().optional().or(z.literal("")),
-  interRoll: z.string().optional().or(z.literal("")),
   additionalQualifications: z.array(additionalQualSchema).optional().default([]),
 });
 
@@ -140,12 +138,10 @@ export default function StudentProfile() {
       matricTotal: (profile as any)?.matricTotal || 1100,
       matricYear: (profile as any)?.matricYear || 0,
       matricBoard: (profile as any)?.matricBoard || "",
-      matricRoll: (profile as any)?.matricRoll || "",
       interMarks: (profile as any)?.interMarks || 0,
       interTotal: (profile as any)?.interTotal || 1100,
       interYear: (profile as any)?.interYear || new Date().getFullYear(),
       interBoard: (profile as any)?.interBoard || "",
-      interRoll: (profile as any)?.interRoll || "",
       additionalQualifications: (profile as any)?.additionalQualifications || [],
     },
   });
@@ -321,13 +317,7 @@ export default function StudentProfile() {
                       {/* Matriculation */}
                       <div>
                         <h3 className="text-sm font-semibold mb-3 text-foreground">Matriculation (10th Grade)</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                          <FormField control={form.control} name="matricRoll"
-                            render={({ field }) => (
-                              <FormItem><FormLabel>Roll No.</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
-                              </FormItem>
-                            )} />
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           <FormField control={form.control} name="matricYear"
                             render={({ field }) => (
                               <FormItem><FormLabel>Passing Year</FormLabel>
@@ -365,13 +355,7 @@ export default function StudentProfile() {
                       {/* Intermediate / FSc */}
                       <div>
                         <h3 className="text-sm font-semibold mb-3 text-foreground">Intermediate / FSc (12th Grade)</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                          <FormField control={form.control} name="interRoll"
-                            render={({ field }) => (
-                              <FormItem><FormLabel>Roll No.</FormLabel>
-                                <FormControl><Input {...field} /></FormControl>
-                              </FormItem>
-                            )} />
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           <FormField control={form.control} name="interYear"
                             render={({ field }) => (
                               <FormItem><FormLabel>Passing Year</FormLabel>
