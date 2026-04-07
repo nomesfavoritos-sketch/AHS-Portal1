@@ -38,6 +38,10 @@ tags:
     description: Dashboard summaries
   - name: students
     description: Joined students
+  - name: settings
+    description: System settings and merit formula
+  - name: seatMatrix
+    description: Program seat matrix
 
 paths:
   /healthz:
@@ -867,6 +871,194 @@ paths:
               schema:
                 $ref: "#/components/schemas/MeritListWithEntries"
 
+  /merit-lists/{id}/publish:
+    patch:
+      operationId: publishMeritList
+      tags: [merit]
+      summary: Publish a merit list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Merit list published
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeritList"
+
+  /merit-lists/{id}/freeze:
+    patch:
+      operationId: freezeMeritList
+      tags: [merit]
+      summary: Freeze a merit list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Merit list frozen
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeritList"
+
+  /merit-lists/{id}/recalculate:
+    post:
+      operationId: recalculateMeritList
+      tags: [merit]
+      summary: Recalculate a merit list
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Merit list recalculated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeritListWithEntries"
+
+  # MERIT SEARCH (public)
+  /merit-search:
+    get:
+      operationId: meritSearch
+      tags: [merit]
+      summary: Public merit search by CNIC or application number
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Merit search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MeritSearchResult"
+
+  # SYSTEM SETTINGS
+  /settings:
+    get:
+      operationId: listSettings
+      tags: [settings]
+      summary: List all system settings
+      responses:
+        "200":
+          description: Settings list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SystemSetting"
+
+  /settings/{key}:
+    patch:
+      operationId: updateSetting
+      tags: [settings]
+      summary: Update a system setting
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSettingBody"
+      responses:
+        "200":
+          description: Setting updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemSetting"
+
+  # SEAT MATRIX
+  /seat-matrix:
+    get:
+      operationId: listSeatMatrix
+      tags: [seatMatrix]
+      summary: List seat matrix entries
+      parameters:
+        - name: sessionId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: programId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Seat matrix entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SeatMatrix"
+
+    post:
+      operationId: createSeatMatrix
+      tags: [seatMatrix]
+      summary: Create seat matrix entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSeatMatrixBody"
+      responses:
+        "201":
+          description: Seat matrix created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeatMatrix"
+
+  /seat-matrix/{id}:
+    patch:
+      operationId: updateSeatMatrix
+      tags: [seatMatrix]
+      summary: Update seat matrix entry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSeatMatrixBody"
+      responses:
+        "200":
+          description: Seat matrix updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeatMatrix"
+
   # VERIFICATION
   /verifications:
     get:
@@ -1384,6 +1576,14 @@ components:
           type: string
         endDate:
           type: string
+        correctionWindowStart:
+          type: ["string", "null"]
+        correctionWindowEnd:
+          type: ["string", "null"]
+        meritPublicationDate:
+          type: ["string", "null"]
+        joiningDeadline:
+          type: ["string", "null"]
         isActive:
           type: boolean
         status:
@@ -1403,6 +1603,14 @@ components:
           type: string
         endDate:
           type: string
+        correctionWindowStart:
+          type: ["string", "null"]
+        correctionWindowEnd:
+          type: ["string", "null"]
+        meritPublicationDate:
+          type: ["string", "null"]
+        joiningDeadline:
+          type: ["string", "null"]
         isActive:
           type: boolean
         status:
@@ -1607,15 +1815,53 @@ components:
           type: integer
         programId:
           type: integer
+        quotaId:
+          type: ["integer", "null"]
+        listNumber:
+          type: integer
+        versionNumber:
+          type: integer
         publishedAt:
+          type: ["string", "null"]
+        frozenAt:
           type: ["string", "null"]
         isPublished:
           type: boolean
+        isFrozen:
+          type: boolean
         totalEntries:
           type: integer
+        generatedBy:
+          type: ["integer", "null"]
+        publishedBy:
+          type: ["integer", "null"]
         createdAt:
           type: string
-      required: [id, name, sessionId, programId, isPublished, totalEntries, createdAt]
+      required: [id, name, sessionId, programId, listNumber, versionNumber, isPublished, isFrozen, totalEntries, createdAt]
+
+    MeritBreakdown:
+      type: object
+      properties:
+        matricMarks:
+          type: ["number", "null"]
+        matricTotal:
+          type: ["number", "null"]
+        matricWeight:
+          type: ["number", "null"]
+        matricWeightedScore:
+          type: ["number", "null"]
+        fscMarks:
+          type: ["number", "null"]
+        fscTotal:
+          type: ["number", "null"]
+        fscWeight:
+          type: ["number", "null"]
+        fscWeightedScore:
+          type: ["number", "null"]
+        rawScore:
+          type: ["number", "null"]
+        normalizedScore:
+          type: ["number", "null"]
 
     MeritListEntry:
       type: object
@@ -1626,10 +1872,22 @@ components:
           type: integer
         applicationId:
           type: integer
+        quotaId:
+          type: ["integer", "null"]
         rank:
           type: integer
         meritScore:
           type: number
+        meritScoreRaw:
+          type: ["number", "null"]
+        meritScoreNormalized:
+          type: ["number", "null"]
+        matricScore:
+          type: ["number", "null"]
+        fscScore:
+          type: ["number", "null"]
+        meritBreakdown:
+          $ref: "#/components/schemas/MeritBreakdown"
         status:
           type: string
         application:
@@ -1647,9 +1905,19 @@ components:
           type: integer
         programId:
           type: integer
+        quotaId:
+          type: ["integer", "null"]
+        listNumber:
+          type: integer
+        versionNumber:
+          type: integer
         publishedAt:
           type: ["string", "null"]
+        frozenAt:
+          type: ["string", "null"]
         isPublished:
+          type: boolean
+        isFrozen:
           type: boolean
         totalEntries:
           type: integer
@@ -1659,7 +1927,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/MeritListEntry"
-      required: [id, name, sessionId, programId, isPublished, totalEntries, createdAt, entries]
+      required: [id, name, sessionId, programId, listNumber, versionNumber, isPublished, isFrozen, totalEntries, createdAt, entries]
 
     CreateMeritListBody:
       type: object
@@ -1670,7 +1938,139 @@ components:
           type: integer
         programId:
           type: integer
+        quotaId:
+          type: ["integer", "null"]
+        listNumber:
+          type: integer
+        eligibilityFilters:
+          type: object
+          properties:
+            requirePaymentVerified:
+              type: boolean
+            requireDocumentsComplete:
+              type: boolean
+            statuses:
+              type: array
+              items:
+                type: string
       required: [name, sessionId, programId]
+
+    MeritSearchResult:
+      type: object
+      properties:
+        applicationNumber:
+          type: string
+        studentName:
+          type: string
+        cnicMasked:
+          type: string
+        programName:
+          type: string
+        sessionName:
+          type: string
+        meritScore:
+          type: ["number", "null"]
+        meritScoreNormalized:
+          type: ["number", "null"]
+        rank:
+          type: ["integer", "null"]
+        quotaName:
+          type: ["string", "null"]
+        listNumber:
+          type: ["integer", "null"]
+        meritListName:
+          type: ["string", "null"]
+        status:
+          type: string
+        isSelected:
+          type: boolean
+      required: [applicationNumber, studentName, cnicMasked, programName, sessionName, status, isSelected]
+
+    SystemSetting:
+      type: object
+      properties:
+        id:
+          type: integer
+        key:
+          type: string
+        value:
+          type: string
+        description:
+          type: ["string", "null"]
+        updatedAt:
+          type: string
+      required: [id, key, value, updatedAt]
+
+    UpdateSettingBody:
+      type: object
+      properties:
+        value:
+          type: string
+      required: [value]
+
+    SeatMatrix:
+      type: object
+      properties:
+        id:
+          type: integer
+        programId:
+          type: integer
+        sessionId:
+          type: integer
+        totalSeats:
+          type: integer
+        openMeritSeats:
+          type: integer
+        minoritySeats:
+          type: integer
+        disabilitySeats:
+          type: integer
+        nmuEmployeeSeats:
+          type: integer
+        districtSeats:
+          type: array
+          items:
+            type: object
+            properties:
+              district:
+                type: string
+              seats:
+                type: integer
+            required: [district, seats]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required: [id, programId, sessionId, totalSeats, openMeritSeats, minoritySeats, disabilitySeats, nmuEmployeeSeats, createdAt, updatedAt]
+
+    CreateSeatMatrixBody:
+      type: object
+      properties:
+        programId:
+          type: integer
+        sessionId:
+          type: integer
+        totalSeats:
+          type: integer
+        openMeritSeats:
+          type: integer
+        minoritySeats:
+          type: integer
+        disabilitySeats:
+          type: integer
+        nmuEmployeeSeats:
+          type: integer
+        districtSeats:
+          type: array
+          items:
+            type: object
+            properties:
+              district:
+                type: string
+              seats:
+                type: integer
+            required: [district, seats]
+      required: [programId, sessionId, totalSeats, openMeritSeats, minoritySeats, disabilitySeats, nmuEmployeeSeats]
 
     # VERIFICATION
     VerificationDecision:

@@ -1,0 +1,101 @@
+Build Phase 3 of AHS Portal.
+
+PHASE 3 GOAL:
+Implement the merit calculation engine, seat matrix, quota system, merit list generation, publication workflow, and public/student merit checking.
+
+REQUIRED IN PHASE 3:
+
+1. Session management
+- create admission sessions
+- application start/end date
+- correction/amendment window
+- merit publication dates
+- joining deadline
+
+2. Program seat matrix
+For each program allow admin to define:
+- total seats
+- open merit seats
+- minority quota seats
+- disability quota seats
+- optional district-wise segmentation
+
+3. Merit formula engine
+Build a configurable merit engine.
+Initial formula:
+- Matric weight = 10%
+- FSc weight = 70%
+
+Because total = 80, store:
+- raw merit score out of 80
+- normalized merit score out of 100
+
+Admin must be able to change weights later from settings without code changes.
+
+4. Merit calculation logic
+- calculate all merit server-side only
+- no client-side trust
+- store full merit breakdown for each application
+- support tie-breakers configurable by admin
+
+5. Eligibility filters
+Support filters such as:
+- only submitted applications
+- only payment-verified applications if admin chooses
+- only complete document applications if required
+- quota-specific filtering
+
+6. Merit list generation
+Admin can:
+- generate merit list by program
+- generate by quota category
+- create 1st, 2nd, 3rd and later merit lists
+- preview before publish
+- publish/freeze merit lists
+- export to PDF and Excel
+
+7. Merit list UI
+Create premium tables showing:
+- merit rank
+- application number
+- student name
+- CNIC masked or policy-based
+- marks
+- merit score
+- quota
+- district if enabled
+- status
+
+8. Public merit search
+Build a merit search page where student can check status by:
+- CNIC
+- application number
+
+9. Student dashboard merit status
+Show:
+- merit score
+- applied programs
+- whether selected or not
+- which merit list number included student
+- next steps instructions
+
+10. Admin controls
+- recalculate merit
+- freeze published lists
+- version merit lists
+- audit who generated/published each list
+
+11. Deliverables
+- working merit engine
+- configurable formula
+- seat matrix
+- quota handling
+- published merit lists
+- public merit search
+- exports
+
+IMPORTANT:
+- keep everything auditable
+- do not hard-code seats or formulas
+- use robust status management
+- ensure lists are reproducible

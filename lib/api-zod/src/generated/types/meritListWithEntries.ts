@@ -13,8 +13,15 @@ export interface MeritListWithEntries {
   sessionId: number;
   programId: number;
   /** @nullable */
+  quotaId?: number | null;
+  listNumber: number;
+  versionNumber: number;
+  /** @nullable */
   publishedAt?: string | null;
+  /** @nullable */
+  frozenAt?: string | null;
   isPublished: boolean;
+  isFrozen: boolean;
   totalEntries: number;
   createdAt: string;
   entries: MeritListEntry[];

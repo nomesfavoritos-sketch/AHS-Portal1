@@ -6,13 +6,25 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { Application } from "./application";
+import type { MeritBreakdown } from "./meritBreakdown";
 
 export interface MeritListEntry {
   id: number;
   meritListId: number;
   applicationId: number;
+  /** @nullable */
+  quotaId?: number | null;
   rank: number;
   meritScore: number;
+  /** @nullable */
+  meritScoreRaw?: number | null;
+  /** @nullable */
+  meritScoreNormalized?: number | null;
+  /** @nullable */
+  matricScore?: number | null;
+  /** @nullable */
+  fscScore?: number | null;
+  meritBreakdown?: MeritBreakdown;
   status: string;
   application: Application;
 }

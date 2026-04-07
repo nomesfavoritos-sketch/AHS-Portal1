@@ -32,9 +32,9 @@ pnpm workspace monorepo using TypeScript.
 | finance_verifier | finance@ahscollege.edu.pk / Admin@1234 |
 | student | student@ahscollege.edu.pk / Student@1234 |
 
-## Database Schema (13 tables)
+## Database Schema (15 tables)
 
-`users`, `programs`, `sessions`, `quotas`, `studentProfiles`, `applications`, `documents`, `challans`, `meritLists`, `meritListEntries`, `verifications`, `notices`, `auditLogs`, `joinedStudents`
+`users`, `programs`, `sessions` (+ correctionWindowStart/End, meritPublicationDate, joiningDeadline), `quotas`, `studentProfiles`, `applications` (+ meritScore/Raw/Breakdown), `documents`, `challans`, `meritLists` (+ quotaId, listNumber, versionNumber, isFrozen, frozenAt, eligibilityFilters), `meritListEntries` (+ matricScore, fscScore, meritScoreRaw/Normalized, meritBreakdown), `verifications`, `notices`, `auditLogs`, `joinedStudents`, **`systemSettings`**, **`programSeatMatrix`**
 
 Session table: `session` (managed by connect-pg-simple, created manually).
 
@@ -42,8 +42,9 @@ Session table: `session` (managed by connect-pg-simple, created manually).
 
 - `/` — Landing page with notices and CTA
 - `/login`, `/register`, `/forgot-password`
-- `/admin/*` — Admin layout: dashboard, programs, sessions, quotas, applications, challans, merit-lists, verification, students, notices, audit-logs, users, settings
-- `/student/*` — Student layout: dashboard, profile, applications, challans, documents, merit, notices
+- `/merit-search` — **Public** CNIC/application-number merit search (no login required)
+- `/admin/*` — Admin layout: dashboard, programs (+ seat matrix section), sessions (+ milestone dates), quotas, applications, challans, merit-lists (full engine UI), verification, students, notices, audit-logs, users, settings (merit formula)
+- `/student/*` — Student layout: dashboard, profile, applications, challans, documents, merit (detailed rank + breakdown), notices
 
 ## API Routes (prefix: `/api`)
 
@@ -52,8 +53,11 @@ Session table: `session` (managed by connect-pg-simple, created manually).
 - `POST /api/auth/register`, `POST /api/auth/forgot-password`
 - `/api/users`, `/api/programs`, `/api/sessions`, `/api/quotas`
 - `/api/applications`, `/api/challans`, `/api/documents`
-- `/api/merit-lists`, `/api/verifications`, `/api/notices`
-- `/api/audit-logs`, `/api/joined-students`
+- `/api/merit-lists` — CRUD, publish, freeze, recalculate
+- `/api/merit-search` — Public CNIC/app-number merit search (no auth)
+- `/api/settings` — GET/PATCH system settings (merit formula keys)
+- `/api/seat-matrix` — CRUD seat allocation per program+session
+- `/api/verifications`, `/api/notices`, `/api/audit-logs`, `/api/joined-students`
 - `GET /api/dashboard/summary`
 
 ## Key Commands
@@ -82,9 +86,21 @@ Session table: `session` (managed by connect-pg-simple, created manually).
 
 BSMLT, BSMIT (Radiology), BSRDT (Renal Dialysis), BSOOT (Optometry), BSANT (Anesthesia), BSEND (Endoscopy), BSDNT (Dental), BSOPT (Orthotics & Prosthetics)
 
-## Merit Score Formula
+## Merit Score Formula (Phase 3 — Configurable)
 
-10% matric percentage + 40% inter percentage (additional fields TBD)
+`merit% = ((matric/matricTotal × matric_weight) + (fsc/fscTotal × fsc_weight)) / raw_total × 100`
+
+Defaults: matric_weight=10, fsc_weight=70, tie_breaker=fsc_marks, raw_total=80.
+All weights stored in `system_settings` table and editable via `/admin/settings`.
+
+## Phase 3 Features (Merit Engine, Seat Matrix, Public Search)
+
+- **Configurable Merit Formula**: weights stored in DB, editable live via admin settings page
+- **Merit List Engine**: generate ranked lists per program/session/quota, publish, freeze, recalculate, export CSV
+- **Seat Matrix**: per program+session seat allocation (open merit, minority, disability, NMU employee)
+- **Public Merit Search**: `/merit-search` — no auth, search by CNIC or application number
+- **Session Milestones**: correction window start/end, merit publication date, joining deadline
+- **Student Merit Page**: shows detailed rank, merit score breakdown, status per published list
 
 ## Theme / Design
 

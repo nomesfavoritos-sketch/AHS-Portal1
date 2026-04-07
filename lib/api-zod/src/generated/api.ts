@@ -246,6 +246,10 @@ export const ListSessionsResponseItem = zod.object({
   year: zod.number(),
   startDate: zod.string(),
   endDate: zod.string(),
+  correctionWindowStart: zod.string().nullish(),
+  correctionWindowEnd: zod.string().nullish(),
+  meritPublicationDate: zod.string().nullish(),
+  joiningDeadline: zod.string().nullish(),
   isActive: zod.boolean(),
   status: zod.string(),
   createdAt: zod.string(),
@@ -260,6 +264,10 @@ export const CreateSessionBody = zod.object({
   year: zod.number(),
   startDate: zod.string(),
   endDate: zod.string(),
+  correctionWindowStart: zod.string().nullish(),
+  correctionWindowEnd: zod.string().nullish(),
+  meritPublicationDate: zod.string().nullish(),
+  joiningDeadline: zod.string().nullish(),
   isActive: zod.boolean(),
   status: zod.string(),
 });
@@ -277,6 +285,10 @@ export const GetSessionResponse = zod.object({
   year: zod.number(),
   startDate: zod.string(),
   endDate: zod.string(),
+  correctionWindowStart: zod.string().nullish(),
+  correctionWindowEnd: zod.string().nullish(),
+  meritPublicationDate: zod.string().nullish(),
+  joiningDeadline: zod.string().nullish(),
   isActive: zod.boolean(),
   status: zod.string(),
   createdAt: zod.string(),
@@ -294,6 +306,10 @@ export const UpdateSessionBody = zod.object({
   year: zod.number(),
   startDate: zod.string(),
   endDate: zod.string(),
+  correctionWindowStart: zod.string().nullish(),
+  correctionWindowEnd: zod.string().nullish(),
+  meritPublicationDate: zod.string().nullish(),
+  joiningDeadline: zod.string().nullish(),
   isActive: zod.boolean(),
   status: zod.string(),
 });
@@ -304,6 +320,10 @@ export const UpdateSessionResponse = zod.object({
   year: zod.number(),
   startDate: zod.string(),
   endDate: zod.string(),
+  correctionWindowStart: zod.string().nullish(),
+  correctionWindowEnd: zod.string().nullish(),
+  meritPublicationDate: zod.string().nullish(),
+  joiningDeadline: zod.string().nullish(),
   isActive: zod.boolean(),
   status: zod.string(),
   createdAt: zod.string(),
@@ -418,6 +438,10 @@ export const ListApplicationsResponse = zod.object({
         year: zod.number(),
         startDate: zod.string(),
         endDate: zod.string(),
+        correctionWindowStart: zod.string().nullish(),
+        correctionWindowEnd: zod.string().nullish(),
+        meritPublicationDate: zod.string().nullish(),
+        joiningDeadline: zod.string().nullish(),
         isActive: zod.boolean(),
         status: zod.string(),
         createdAt: zod.string(),
@@ -483,6 +507,10 @@ export const GetApplicationResponse = zod.object({
     year: zod.number(),
     startDate: zod.string(),
     endDate: zod.string(),
+    correctionWindowStart: zod.string().nullish(),
+    correctionWindowEnd: zod.string().nullish(),
+    meritPublicationDate: zod.string().nullish(),
+    joiningDeadline: zod.string().nullish(),
     isActive: zod.boolean(),
     status: zod.string(),
     createdAt: zod.string(),
@@ -540,6 +568,10 @@ export const UpdateApplicationResponse = zod.object({
     year: zod.number(),
     startDate: zod.string(),
     endDate: zod.string(),
+    correctionWindowStart: zod.string().nullish(),
+    correctionWindowEnd: zod.string().nullish(),
+    meritPublicationDate: zod.string().nullish(),
+    joiningDeadline: zod.string().nullish(),
     isActive: zod.boolean(),
     status: zod.string(),
     createdAt: zod.string(),
@@ -596,6 +628,10 @@ export const UpdateApplicationStatusResponse = zod.object({
     year: zod.number(),
     startDate: zod.string(),
     endDate: zod.string(),
+    correctionWindowStart: zod.string().nullish(),
+    correctionWindowEnd: zod.string().nullish(),
+    meritPublicationDate: zod.string().nullish(),
+    joiningDeadline: zod.string().nullish(),
     isActive: zod.boolean(),
     status: zod.string(),
     createdAt: zod.string(),
@@ -795,9 +831,16 @@ export const ListMeritListsResponseItem = zod.object({
   name: zod.string(),
   sessionId: zod.number(),
   programId: zod.number(),
+  quotaId: zod.number().nullish(),
+  listNumber: zod.number(),
+  versionNumber: zod.number(),
   publishedAt: zod.string().nullish(),
+  frozenAt: zod.string().nullish(),
   isPublished: zod.boolean(),
+  isFrozen: zod.boolean(),
   totalEntries: zod.number(),
+  generatedBy: zod.number().nullish(),
+  publishedBy: zod.number().nullish(),
   createdAt: zod.string(),
 });
 export const ListMeritListsResponse = zod.array(ListMeritListsResponseItem);
@@ -809,6 +852,15 @@ export const CreateMeritListBody = zod.object({
   name: zod.string(),
   sessionId: zod.number(),
   programId: zod.number(),
+  quotaId: zod.number().nullish(),
+  listNumber: zod.number().optional(),
+  eligibilityFilters: zod
+    .object({
+      requirePaymentVerified: zod.boolean().optional(),
+      requireDocumentsComplete: zod.boolean().optional(),
+      statuses: zod.array(zod.string()).optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -823,8 +875,13 @@ export const GetMeritListResponse = zod.object({
   name: zod.string(),
   sessionId: zod.number(),
   programId: zod.number(),
+  quotaId: zod.number().nullish(),
+  listNumber: zod.number(),
+  versionNumber: zod.number(),
   publishedAt: zod.string().nullish(),
+  frozenAt: zod.string().nullish(),
   isPublished: zod.boolean(),
+  isFrozen: zod.boolean(),
   totalEntries: zod.number(),
   createdAt: zod.string(),
   entries: zod.array(
@@ -832,8 +889,27 @@ export const GetMeritListResponse = zod.object({
       id: zod.number(),
       meritListId: zod.number(),
       applicationId: zod.number(),
+      quotaId: zod.number().nullish(),
       rank: zod.number(),
       meritScore: zod.number(),
+      meritScoreRaw: zod.number().nullish(),
+      meritScoreNormalized: zod.number().nullish(),
+      matricScore: zod.number().nullish(),
+      fscScore: zod.number().nullish(),
+      meritBreakdown: zod
+        .object({
+          matricMarks: zod.number().nullish(),
+          matricTotal: zod.number().nullish(),
+          matricWeight: zod.number().nullish(),
+          matricWeightedScore: zod.number().nullish(),
+          fscMarks: zod.number().nullish(),
+          fscTotal: zod.number().nullish(),
+          fscWeight: zod.number().nullish(),
+          fscWeightedScore: zod.number().nullish(),
+          rawScore: zod.number().nullish(),
+          normalizedScore: zod.number().nullish(),
+        })
+        .optional(),
       status: zod.string(),
       application: zod.object({
         id: zod.number(),
@@ -873,6 +949,10 @@ export const GetMeritListResponse = zod.object({
           year: zod.number(),
           startDate: zod.string(),
           endDate: zod.string(),
+          correctionWindowStart: zod.string().nullish(),
+          correctionWindowEnd: zod.string().nullish(),
+          meritPublicationDate: zod.string().nullish(),
+          joiningDeadline: zod.string().nullish(),
           isActive: zod.boolean(),
           status: zod.string(),
           createdAt: zod.string(),
@@ -880,6 +960,307 @@ export const GetMeritListResponse = zod.object({
       }),
     }),
   ),
+});
+
+/**
+ * @summary Publish a merit list
+ */
+export const PublishMeritListParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const PublishMeritListResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  sessionId: zod.number(),
+  programId: zod.number(),
+  quotaId: zod.number().nullish(),
+  listNumber: zod.number(),
+  versionNumber: zod.number(),
+  publishedAt: zod.string().nullish(),
+  frozenAt: zod.string().nullish(),
+  isPublished: zod.boolean(),
+  isFrozen: zod.boolean(),
+  totalEntries: zod.number(),
+  generatedBy: zod.number().nullish(),
+  publishedBy: zod.number().nullish(),
+  createdAt: zod.string(),
+});
+
+/**
+ * @summary Freeze a merit list
+ */
+export const FreezeMeritListParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const FreezeMeritListResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  sessionId: zod.number(),
+  programId: zod.number(),
+  quotaId: zod.number().nullish(),
+  listNumber: zod.number(),
+  versionNumber: zod.number(),
+  publishedAt: zod.string().nullish(),
+  frozenAt: zod.string().nullish(),
+  isPublished: zod.boolean(),
+  isFrozen: zod.boolean(),
+  totalEntries: zod.number(),
+  generatedBy: zod.number().nullish(),
+  publishedBy: zod.number().nullish(),
+  createdAt: zod.string(),
+});
+
+/**
+ * @summary Recalculate a merit list
+ */
+export const RecalculateMeritListParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const RecalculateMeritListResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  sessionId: zod.number(),
+  programId: zod.number(),
+  quotaId: zod.number().nullish(),
+  listNumber: zod.number(),
+  versionNumber: zod.number(),
+  publishedAt: zod.string().nullish(),
+  frozenAt: zod.string().nullish(),
+  isPublished: zod.boolean(),
+  isFrozen: zod.boolean(),
+  totalEntries: zod.number(),
+  createdAt: zod.string(),
+  entries: zod.array(
+    zod.object({
+      id: zod.number(),
+      meritListId: zod.number(),
+      applicationId: zod.number(),
+      quotaId: zod.number().nullish(),
+      rank: zod.number(),
+      meritScore: zod.number(),
+      meritScoreRaw: zod.number().nullish(),
+      meritScoreNormalized: zod.number().nullish(),
+      matricScore: zod.number().nullish(),
+      fscScore: zod.number().nullish(),
+      meritBreakdown: zod
+        .object({
+          matricMarks: zod.number().nullish(),
+          matricTotal: zod.number().nullish(),
+          matricWeight: zod.number().nullish(),
+          matricWeightedScore: zod.number().nullish(),
+          fscMarks: zod.number().nullish(),
+          fscTotal: zod.number().nullish(),
+          fscWeight: zod.number().nullish(),
+          fscWeightedScore: zod.number().nullish(),
+          rawScore: zod.number().nullish(),
+          normalizedScore: zod.number().nullish(),
+        })
+        .optional(),
+      status: zod.string(),
+      application: zod.object({
+        id: zod.number(),
+        applicationNumber: zod.string(),
+        userId: zod.number(),
+        sessionId: zod.number(),
+        programId: zod.number(),
+        quotaId: zod.number().nullish(),
+        status: zod.string(),
+        remarks: zod.string().nullish(),
+        submittedAt: zod.string().nullish(),
+        createdAt: zod.string(),
+        updatedAt: zod.string(),
+        user: zod.object({
+          id: zod.number(),
+          email: zod.string(),
+          fullName: zod.string(),
+          role: zod.string(),
+          phone: zod.string().nullish(),
+          isActive: zod.boolean(),
+          createdAt: zod.string(),
+          updatedAt: zod.string(),
+        }),
+        program: zod.object({
+          id: zod.number(),
+          name: zod.string(),
+          code: zod.string(),
+          duration: zod.string(),
+          seats: zod.number(),
+          description: zod.string().nullish(),
+          isActive: zod.boolean(),
+          createdAt: zod.string(),
+        }),
+        session: zod.object({
+          id: zod.number(),
+          name: zod.string(),
+          year: zod.number(),
+          startDate: zod.string(),
+          endDate: zod.string(),
+          correctionWindowStart: zod.string().nullish(),
+          correctionWindowEnd: zod.string().nullish(),
+          meritPublicationDate: zod.string().nullish(),
+          joiningDeadline: zod.string().nullish(),
+          isActive: zod.boolean(),
+          status: zod.string(),
+          createdAt: zod.string(),
+        }),
+      }),
+    }),
+  ),
+});
+
+/**
+ * @summary Public merit search by CNIC or application number
+ */
+export const MeritSearchQueryParams = zod.object({
+  query: zod.coerce.string(),
+});
+
+export const MeritSearchResponseItem = zod.object({
+  applicationNumber: zod.string(),
+  studentName: zod.string(),
+  cnicMasked: zod.string(),
+  programName: zod.string(),
+  sessionName: zod.string(),
+  meritScore: zod.number().nullish(),
+  meritScoreNormalized: zod.number().nullish(),
+  rank: zod.number().nullish(),
+  quotaName: zod.string().nullish(),
+  listNumber: zod.number().nullish(),
+  meritListName: zod.string().nullish(),
+  status: zod.string(),
+  isSelected: zod.boolean(),
+});
+export const MeritSearchResponse = zod.array(MeritSearchResponseItem);
+
+/**
+ * @summary List all system settings
+ */
+export const ListSettingsResponseItem = zod.object({
+  id: zod.number(),
+  key: zod.string(),
+  value: zod.string(),
+  description: zod.string().nullish(),
+  updatedAt: zod.string(),
+});
+export const ListSettingsResponse = zod.array(ListSettingsResponseItem);
+
+/**
+ * @summary Update a system setting
+ */
+export const UpdateSettingParams = zod.object({
+  key: zod.coerce.string(),
+});
+
+export const UpdateSettingBody = zod.object({
+  value: zod.string(),
+});
+
+export const UpdateSettingResponse = zod.object({
+  id: zod.number(),
+  key: zod.string(),
+  value: zod.string(),
+  description: zod.string().nullish(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary List seat matrix entries
+ */
+export const ListSeatMatrixQueryParams = zod.object({
+  sessionId: zod.coerce.number().nullish(),
+  programId: zod.coerce.number().nullish(),
+});
+
+export const ListSeatMatrixResponseItem = zod.object({
+  id: zod.number(),
+  programId: zod.number(),
+  sessionId: zod.number(),
+  totalSeats: zod.number(),
+  openMeritSeats: zod.number(),
+  minoritySeats: zod.number(),
+  disabilitySeats: zod.number(),
+  nmuEmployeeSeats: zod.number(),
+  districtSeats: zod
+    .array(
+      zod.object({
+        district: zod.string(),
+        seats: zod.number(),
+      }),
+    )
+    .optional(),
+  createdAt: zod.string(),
+  updatedAt: zod.string(),
+});
+export const ListSeatMatrixResponse = zod.array(ListSeatMatrixResponseItem);
+
+/**
+ * @summary Create seat matrix entry
+ */
+export const CreateSeatMatrixBody = zod.object({
+  programId: zod.number(),
+  sessionId: zod.number(),
+  totalSeats: zod.number(),
+  openMeritSeats: zod.number(),
+  minoritySeats: zod.number(),
+  disabilitySeats: zod.number(),
+  nmuEmployeeSeats: zod.number(),
+  districtSeats: zod
+    .array(
+      zod.object({
+        district: zod.string(),
+        seats: zod.number(),
+      }),
+    )
+    .optional(),
+});
+
+/**
+ * @summary Update seat matrix entry
+ */
+export const UpdateSeatMatrixParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateSeatMatrixBody = zod.object({
+  programId: zod.number(),
+  sessionId: zod.number(),
+  totalSeats: zod.number(),
+  openMeritSeats: zod.number(),
+  minoritySeats: zod.number(),
+  disabilitySeats: zod.number(),
+  nmuEmployeeSeats: zod.number(),
+  districtSeats: zod
+    .array(
+      zod.object({
+        district: zod.string(),
+        seats: zod.number(),
+      }),
+    )
+    .optional(),
+});
+
+export const UpdateSeatMatrixResponse = zod.object({
+  id: zod.number(),
+  programId: zod.number(),
+  sessionId: zod.number(),
+  totalSeats: zod.number(),
+  openMeritSeats: zod.number(),
+  minoritySeats: zod.number(),
+  disabilitySeats: zod.number(),
+  nmuEmployeeSeats: zod.number(),
+  districtSeats: zod
+    .array(
+      zod.object({
+        district: zod.string(),
+        seats: zod.number(),
+      }),
+    )
+    .optional(),
+  createdAt: zod.string(),
+  updatedAt: zod.string(),
 });
 
 /**

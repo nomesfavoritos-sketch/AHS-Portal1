@@ -13,6 +13,7 @@ import { ProtectedRoute } from "@/components/layout/protected-route";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { StudentLayout } from "@/components/layout/student-layout";
 
+import PublicMeritSearch from "@/pages/merit-search";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminPrograms from "@/pages/admin/programs";
 import AdminSessions from "@/pages/admin/sessions";
@@ -51,6 +52,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/merit-search" component={PublicMeritSearch} />
 
       {/* Admin Routes */}
       <Route path="/admin/*">

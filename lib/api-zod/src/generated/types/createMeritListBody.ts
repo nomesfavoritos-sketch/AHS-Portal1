@@ -5,9 +5,14 @@
  * AHS Portal API - Allied Health College, Nishtar Medical University
  * OpenAPI spec version: 0.1.0
  */
+import type { CreateMeritListBodyEligibilityFilters } from "./createMeritListBodyEligibilityFilters";
 
 export interface CreateMeritListBody {
   name: string;
   sessionId: number;
   programId: number;
+  /** @nullable */
+  quotaId?: number | null;
+  listNumber?: number;
+  eligibilityFilters?: CreateMeritListBodyEligibilityFilters;
 }

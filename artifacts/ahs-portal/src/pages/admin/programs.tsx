@@ -3,14 +3,18 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { 
-  useListPrograms, 
+import {
+  useListPrograms,
   getListProgramsQueryKey,
   useCreateProgram,
   useUpdateProgram,
-  useDeleteProgram 
+  useDeleteProgram,
+  useListSessions,
+  useListSeatMatrix,
+  useCreateSeatMatrix,
+  useUpdateSeatMatrix,
+  getListSeatMatrixQueryKey,
 } from "@workspace/api-client-react";
-import { format } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,10 +22,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Plus, Pencil, Trash2, GraduationCap } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Loader2, Plus, Pencil, Trash2, GraduationCap, Grid3X3, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Program } from "@workspace/api-client-react/src/generated/api.schemas";
 
@@ -449,6 +455,186 @@ export default function AdminPrograms() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <SeatMatrixSection programs={programs ?? []} />
     </div>
+  );
+}
+
+const seatMatrixSchema = z.object({
+  programId: z.coerce.number().min(1, "Program required"),
+  sessionId: z.coerce.number().min(1, "Session required"),
+  totalSeats: z.coerce.number().min(0),
+  openMeritSeats: z.coerce.number().min(0),
+  minoritySeats: z.coerce.number().min(0),
+  disabilitySeats: z.coerce.number().min(0),
+  nmuEmployeeSeats: z.coerce.number().min(0),
+});
+type SeatMatrixValues = z.infer<typeof seatMatrixSchema>;
+
+function SeatMatrixSection({ programs }: { programs: Program[] }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [filterSessionId, setFilterSessionId] = useState<string>("all");
+  const [isOpen, setIsOpen] = useState(false);
+  const [editRow, setEditRow] = useState<any | null>(null);
+
+  const { data: sessions } = useListSessions();
+  const { data: matrix, isLoading } = useListSeatMatrix(filterSessionId !== "all" ? { sessionId: Number(filterSessionId) } : {});
+  const createSeatMatrix = useCreateSeatMatrix();
+  const updateSeatMatrix = useUpdateSeatMatrix();
+
+  const form = useForm<SeatMatrixValues>({
+    resolver: zodResolver(seatMatrixSchema),
+    defaultValues: { programId: 0, sessionId: 0, totalSeats: 0, openMeritSeats: 0, minoritySeats: 0, disabilitySeats: 0, nmuEmployeeSeats: 0 },
+  });
+
+  const openCreate = () => { setEditRow(null); form.reset({ programId: 0, sessionId: 0, totalSeats: 0, openMeritSeats: 0, minoritySeats: 0, disabilitySeats: 0, nmuEmployeeSeats: 0 }); setIsOpen(true); };
+  const openEdit = (row: any) => {
+    setEditRow(row);
+    form.reset({ programId: row.programId, sessionId: row.sessionId, totalSeats: row.totalSeats, openMeritSeats: row.openMeritSeats, minoritySeats: row.minoritySeats, disabilitySeats: row.disabilitySeats, nmuEmployeeSeats: row.nmuEmployeeSeats });
+    setIsOpen(true);
+  };
+
+  const onSubmit = (data: SeatMatrixValues) => {
+    const invalidate = () => queryClient.invalidateQueries({ queryKey: getListSeatMatrixQueryKey() });
+    if (editRow) {
+      updateSeatMatrix.mutate({ id: editRow.id, data }, {
+        onSuccess: () => { toast({ title: "Seat matrix updated" }); setIsOpen(false); invalidate(); },
+        onError: () => toast({ title: "Failed to update", variant: "destructive" }),
+      });
+    } else {
+      createSeatMatrix.mutate({ data }, {
+        onSuccess: () => { toast({ title: "Seat matrix saved" }); setIsOpen(false); invalidate(); },
+        onError: () => toast({ title: "Failed to save", variant: "destructive" }),
+      });
+    }
+  };
+
+  const getProgramName = (id: number) => programs.find((p) => p.id === id)?.code ?? `Program ${id}`;
+  const getSessionName = (id: number) => sessions?.find((s) => s.id === id)?.name ?? `Session ${id}`;
+
+  return (
+    <>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2"><Grid3X3 className="h-5 w-5" />Seat Matrix</CardTitle>
+              <CardDescription>Session-wise seat allocation per program and quota category.</CardDescription>
+            </div>
+            <div className="flex items-center gap-3">
+              <Select value={filterSessionId} onValueChange={setFilterSessionId}>
+                <SelectTrigger className="w-48"><SelectValue placeholder="All sessions" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Sessions</SelectItem>
+                  {sessions?.map((s) => <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Button onClick={openCreate}><Plus className="mr-2 h-4 w-4" />Add Entry</Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex justify-center p-8"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+          ) : !matrix?.length ? (
+            <div className="text-center p-8 text-muted-foreground border rounded-lg border-dashed">
+              No seat allocations configured. Click "Add Entry" to set seats per session and program.
+            </div>
+          ) : (
+            <div className="rounded-md border overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/40">
+                    <TableHead>Session</TableHead>
+                    <TableHead>Program</TableHead>
+                    <TableHead className="text-center">Total</TableHead>
+                    <TableHead className="text-center">Open Merit</TableHead>
+                    <TableHead className="text-center">Minority</TableHead>
+                    <TableHead className="text-center">Disability</TableHead>
+                    <TableHead className="text-center">NMU Employee</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {matrix.map((row) => (
+                    <TableRow key={row.id}>
+                      <TableCell className="font-medium">{getSessionName(row.sessionId)}</TableCell>
+                      <TableCell>{getProgramName(row.programId)}</TableCell>
+                      <TableCell className="text-center font-bold">{row.totalSeats}</TableCell>
+                      <TableCell className="text-center">{row.openMeritSeats}</TableCell>
+                      <TableCell className="text-center">{row.minoritySeats}</TableCell>
+                      <TableCell className="text-center">{row.disabilitySeats}</TableCell>
+                      <TableCell className="text-center">{row.nmuEmployeeSeats}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" onClick={() => openEdit(row)}><Pencil className="h-4 w-4" /></Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{editRow ? "Edit Seat Allocation" : "Add Seat Allocation"}</DialogTitle>
+            <DialogDescription>Set seats for a program–session combination.</DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {!editRow && (
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField control={form.control} name="sessionId" render={({ field }) => (
+                    <FormItem><FormLabel>Session</FormLabel>
+                      <Select onValueChange={(v) => field.onChange(Number(v))} defaultValue="">
+                        <FormControl><SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger></FormControl>
+                        <SelectContent>{sessions?.map((s) => <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>)}</SelectContent>
+                      </Select>
+                    <FormMessage /></FormItem>
+                  )} />
+                  <FormField control={form.control} name="programId" render={({ field }) => (
+                    <FormItem><FormLabel>Program</FormLabel>
+                      <Select onValueChange={(v) => field.onChange(Number(v))} defaultValue="">
+                        <FormControl><SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger></FormControl>
+                        <SelectContent>{programs.map((p) => <SelectItem key={p.id} value={String(p.id)}>{p.code}</SelectItem>)}</SelectContent>
+                      </Select>
+                    <FormMessage /></FormItem>
+                  )} />
+                </div>
+              )}
+              <Separator />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField control={form.control} name="totalSeats" render={({ field }) => (
+                  <FormItem><FormLabel>Total Seats</FormLabel><FormControl><Input type="number" min={0} {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="openMeritSeats" render={({ field }) => (
+                  <FormItem><FormLabel>Open Merit</FormLabel><FormControl><Input type="number" min={0} {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="minoritySeats" render={({ field }) => (
+                  <FormItem><FormLabel>Minority Seats</FormLabel><FormControl><Input type="number" min={0} {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="disabilitySeats" render={({ field }) => (
+                  <FormItem><FormLabel>Disability Seats</FormLabel><FormControl><Input type="number" min={0} {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+                <FormField control={form.control} name="nmuEmployeeSeats" render={({ field }) => (
+                  <FormItem><FormLabel>NMU Employee Seats</FormLabel><FormControl><Input type="number" min={0} {...field} /></FormControl><FormMessage /></FormItem>
+                )} />
+              </div>
+              <DialogFooter>
+                <Button type="submit" disabled={createSeatMatrix.isPending || updateSeatMatrix.isPending}>
+                  {(createSeatMatrix.isPending || updateSeatMatrix.isPending) ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                  {editRow ? "Save Changes" : "Create Allocation"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

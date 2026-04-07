@@ -179,6 +179,14 @@ export interface AdmissionSession {
   year: number;
   startDate: string;
   endDate: string;
+  /** @nullable */
+  correctionWindowStart?: string | null;
+  /** @nullable */
+  correctionWindowEnd?: string | null;
+  /** @nullable */
+  meritPublicationDate?: string | null;
+  /** @nullable */
+  joiningDeadline?: string | null;
   isActive: boolean;
   status: string;
   createdAt: string;
@@ -189,6 +197,14 @@ export interface CreateSessionBody {
   year: number;
   startDate: string;
   endDate: string;
+  /** @nullable */
+  correctionWindowStart?: string | null;
+  /** @nullable */
+  correctionWindowEnd?: string | null;
+  /** @nullable */
+  meritPublicationDate?: string | null;
+  /** @nullable */
+  joiningDeadline?: string | null;
   isActive: boolean;
   status: string;
 }
@@ -309,18 +325,63 @@ export interface MeritList {
   sessionId: number;
   programId: number;
   /** @nullable */
+  quotaId?: number | null;
+  listNumber: number;
+  versionNumber: number;
+  /** @nullable */
   publishedAt?: string | null;
+  /** @nullable */
+  frozenAt?: string | null;
   isPublished: boolean;
+  isFrozen: boolean;
   totalEntries: number;
+  /** @nullable */
+  generatedBy?: number | null;
+  /** @nullable */
+  publishedBy?: number | null;
   createdAt: string;
+}
+
+export interface MeritBreakdown {
+  /** @nullable */
+  matricMarks?: number | null;
+  /** @nullable */
+  matricTotal?: number | null;
+  /** @nullable */
+  matricWeight?: number | null;
+  /** @nullable */
+  matricWeightedScore?: number | null;
+  /** @nullable */
+  fscMarks?: number | null;
+  /** @nullable */
+  fscTotal?: number | null;
+  /** @nullable */
+  fscWeight?: number | null;
+  /** @nullable */
+  fscWeightedScore?: number | null;
+  /** @nullable */
+  rawScore?: number | null;
+  /** @nullable */
+  normalizedScore?: number | null;
 }
 
 export interface MeritListEntry {
   id: number;
   meritListId: number;
   applicationId: number;
+  /** @nullable */
+  quotaId?: number | null;
   rank: number;
   meritScore: number;
+  /** @nullable */
+  meritScoreRaw?: number | null;
+  /** @nullable */
+  meritScoreNormalized?: number | null;
+  /** @nullable */
+  matricScore?: number | null;
+  /** @nullable */
+  fscScore?: number | null;
+  meritBreakdown?: MeritBreakdown;
   status: string;
   application: Application;
 }
@@ -331,17 +392,104 @@ export interface MeritListWithEntries {
   sessionId: number;
   programId: number;
   /** @nullable */
+  quotaId?: number | null;
+  listNumber: number;
+  versionNumber: number;
+  /** @nullable */
   publishedAt?: string | null;
+  /** @nullable */
+  frozenAt?: string | null;
   isPublished: boolean;
+  isFrozen: boolean;
   totalEntries: number;
   createdAt: string;
   entries: MeritListEntry[];
 }
 
+export type CreateMeritListBodyEligibilityFilters = {
+  requirePaymentVerified?: boolean;
+  requireDocumentsComplete?: boolean;
+  statuses?: string[];
+};
+
 export interface CreateMeritListBody {
   name: string;
   sessionId: number;
   programId: number;
+  /** @nullable */
+  quotaId?: number | null;
+  listNumber?: number;
+  eligibilityFilters?: CreateMeritListBodyEligibilityFilters;
+}
+
+export interface MeritSearchResult {
+  applicationNumber: string;
+  studentName: string;
+  cnicMasked: string;
+  programName: string;
+  sessionName: string;
+  /** @nullable */
+  meritScore?: number | null;
+  /** @nullable */
+  meritScoreNormalized?: number | null;
+  /** @nullable */
+  rank?: number | null;
+  /** @nullable */
+  quotaName?: string | null;
+  /** @nullable */
+  listNumber?: number | null;
+  /** @nullable */
+  meritListName?: string | null;
+  status: string;
+  isSelected: boolean;
+}
+
+export interface SystemSetting {
+  id: number;
+  key: string;
+  value: string;
+  /** @nullable */
+  description?: string | null;
+  updatedAt: string;
+}
+
+export interface UpdateSettingBody {
+  value: string;
+}
+
+export type SeatMatrixDistrictSeatsItem = {
+  district: string;
+  seats: number;
+};
+
+export interface SeatMatrix {
+  id: number;
+  programId: number;
+  sessionId: number;
+  totalSeats: number;
+  openMeritSeats: number;
+  minoritySeats: number;
+  disabilitySeats: number;
+  nmuEmployeeSeats: number;
+  districtSeats?: SeatMatrixDistrictSeatsItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateSeatMatrixBodyDistrictSeatsItem = {
+  district: string;
+  seats: number;
+};
+
+export interface CreateSeatMatrixBody {
+  programId: number;
+  sessionId: number;
+  totalSeats: number;
+  openMeritSeats: number;
+  minoritySeats: number;
+  disabilitySeats: number;
+  nmuEmployeeSeats: number;
+  districtSeats?: CreateSeatMatrixBodyDistrictSeatsItem[];
 }
 
 export interface VerificationDecision {
@@ -545,6 +693,21 @@ export type ListDocumentsParams = {
 };
 
 export type ListMeritListsParams = {
+  /**
+   * @nullable
+   */
+  sessionId?: number | null;
+  /**
+   * @nullable
+   */
+  programId?: number | null;
+};
+
+export type MeritSearchParams = {
+  query: string;
+};
+
+export type ListSeatMatrixParams = {
   /**
    * @nullable
    */

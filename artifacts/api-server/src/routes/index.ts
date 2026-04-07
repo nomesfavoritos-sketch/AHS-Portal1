@@ -15,6 +15,8 @@ import auditLogsRouter from "./auditLogs";
 import dashboardRouter from "./dashboard";
 import joinedStudentsRouter from "./joinedStudents";
 import storageRouter from "./storage";
+import settingsRouter from "./settings";
+import seatMatrixRouter from "./seatMatrix";
 
 const router: IRouter = Router();
 
@@ -34,5 +36,7 @@ router.use(auditLogsRouter);
 router.use(dashboardRouter);
 router.use(joinedStudentsRouter);
 router.use(storageRouter);
+router.use(settingsRouter);
+router.use(seatMatrixRouter);
 
 export default router;

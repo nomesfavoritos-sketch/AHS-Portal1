@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, integer, doublePrecision, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 import { usersTable } from "./users";
@@ -16,6 +16,20 @@ export const applicationsTable = pgTable("applications", {
   status: text("status").notNull().default("draft"),
   remarks: text("remarks"),
   submittedAt: timestamp("submitted_at", { withTimezone: true }),
+  meritScore: doublePrecision("merit_score"),
+  meritScoreRaw: doublePrecision("merit_score_raw"),
+  meritBreakdown: jsonb("merit_breakdown").$type<{
+    matricMarks?: number;
+    matricTotal?: number;
+    matricWeight?: number;
+    matricWeightedScore?: number;
+    fscMarks?: number;
+    fscTotal?: number;
+    fscWeight?: number;
+    fscWeightedScore?: number;
+    rawScore?: number;
+    normalizedScore?: number;
+  }>().default({}),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });

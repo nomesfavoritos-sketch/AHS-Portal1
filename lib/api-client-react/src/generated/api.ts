@@ -33,6 +33,7 @@ import type {
   CreateNoticeBody,
   CreateProgramBody,
   CreateQuotaBody,
+  CreateSeatMatrixBody,
   CreateSessionBody,
   CreateUserBody,
   CreateVerificationBody,
@@ -48,21 +49,27 @@ import type {
   ListJoinedStudentsParams,
   ListMeritListsParams,
   ListNoticesParams,
+  ListSeatMatrixParams,
   ListUsersParams,
   ListVerificationsParams,
   LoginBody,
   MeritList,
   MeritListWithEntries,
+  MeritSearchParams,
+  MeritSearchResult,
   MessageResponse,
   Notice,
   PaymentChallan,
   Program,
   QuotaCategory,
   RegisterBody,
+  SeatMatrix,
   StudentDashboardSummary,
   StudentProfile,
+  SystemSetting,
   UpdateApplicationBody,
   UpdateProfileBody,
+  UpdateSettingBody,
   UpdateStatusBody,
   UpdateUserBody,
   User,
@@ -3559,6 +3566,781 @@ export function useGetMeritList<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Publish a merit list
+ */
+export const getPublishMeritListUrl = (id: number) => {
+  return `/api/merit-lists/${id}/publish`;
+};
+
+export const publishMeritList = async (
+  id: number,
+  options?: RequestInit,
+): Promise<MeritList> => {
+  return customFetch<MeritList>(getPublishMeritListUrl(id), {
+    ...options,
+    method: "PATCH",
+  });
+};
+
+export const getPublishMeritListMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof publishMeritList>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof publishMeritList>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["publishMeritList"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof publishMeritList>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return publishMeritList(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PublishMeritListMutationResult = NonNullable<
+  Awaited<ReturnType<typeof publishMeritList>>
+>;
+
+export type PublishMeritListMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Publish a merit list
+ */
+export const usePublishMeritList = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof publishMeritList>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof publishMeritList>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getPublishMeritListMutationOptions(options));
+};
+
+/**
+ * @summary Freeze a merit list
+ */
+export const getFreezeMeritListUrl = (id: number) => {
+  return `/api/merit-lists/${id}/freeze`;
+};
+
+export const freezeMeritList = async (
+  id: number,
+  options?: RequestInit,
+): Promise<MeritList> => {
+  return customFetch<MeritList>(getFreezeMeritListUrl(id), {
+    ...options,
+    method: "PATCH",
+  });
+};
+
+export const getFreezeMeritListMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof freezeMeritList>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof freezeMeritList>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["freezeMeritList"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof freezeMeritList>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return freezeMeritList(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type FreezeMeritListMutationResult = NonNullable<
+  Awaited<ReturnType<typeof freezeMeritList>>
+>;
+
+export type FreezeMeritListMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Freeze a merit list
+ */
+export const useFreezeMeritList = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof freezeMeritList>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof freezeMeritList>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getFreezeMeritListMutationOptions(options));
+};
+
+/**
+ * @summary Recalculate a merit list
+ */
+export const getRecalculateMeritListUrl = (id: number) => {
+  return `/api/merit-lists/${id}/recalculate`;
+};
+
+export const recalculateMeritList = async (
+  id: number,
+  options?: RequestInit,
+): Promise<MeritListWithEntries> => {
+  return customFetch<MeritListWithEntries>(getRecalculateMeritListUrl(id), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getRecalculateMeritListMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof recalculateMeritList>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof recalculateMeritList>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["recalculateMeritList"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof recalculateMeritList>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return recalculateMeritList(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RecalculateMeritListMutationResult = NonNullable<
+  Awaited<ReturnType<typeof recalculateMeritList>>
+>;
+
+export type RecalculateMeritListMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Recalculate a merit list
+ */
+export const useRecalculateMeritList = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof recalculateMeritList>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof recalculateMeritList>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getRecalculateMeritListMutationOptions(options));
+};
+
+/**
+ * @summary Public merit search by CNIC or application number
+ */
+export const getMeritSearchUrl = (params: MeritSearchParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/merit-search?${stringifiedParams}`
+    : `/api/merit-search`;
+};
+
+export const meritSearch = async (
+  params: MeritSearchParams,
+  options?: RequestInit,
+): Promise<MeritSearchResult[]> => {
+  return customFetch<MeritSearchResult[]>(getMeritSearchUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getMeritSearchQueryKey = (params?: MeritSearchParams) => {
+  return [`/api/merit-search`, ...(params ? [params] : [])] as const;
+};
+
+export const getMeritSearchQueryOptions = <
+  TData = Awaited<ReturnType<typeof meritSearch>>,
+  TError = ErrorType<unknown>,
+>(
+  params: MeritSearchParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof meritSearch>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getMeritSearchQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof meritSearch>>> = ({
+    signal,
+  }) => meritSearch(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof meritSearch>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type MeritSearchQueryResult = NonNullable<
+  Awaited<ReturnType<typeof meritSearch>>
+>;
+export type MeritSearchQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Public merit search by CNIC or application number
+ */
+
+export function useMeritSearch<
+  TData = Awaited<ReturnType<typeof meritSearch>>,
+  TError = ErrorType<unknown>,
+>(
+  params: MeritSearchParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof meritSearch>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getMeritSearchQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary List all system settings
+ */
+export const getListSettingsUrl = () => {
+  return `/api/settings`;
+};
+
+export const listSettings = async (
+  options?: RequestInit,
+): Promise<SystemSetting[]> => {
+  return customFetch<SystemSetting[]>(getListSettingsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListSettingsQueryKey = () => {
+  return [`/api/settings`] as const;
+};
+
+export const getListSettingsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListSettingsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listSettings>>> = ({
+    signal,
+  }) => listSettings({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listSettings>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListSettingsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listSettings>>
+>;
+export type ListSettingsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List all system settings
+ */
+
+export function useListSettings<
+  TData = Awaited<ReturnType<typeof listSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListSettingsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Update a system setting
+ */
+export const getUpdateSettingUrl = (key: string) => {
+  return `/api/settings/${key}`;
+};
+
+export const updateSetting = async (
+  key: string,
+  updateSettingBody: UpdateSettingBody,
+  options?: RequestInit,
+): Promise<SystemSetting> => {
+  return customFetch<SystemSetting>(getUpdateSettingUrl(key), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateSettingBody),
+  });
+};
+
+export const getUpdateSettingMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateSetting>>,
+    TError,
+    { key: string; data: BodyType<UpdateSettingBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateSetting>>,
+  TError,
+  { key: string; data: BodyType<UpdateSettingBody> },
+  TContext
+> => {
+  const mutationKey = ["updateSetting"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateSetting>>,
+    { key: string; data: BodyType<UpdateSettingBody> }
+  > = (props) => {
+    const { key, data } = props ?? {};
+
+    return updateSetting(key, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateSettingMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateSetting>>
+>;
+export type UpdateSettingMutationBody = BodyType<UpdateSettingBody>;
+export type UpdateSettingMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update a system setting
+ */
+export const useUpdateSetting = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateSetting>>,
+    TError,
+    { key: string; data: BodyType<UpdateSettingBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateSetting>>,
+  TError,
+  { key: string; data: BodyType<UpdateSettingBody> },
+  TContext
+> => {
+  return useMutation(getUpdateSettingMutationOptions(options));
+};
+
+/**
+ * @summary List seat matrix entries
+ */
+export const getListSeatMatrixUrl = (params?: ListSeatMatrixParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/seat-matrix?${stringifiedParams}`
+    : `/api/seat-matrix`;
+};
+
+export const listSeatMatrix = async (
+  params?: ListSeatMatrixParams,
+  options?: RequestInit,
+): Promise<SeatMatrix[]> => {
+  return customFetch<SeatMatrix[]>(getListSeatMatrixUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListSeatMatrixQueryKey = (params?: ListSeatMatrixParams) => {
+  return [`/api/seat-matrix`, ...(params ? [params] : [])] as const;
+};
+
+export const getListSeatMatrixQueryOptions = <
+  TData = Awaited<ReturnType<typeof listSeatMatrix>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListSeatMatrixParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listSeatMatrix>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListSeatMatrixQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listSeatMatrix>>> = ({
+    signal,
+  }) => listSeatMatrix(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listSeatMatrix>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListSeatMatrixQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listSeatMatrix>>
+>;
+export type ListSeatMatrixQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List seat matrix entries
+ */
+
+export function useListSeatMatrix<
+  TData = Awaited<ReturnType<typeof listSeatMatrix>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListSeatMatrixParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listSeatMatrix>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListSeatMatrixQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Create seat matrix entry
+ */
+export const getCreateSeatMatrixUrl = () => {
+  return `/api/seat-matrix`;
+};
+
+export const createSeatMatrix = async (
+  createSeatMatrixBody: CreateSeatMatrixBody,
+  options?: RequestInit,
+): Promise<SeatMatrix> => {
+  return customFetch<SeatMatrix>(getCreateSeatMatrixUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createSeatMatrixBody),
+  });
+};
+
+export const getCreateSeatMatrixMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createSeatMatrix>>,
+    TError,
+    { data: BodyType<CreateSeatMatrixBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createSeatMatrix>>,
+  TError,
+  { data: BodyType<CreateSeatMatrixBody> },
+  TContext
+> => {
+  const mutationKey = ["createSeatMatrix"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createSeatMatrix>>,
+    { data: BodyType<CreateSeatMatrixBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createSeatMatrix(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateSeatMatrixMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createSeatMatrix>>
+>;
+export type CreateSeatMatrixMutationBody = BodyType<CreateSeatMatrixBody>;
+export type CreateSeatMatrixMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create seat matrix entry
+ */
+export const useCreateSeatMatrix = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createSeatMatrix>>,
+    TError,
+    { data: BodyType<CreateSeatMatrixBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createSeatMatrix>>,
+  TError,
+  { data: BodyType<CreateSeatMatrixBody> },
+  TContext
+> => {
+  return useMutation(getCreateSeatMatrixMutationOptions(options));
+};
+
+/**
+ * @summary Update seat matrix entry
+ */
+export const getUpdateSeatMatrixUrl = (id: number) => {
+  return `/api/seat-matrix/${id}`;
+};
+
+export const updateSeatMatrix = async (
+  id: number,
+  createSeatMatrixBody: CreateSeatMatrixBody,
+  options?: RequestInit,
+): Promise<SeatMatrix> => {
+  return customFetch<SeatMatrix>(getUpdateSeatMatrixUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createSeatMatrixBody),
+  });
+};
+
+export const getUpdateSeatMatrixMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateSeatMatrix>>,
+    TError,
+    { id: number; data: BodyType<CreateSeatMatrixBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateSeatMatrix>>,
+  TError,
+  { id: number; data: BodyType<CreateSeatMatrixBody> },
+  TContext
+> => {
+  const mutationKey = ["updateSeatMatrix"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateSeatMatrix>>,
+    { id: number; data: BodyType<CreateSeatMatrixBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateSeatMatrix(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateSeatMatrixMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateSeatMatrix>>
+>;
+export type UpdateSeatMatrixMutationBody = BodyType<CreateSeatMatrixBody>;
+export type UpdateSeatMatrixMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update seat matrix entry
+ */
+export const useUpdateSeatMatrix = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateSeatMatrix>>,
+    TError,
+    { id: number; data: BodyType<CreateSeatMatrixBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateSeatMatrix>>,
+  TError,
+  { id: number; data: BodyType<CreateSeatMatrixBody> },
+  TContext
+> => {
+  return useMutation(getUpdateSeatMatrixMutationOptions(options));
+};
 
 /**
  * @summary List verification decisions

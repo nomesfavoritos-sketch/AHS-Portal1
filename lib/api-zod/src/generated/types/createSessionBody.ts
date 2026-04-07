@@ -11,6 +11,14 @@ export interface CreateSessionBody {
   year: number;
   startDate: string;
   endDate: string;
+  /** @nullable */
+  correctionWindowStart?: string | null;
+  /** @nullable */
+  correctionWindowEnd?: string | null;
+  /** @nullable */
+  meritPublicationDate?: string | null;
+  /** @nullable */
+  joiningDeadline?: string | null;
   isActive: boolean;
   status: string;
 }
