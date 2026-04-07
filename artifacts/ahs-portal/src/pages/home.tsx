@@ -512,21 +512,6 @@ export default function Home() {
               </motion.div>
             </motion.div>
 
-            {/* Mobile photo strip */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.3 }} className="relative h-52 sm:h-64 overflow-hidden mx-4 sm:mx-6 mb-2 rounded-2xl">
-              <div className="absolute inset-0 rounded-2xl" style={{ background: `linear-gradient(160deg, ${G} 0%, ${GA} 100%)` }} />
-              <img src={universityPhoto} alt="NMU Campus" className="w-full h-full object-cover object-center rounded-2xl" style={{ mixBlendMode: "luminosity", opacity: 0.55 }} />
-              <div className="absolute inset-0 rounded-2xl" style={{ background: `linear-gradient(180deg, rgba(1,65,28,0.15) 0%, rgba(1,65,28,0.50) 100%)` }} />
-              {/* mobile inline stats */}
-              <div className="absolute bottom-4 left-4 right-4 flex gap-2">
-                {[{ label: "Programs", value: 8 }, { label: "Seats", value: 320 }, { label: "Students", value: 1200, suffix: "+" }].map(({ label, value, suffix = "" }) => (
-                  <div key={label} className="bg-white/95 rounded-xl px-3 py-2 flex-1 text-center shadow-lg">
-                    <p className="text-[18px] font-black leading-none" style={{ color: G }}><AnimatedCounter to={value} suffix={suffix} /></p>
-                    <p className="text-[10px] font-semibold text-slate-500 mt-0.5">{label}</p>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
           </div>
         </section>
 
@@ -584,7 +569,7 @@ export default function Home() {
             <div>
               <Reveal>
                 <SectionLabel>Why Choose Us</SectionLabel>
-                <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-slate-900">
+                <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-4 text-slate-900">
                   Admissions Focused<br />
                   <span style={{ color: G }}>on Your Future</span>
                 </h2>
@@ -621,7 +606,7 @@ export default function Home() {
             <Reveal className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
               <div>
                 <SectionLabel>Our Programs</SectionLabel>
-                <h2 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">
+                <h2 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900">
                   8 Allied Health<br />
                   <span style={{ color: G }}>Disciplines</span>
                 </h2>
@@ -677,7 +662,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <Reveal className="text-center mb-14">
               <SectionLabel>Application Process</SectionLabel>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-slate-900">
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-4 text-slate-900">
                 Six Steps to <span style={{ color: G }}>Admission</span>
               </h2>
               <p className="text-slate-500 max-w-lg mx-auto text-[15px] leading-relaxed">
@@ -728,7 +713,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <Reveal className="text-center mb-14">
               <SectionLabel>Eligibility</SectionLabel>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-slate-900">
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-4 text-slate-900">
                 Admission <span style={{ color: G }}>Requirements</span>
               </h2>
             </Reveal>
@@ -777,7 +762,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
                 <div>
                   <SectionLabel>Latest Updates</SectionLabel>
-                  <h2 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">
+                  <h2 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900">
                     Important <span style={{ color: G }}>Notices</span>
                   </h2>
                 </div>
@@ -835,7 +820,7 @@ export default function Home() {
           <div className="max-w-3xl mx-auto text-center relative z-10">
             <Reveal>
               <SectionLabel>Merit Lists</SectionLabel>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-5">
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white mb-5">
                 Check Your Merit<br />
                 <span style={{ color: Y }}>Status Instantly</span>
               </h2>
@@ -858,7 +843,7 @@ export default function Home() {
           <div className="max-w-3xl mx-auto">
             <Reveal className="text-center mb-14">
               <SectionLabel>FAQ</SectionLabel>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-slate-900">
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-4 text-slate-900">
                 Frequently Asked <span style={{ color: G }}>Questions</span>
               </h2>
             </Reveal>
@@ -888,7 +873,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <Reveal className="text-center mb-14">
               <SectionLabel>Contact</SectionLabel>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900">
                 Get in <span style={{ color: G }}>Touch</span>
               </h2>
             </Reveal>
