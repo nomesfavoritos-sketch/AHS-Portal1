@@ -89,6 +89,15 @@ router.post("/applications", requireAuth, async (req, res): Promise<void> => {
     return;
   }
 
+  // Block if profile is not sufficiently complete
+  const [profile] = await db.select().from(studentProfilesTable).where(eq(studentProfilesTable.userId, userId));
+  if (!profile || (profile.completionPercentage ?? 0) < 80) {
+    res.status(400).json({
+      error: "Your profile must be at least 80% complete before you can submit an application. Please complete your profile first.",
+    });
+    return;
+  }
+
   const [existing] = await db.select().from(applicationsTable).where(
     and(
       eq(applicationsTable.userId, userId),
@@ -202,9 +211,15 @@ router.post("/applications/:id/submit", requireAuth, async (req, res): Promise<v
     return;
   }
 
+  const [challan] = await db.select().from(paymentChallansTable).where(eq(paymentChallansTable.applicationId, id));
+  if (!challan || !challan.paidSlipPath) {
+    res.status(400).json({ error: "You must upload the fee payment slip before submitting your application." });
+    return;
+  }
+
   const [profile] = await db.select().from(studentProfilesTable).where(eq(studentProfilesTable.userId, userId));
-  if (!profile || (profile.completionPercentage ?? 0) < 50) {
-    res.status(400).json({ error: "Please complete your profile (at least 50%) before submitting" });
+  if (!profile || (profile.completionPercentage ?? 0) < 80) {
+    res.status(400).json({ error: "Your profile must be at least 80% complete before submitting. Please complete your profile first." });
     return;
   }
 

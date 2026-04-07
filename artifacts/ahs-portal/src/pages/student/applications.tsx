@@ -11,7 +11,7 @@ import {
   useListPrograms,
   useListQuotas,
   useListChallans,
-  useUpdateApplicationStatus
+  useGetMyProfile,
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
 
@@ -23,7 +23,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Plus, CheckCircle, UploadCloud, AlertTriangle, ClipboardCheck, PartyPopper, XCircle, Clock, ShieldCheck } from "lucide-react";
+import { Loader2, Plus, CheckCircle, UploadCloud, AlertTriangle, ClipboardCheck, PartyPopper, XCircle, Clock, ShieldCheck, UserCheck } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ObjectUploader } from "@workspace/object-storage-web";
 
@@ -212,8 +212,11 @@ export default function StudentApplications() {
   const { data: programs } = useListPrograms();
   const { data: quotas } = useListQuotas();
   const { data: challansData } = useListChallans();
+  const { data: profileData } = useGetMyProfile();
   const createApplication = useCreateApplication();
-  const updateApplicationStatus = useUpdateApplicationStatus();
+
+  const profilePct = (profileData as any)?.completionPercentage ?? 0;
+  const profileComplete = profilePct >= 80;
 
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationSchema),
@@ -241,26 +244,30 @@ export default function StudentApplications() {
     );
   };
 
-  const handleFinalSubmit = (appId: number) => {
+  const handleFinalSubmit = async (appId: number) => {
     setIsSubmitting(true);
-    updateApplicationStatus.mutate(
-      { id: appId, data: { status: "submitted" } },
-      {
-        onSuccess: () => {
-          toast({ title: "Application submitted successfully" });
-          queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey() });
-          setIsSubmitting(false);
-        },
-        onError: (error) => {
-          toast({
-            title: "Submission failed",
-            description: error.error || "An error occurred",
-            variant: "destructive",
-          });
-          setIsSubmitting(false);
-        }
+    try {
+      const res = await fetch(`${import.meta.env.BASE_URL}api/applications/${appId}/submit`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+      const body = await res.json();
+      if (!res.ok) {
+        toast({
+          title: "Submission failed",
+          description: body?.error || "An error occurred",
+          variant: "destructive",
+        });
+        return;
       }
-    );
+      toast({ title: "Application submitted successfully", description: "Your application is now under review." });
+      queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey() });
+    } catch (e: any) {
+      toast({ title: "Submission failed", description: e?.message || "Network error", variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleUploadComplete = async (result: any, challanId: number, appId: number) => {
@@ -294,15 +301,30 @@ export default function StudentApplications() {
 
   return (
     <div className="space-y-6">
+      {/* Profile incomplete warning */}
+      {!profileComplete && (
+        <Alert className="border-amber-300 bg-amber-50">
+          <UserCheck className="h-4 w-4 text-amber-600" />
+          <AlertTitle className="text-amber-800">Profile Incomplete — {profilePct}% done</AlertTitle>
+          <AlertDescription className="text-amber-700 text-sm">
+            Your profile must be at least <strong>80% complete</strong> before you can start or submit an application.
+            Please go to <strong>My Profile</strong> and fill in your personal details, academic records, and upload your photo.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">My Applications</h1>
           <p className="text-muted-foreground">Manage your program applications and track their progress.</p>
         </div>
 
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+        <Dialog open={isCreateOpen} onOpenChange={(open) => { if (!profileComplete && open) return; setIsCreateOpen(open); }}>
           <DialogTrigger asChild>
-            <Button disabled={openSessions.length === 0}>
+            <Button
+              disabled={openSessions.length === 0 || !profileComplete}
+              title={!profileComplete ? `Complete your profile to at least 80% (currently ${profilePct}%)` : undefined}
+            >
               <Plus className="mr-2 h-4 w-4" />
               New Application
             </Button>
