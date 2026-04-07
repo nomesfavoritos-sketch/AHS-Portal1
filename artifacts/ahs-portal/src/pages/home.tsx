@@ -7,30 +7,32 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import {
   ArrowRight, CheckCircle, FileText, CreditCard, ClipboardCheck, Award, Users,
   GraduationCap, Search, Bell, Phone, Mail, MapPin, Microscope, Eye, Heart,
-  Activity, Smile, Bone, Shield, Star, Zap, Globe, BookOpen, FlaskConical
+  Activity, Smile, Bone, Shield, Star, Zap, Globe, BookOpen, FlaskConical, ChevronRight
 } from "lucide-react";
 import { format } from "date-fns";
 import universityPhoto from "@assets/jjjlllji_1775576930917.webp";
 import nmuLogo from "@assets/logo_(1)_1775576288927.webp";
 
-/* ─── Pakistan Institutional Green Palette ─── */
-// Primary: #01411C (flag green)
-// Emerald accent: #059669
-// Gold: #B7903A
-// Light green: #16a34a
+/* ─── Color tokens ─── */
+const G = "#01411C";       // Pakistan institutional green
+const GA = "#16a34a";      // light accent green
+const Y = "#EAB308";       // yellow accent
+const YL = "#FEF9C3";      // yellow light
+const CREAM = "#FDFBF4";   // hero cream background
+const DARK = "#0a1f0f";    // dark footer green
 
-/* ─── Framer Motion Variants ─── */
+/* ─── Variants ─── */
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.25, 0.46, 0.45, 0.94] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
 };
 const scaleIn = {
-  hidden: { opacity: 0, scale: 0.9 },
+  hidden: { opacity: 0, scale: 0.92 },
   show: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] } },
 };
-const staggerContainer = {
+const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.04 } },
 };
 
 /* ─── Animated Counter ─── */
@@ -52,16 +54,16 @@ function AnimatedCounter({ to, suffix = "", duration = 1.8 }: { to: number; suff
   return <span ref={ref}><span ref={nodeRef}>0{suffix}</span></span>;
 }
 
-/* ─── Scroll-reveal section ─── */
+/* ─── Scroll reveal ─── */
 function Reveal({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={{ duration: 0.7, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+      initial={{ opacity: 0, y: 36 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 36 }}
+      transition={{ duration: 0.65, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
       className={className}
     >
       {children}
@@ -69,7 +71,18 @@ function Reveal({ children, className = "", delay = 0 }: { children: React.React
   );
 }
 
-/* ─── Program config ─── */
+/* ─── Section label ─── */
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="inline-flex items-center gap-2 mb-3">
+      <span className="h-1 w-6 rounded-full" style={{ background: Y }} />
+      <span className="text-xs font-bold uppercase tracking-widest" style={{ color: G }}>{children}</span>
+      <span className="h-1 w-6 rounded-full" style={{ background: Y }} />
+    </div>
+  );
+}
+
+/* ─── Program icons ─── */
 const PROGRAM_ICONS: Record<string, React.ElementType> = {
   BSMLT: Microscope, BSMIT: Eye, BSRDT: Activity, BSOOT: Globe,
   BSANT: Heart, BSEND: FlaskConical, BSDNT: Smile, BSOPT: Bone,
@@ -102,7 +115,6 @@ const FAQ = [
   { q: "What happens after being selected for verification?", a: "Report to the Verification Desk at Allied Health College with all original documents during working hours: Monday–Friday, 8am–2pm." },
   { q: "Can I apply under a quota category?", a: "Yes. Special quotas are available for minorities, persons with disabilities, and children of NMU employees. Select your category during the application process and provide supporting documentation." },
 ];
-
 const CAT_STYLES: Record<string, string> = {
   general: "bg-slate-100 text-slate-700 border-slate-200",
   admission: "bg-green-50 text-green-800 border-green-200",
@@ -110,6 +122,26 @@ const CAT_STYLES: Record<string, string> = {
   payment: "bg-amber-50 text-amber-800 border-amber-200",
   urgent: "bg-red-50 text-red-700 border-red-200 font-semibold",
 };
+
+/* ─── Decorative dot grid ─── */
+function DotGrid({ className = "" }: { className?: string }) {
+  return (
+    <div className={`absolute pointer-events-none ${className}`} aria-hidden>
+      {Array.from({ length: 20 }).map((_, i) => (
+        <span key={i} className="inline-block m-1.5 h-1.5 w-1.5 rounded-full" style={{ background: "rgba(1,65,28,0.18)" }} />
+      ))}
+    </div>
+  );
+}
+
+/* ─── Yellow star decoration ─── */
+function Star4({ size = 24, color = Y, className = "" }: { size?: number; color?: string; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} className={className} aria-hidden>
+      <path d="M12 2 L13.5 10.5 L22 12 L13.5 13.5 L12 22 L10.5 13.5 L2 12 L10.5 10.5 Z" />
+    </svg>
+  );
+}
 
 export default function Home() {
   const { data: notices } = useListNotices({ active: "true" } as any);
@@ -134,49 +166,42 @@ export default function Home() {
       <motion.header
         initial={{ y: -70, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.55, ease: "easeOut" }}
-        className={`px-6 lg:px-12 py-3 flex items-center justify-between fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-          scrolled ? "bg-white/95 backdrop-blur-xl shadow-sm border-b border-slate-200/70" : "bg-transparent"
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className={`px-6 lg:px-16 py-3 flex items-center justify-between fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+          scrolled ? "bg-white shadow-sm border-b border-slate-200/80" : "bg-white border-b border-slate-200/40"
         }`}
       >
-        {/* Logo */}
         <div className="flex items-center gap-2.5">
-          <img src={nmuLogo} alt="NMU Logo" className="h-10 w-10 object-contain drop-shadow-sm" />
+          <img src={nmuLogo} alt="NMU Logo" className="h-10 w-10 object-contain" />
           <div>
-            <span className="font-extrabold text-[13px] tracking-tight block leading-tight" style={{ color: "#01411C" }}>AHS Portal</span>
+            <span className="font-extrabold text-[13px] tracking-tight block leading-tight" style={{ color: G }}>AHS Portal</span>
             <span className="text-[10px] text-slate-500 leading-tight block">Nishtar Medical University</span>
           </div>
         </div>
 
-        {/* Nav */}
-        <nav className="hidden lg:flex items-center gap-7 text-[13px] font-medium">
+        <nav className="hidden lg:flex items-center gap-8 text-[13px] font-medium">
           {[["Programs", "#programs"], ["How to Apply", "#how-to-apply"], ["Notices", "#notices"], ["FAQ", "#faq"]].map(([label, href]) => (
-            <a key={label} href={href} className="text-slate-600 hover:text-[#01411C] transition-colors relative group">
+            <a key={label} href={href} className="text-slate-600 hover:text-[#01411C] transition-colors">
               {label}
-              <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-[#01411C] group-hover:w-full transition-all duration-200" />
             </a>
           ))}
           <Link href="/merit-search">
-            <span className="text-slate-600 hover:text-[#01411C] transition-colors cursor-pointer relative group">
-              Merit Search
-              <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-[#01411C] group-hover:w-full transition-all duration-200" />
-            </span>
+            <span className="text-slate-600 hover:text-[#01411C] transition-colors cursor-pointer">Merit Search</span>
           </Link>
         </nav>
 
-        {/* Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <a href="tel:+926-61-9200174" className="hidden lg:flex items-center gap-1.5 text-[12px] font-medium text-slate-600">
+            <Phone className="h-3.5 w-3.5" style={{ color: G }} />
+            061-920-0174
+          </a>
           <Link href="/login">
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-              <Button variant="ghost" size="sm" className="text-[13px] font-medium text-slate-700">Sign in</Button>
-            </motion.div>
+            <Button variant="ghost" size="sm" className="text-[13px] font-medium text-slate-700">Sign In</Button>
           </Link>
           <Link href="/register">
-            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
-              <Button size="sm" className="text-[13px] font-semibold px-5 rounded-lg shadow-md" style={{ background: "linear-gradient(135deg, #01411C, #16a34a)", boxShadow: "0 4px 14px rgba(1,65,28,0.3)" }}>
-                Apply Now
-              </Button>
-            </motion.div>
+            <Button size="sm" className="text-[13px] font-semibold px-5 rounded-lg text-white" style={{ background: G }}>
+              Apply Now
+            </Button>
           </Link>
         </div>
       </motion.header>
@@ -184,174 +209,239 @@ export default function Home() {
       <main className="flex-1 pt-16">
 
         {/* ══════ HERO ══════ */}
-        <section className="relative min-h-[92vh] flex items-center overflow-hidden">
-          {/* University aerial photo background */}
-          <div className="absolute inset-0">
-            <img
-              src={universityPhoto}
-              alt="Nishtar Medical University, Multan"
-              className="w-full h-full object-cover object-center"
-              style={{ filter: "brightness(0.6) saturate(0.85)" }}
-            />
+        <section className="relative overflow-hidden" style={{ background: CREAM }}>
+          {/* decorative dots */}
+          <div className="absolute top-12 left-8 grid grid-cols-5 gap-2.5 pointer-events-none" aria-hidden>
+            {Array.from({ length: 25 }).map((_, i) => (
+              <span key={i} className="h-1.5 w-1.5 rounded-full" style={{ background: "rgba(1,65,28,0.12)" }} />
+            ))}
           </div>
-          {/* Lighter green tint overlay */}
-          <div className="absolute inset-0" style={{ background: "linear-gradient(150deg, rgba(1,65,28,0.58) 0%, rgba(2,89,31,0.40) 55%, rgba(1,65,28,0.28) 100%)" }} />
-          {/* Bottom fade to white */}
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
-          {/* Left darkening for text legibility only */}
-          <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.28) 0%, transparent 50%)" }} />
+          <Star4 size={36} className="absolute top-20 right-[44%] opacity-70" />
+          <Star4 size={20} className="absolute top-40 right-[42%] opacity-50" />
 
-          <div className="relative max-w-7xl mx-auto px-6 lg:px-12 py-28 w-full">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="max-w-7xl mx-auto px-6 lg:px-16 grid lg:grid-cols-2 min-h-[88vh] items-center gap-0">
 
-              {/* Left: Copy */}
-              <motion.div initial="hidden" animate="show" variants={staggerContainer}>
-                {/* Institution branding row */}
-                <motion.div variants={fadeUp} className="flex items-center gap-3 mb-7">
-                  <img src={nmuLogo} alt="NMU Logo" className="h-16 w-16 object-contain drop-shadow-lg" style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.4))" }} />
-                  <div>
-                    <p className="text-white font-bold text-sm leading-tight">Allied Health College</p>
-                    <p className="text-white/60 text-xs leading-tight">Nishtar Medical University, Multan</p>
-                  </div>
-                </motion.div>
-
-                {/* Live badge */}
-                <motion.div variants={fadeUp} className="mb-6">
-                  <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs font-semibold text-white/90">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-80" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-300" />
-                    </span>
-                    Admissions Open — Session 2025–26
+            {/* LEFT — copy */}
+            <motion.div
+              initial="hidden" animate="show" variants={stagger}
+              className="py-24 lg:py-0 lg:pr-12 flex flex-col z-10"
+            >
+              {/* live badge */}
+              <motion.div variants={fadeUp} className="mb-6">
+                <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold border" style={{ background: YL, color: "#854D0E", borderColor: "#FDE68A" }}>
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: Y }} />
+                    <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: Y }} />
                   </span>
-                </motion.div>
-
-                <motion.div variants={fadeUp}>
-                  <h1 className="text-5xl md:text-6xl font-black tracking-tight text-white leading-[1.08] mb-6">
-                    Begin Your Career<br />
-                    <span style={{ color: "#86efac" }}>in Allied Health</span><br />
-                    Sciences
-                  </h1>
-                </motion.div>
-
-                <motion.p variants={fadeUp} className="text-base text-white/65 leading-relaxed mb-9 max-w-[480px]">
-                  Official admissions portal for Allied Health College, Nishtar Medical University, Multan — the premier institution for Allied Health Sciences in southern Punjab.
-                </motion.p>
-
-                <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 mb-10">
-                  <Link href="/register">
-                    <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
-                      <Button size="lg" className="h-12 px-8 text-[15px] font-semibold gap-2 rounded-lg shadow-xl" style={{ background: "white", color: "#01411C" }}>
-                        Start Application <ArrowRight className="h-4 w-4" />
-                      </Button>
-                    </motion.div>
-                  </Link>
-                  <Link href="/merit-search">
-                    <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
-                      <Button size="lg" variant="outline" className="h-12 px-8 text-[15px] font-semibold gap-2 rounded-lg border-white/30 text-white hover:bg-white/10 bg-white/5 backdrop-blur-sm">
-                        <Search className="h-4 w-4" /> Check Merit Status
-                      </Button>
-                    </motion.div>
-                  </Link>
-                </motion.div>
-
-                <motion.div variants={staggerContainer} className="flex flex-wrap gap-2.5">
-                  {[
-                    { icon: GraduationCap, label: "8 BSc Programs" },
-                    { icon: Shield, label: "HEC Recognized" },
-                    { icon: Star, label: "NMU Affiliated" },
-                    { icon: Zap, label: "Merit-Based" },
-                  ].map(({ icon: Icon, label }) => (
-                    <motion.div key={label} variants={scaleIn} className="flex items-center gap-2 rounded-full border border-white/15 bg-white/8 backdrop-blur-sm px-3.5 py-1.5 text-xs text-white/75 font-medium">
-                      <Icon className="h-3.5 w-3.5 text-emerald-300" />
-                      {label}
-                    </motion.div>
-                  ))}
-                </motion.div>
+                  Admissions Open — Session 2025–26
+                </span>
               </motion.div>
 
-              {/* Right: Stat Cards */}
-              <motion.div initial="hidden" animate="show" variants={staggerContainer} className="hidden lg:grid grid-cols-2 gap-4">
+              <motion.h1 variants={fadeUp} className="text-5xl md:text-6xl font-black tracking-tight leading-[1.07] mb-6 text-slate-900">
+                Begin Your Career<br />
+                <span style={{ color: G }}>in Allied Health</span><br />
+                Sciences
+              </motion.h1>
+
+              <motion.p variants={fadeUp} className="text-[15px] text-slate-500 leading-relaxed mb-8 max-w-[460px]">
+                Official admissions portal for Allied Health College, Nishtar Medical University, Multan — the premier institution for Allied Health Sciences in southern Punjab.
+              </motion.p>
+
+              <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 mb-10">
+                <Link href="/register">
+                  <Button size="lg" className="h-12 px-8 text-[15px] font-semibold gap-2 rounded-xl text-white shadow-lg" style={{ background: G, boxShadow: "0 8px 24px rgba(1,65,28,0.30)" }}>
+                    Start Application <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/merit-search">
+                  <Button size="lg" variant="outline" className="h-12 px-8 text-[15px] font-semibold gap-2 rounded-xl border-slate-300">
+                    <Search className="h-4 w-4" /> Check Merit Status
+                  </Button>
+                </Link>
+              </motion.div>
+
+              {/* pill tags */}
+              <motion.div variants={stagger} className="flex flex-wrap gap-2">
                 {[
-                  { label: "Programs Offered", value: 8, suffix: "", icon: GraduationCap },
-                  { label: "Years Established", value: 15, suffix: "+", icon: Star },
-                  { label: "Students Enrolled", value: 1200, suffix: "+", icon: Users },
-                  { label: "Seats Available", value: 320, suffix: "", icon: Award },
-                ].map(({ label, value, suffix, icon: Icon }) => (
-                  <motion.div
-                    key={label}
-                    variants={scaleIn}
-                    whileHover={{ y: -5, scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="rounded-2xl p-6 flex flex-col gap-3"
-                    style={{
-                      background: "rgba(0,0,0,0.40)",
-                      backdropFilter: "blur(20px)",
-                      WebkitBackdropFilter: "blur(20px)",
-                      border: "1.5px solid rgba(255,255,255,0.20)",
-                      boxShadow: "0 8px 32px rgba(0,0,0,0.40)",
-                    }}
-                  >
-                    <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(255,255,255,0.12)" }}>
-                      <Icon className="h-5 w-5 text-emerald-400" />
-                    </div>
-                    <p className="text-4xl font-black text-white">
-                      <AnimatedCounter to={value} suffix={suffix} />
-                    </p>
-                    <p className="text-white/70 text-xs font-semibold tracking-wide uppercase">{label}</p>
+                  { icon: GraduationCap, label: "8 BSc Programs" },
+                  { icon: Shield, label: "HEC Recognized" },
+                  { icon: Star, label: "NMU Affiliated" },
+                  { icon: Zap, label: "Merit-Based" },
+                ].map(({ icon: Icon, label }) => (
+                  <motion.div key={label} variants={scaleIn} className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-medium text-slate-600">
+                    <Icon className="h-3.5 w-3.5" style={{ color: G }} />
+                    {label}
                   </motion.div>
                 ))}
               </motion.div>
-            </div>
+            </motion.div>
 
-            {/* Scroll cue */}
-            <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5" animate={{ y: [0, 7, 0] }} transition={{ duration: 2.2, repeat: Infinity }}>
-              <span className="text-white/30 text-[10px] font-medium tracking-widest uppercase">Scroll</span>
-              <div className="w-px h-7 bg-gradient-to-b from-white/25 to-transparent" />
+            {/* RIGHT — university photo panel */}
+            <motion.div
+              initial={{ opacity: 0, x: 60 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="relative hidden lg:flex items-end justify-end h-full min-h-[88vh]"
+            >
+              {/* green panel behind image */}
+              <div className="absolute inset-0 rounded-bl-[80px]" style={{ background: `linear-gradient(160deg, ${G} 0%, ${GA} 100%)` }} />
+
+              {/* campus photo */}
+              <div className="relative w-full h-full rounded-bl-[80px] overflow-hidden">
+                <img
+                  src={universityPhoto}
+                  alt="Nishtar Medical University Campus"
+                  className="w-full h-full object-cover object-center"
+                  style={{ mixBlendMode: "luminosity", opacity: 0.55 }}
+                />
+                {/* green tint on photo */}
+                <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, rgba(1,65,28,0.20) 0%, rgba(1,65,28,0.55) 100%)` }} />
+              </div>
+
+              {/* floating stat cards */}
+              <div className="absolute bottom-10 left-[-28px] flex flex-col gap-3">
+                {[
+                  { label: "Programs", value: 8, suffix: "" },
+                  { label: "Seats Available", value: 320, suffix: "" },
+                ].map(({ label, value, suffix }) => (
+                  <motion.div
+                    key={label}
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.7, delay: 0.5 }}
+                    className="bg-white rounded-2xl px-5 py-3.5 shadow-2xl flex items-center gap-3"
+                    style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.18)" }}
+                  >
+                    <p className="text-3xl font-black" style={{ color: G }}>
+                      <AnimatedCounter to={value} suffix={suffix} />
+                    </p>
+                    <p className="text-xs font-semibold text-slate-500 leading-tight max-w-[70px]">{label}</p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* top right badge */}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.7 }}
+                className="absolute top-8 right-8 bg-white rounded-2xl px-4 py-3 shadow-xl"
+              >
+                <p className="text-xs font-bold text-slate-500 mb-0.5">Students Enrolled</p>
+                <p className="text-2xl font-black" style={{ color: G }}>
+                  <AnimatedCounter to={1200} suffix="+" />
+                </p>
+              </motion.div>
+
+              {/* yellow star decoration on panel */}
+              <Star4 size={28} className="absolute top-16 left-8 opacity-80" />
+              <Star4 size={18} className="absolute top-28 left-14 opacity-50" />
             </motion.div>
           </div>
         </section>
 
-        {/* ══════ STATS STRIP ══════ */}
-        <section className="bg-white border-b border-slate-100">
+        {/* ══════ STATS BAR ══════ */}
+        <section style={{ background: G }}>
           <motion.div
             initial="hidden" whileInView="show" viewport={{ once: true }}
-            variants={staggerContainer}
-            className="max-w-6xl mx-auto px-6 lg:px-12 py-10 grid grid-cols-2 md:grid-cols-4 gap-8"
+            variants={stagger}
+            className="max-w-6xl mx-auto px-6 lg:px-16 py-5 flex flex-wrap items-center justify-center gap-0 divide-x divide-white/20"
           >
             {[
-              { label: "Allied Health Programs", value: 8, suffix: "", color: "#01411C" },
-              { label: "Total Seats per Session", value: 320, suffix: "", color: "#01411C" },
-              { label: "Established", value: 2009, suffix: "", color: "#01411C" },
-              { label: "Graduate Success Rate", value: 94, suffix: "%", color: "#01411C" },
-            ].map(({ label, value, suffix, color }) => (
-              <motion.div key={label} variants={scaleIn} className="text-center">
-                <p className="text-4xl font-black" style={{ color }}>
-                  <AnimatedCounter to={value} suffix={suffix} />
-                </p>
-                <p className="text-sm text-slate-500 mt-1.5 font-medium">{label}</p>
+              { icon: GraduationCap, label: "8 Programs", sub: "Allied Health Sciences" },
+              { icon: Award, label: "320 Seats", sub: "Per Admission Session" },
+              { icon: Shield, label: "HEC Recognized", sub: "Fully Accredited" },
+              { icon: BookOpen, label: "Established 2009", sub: "Nishtar Medical University" },
+              { icon: Users, label: "1,200+ Alumni", sub: "Across Pakistan" },
+            ].map(({ icon: Icon, label, sub }) => (
+              <motion.div key={label} variants={fadeUp} className="flex items-center gap-3 px-8 py-1.5">
+                <Icon className="h-5 w-5 flex-shrink-0" style={{ color: Y }} />
+                <div>
+                  <p className="text-white font-bold text-[13px] leading-tight">{label}</p>
+                  <p className="text-white/50 text-[11px] leading-tight">{sub}</p>
+                </div>
               </motion.div>
             ))}
           </motion.div>
         </section>
 
+        {/* ══════ ABOUT STRIP ══════ */}
+        <section className="py-20 px-6 lg:px-16 bg-white">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+            {/* left — image */}
+            <Reveal>
+              <div className="relative rounded-3xl overflow-hidden h-[400px]">
+                <img
+                  src={universityPhoto}
+                  alt="Nishtar Medical University"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0" style={{ background: `linear-gradient(to top, rgba(1,65,28,0.5) 0%, transparent 60%)` }} />
+                {/* bottom label */}
+                <div className="absolute bottom-5 left-5 right-5 flex items-center gap-3 bg-white/95 backdrop-blur rounded-xl px-4 py-3">
+                  <img src={nmuLogo} alt="NMU" className="h-9 w-9 object-contain" />
+                  <div>
+                    <p className="font-bold text-[13px] leading-tight" style={{ color: G }}>Allied Health College</p>
+                    <p className="text-[11px] text-slate-500">Nishtar Medical University, Multan</p>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+
+            {/* right — features */}
+            <div>
+              <Reveal>
+                <SectionLabel>Why Choose Us</SectionLabel>
+                <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-slate-900">
+                  Admissions Focused<br />
+                  <span style={{ color: G }}>on Your Future</span>
+                </h2>
+                <p className="text-slate-500 mb-8 text-[15px] leading-relaxed">
+                  Allied Health College offers HEC-recognized BSc programs in eight cutting-edge allied health disciplines. Merit-based, transparent, and fully digital admissions.
+                </p>
+              </Reveal>
+
+              <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={stagger} className="space-y-4">
+                {[
+                  { icon: GraduationCap, title: "Merit-Based Selection", desc: "Fully transparent merit formula based on FSc and Matric marks. No discretionary seats." },
+                  { icon: Shield, title: "HEC & PMC Recognized", desc: "All programs recognized by Higher Education Commission and relevant regulatory bodies." },
+                  { icon: FileText, title: "100% Digital Process", desc: "Apply, track status, generate challans, and check merit lists entirely online." },
+                  { icon: Award, title: "Special Quota Support", desc: "Dedicated seats for minorities, differently-abled applicants, and NMU employees' children." },
+                ].map(({ icon: Icon, title, desc }) => (
+                  <motion.div key={title} variants={fadeUp} className="flex items-start gap-4">
+                    <div className="h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(1,65,28,0.08)" }}>
+                      <Icon className="h-5 w-5" style={{ color: G }} />
+                    </div>
+                    <div>
+                      <p className="font-bold text-[14px] text-slate-900 mb-0.5">{title}</p>
+                      <p className="text-[13px] text-slate-500 leading-relaxed">{desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
         {/* ══════ PROGRAMS ══════ */}
-        <section id="programs" className="py-20 px-6 lg:px-12 bg-[#f9fafb]">
+        <section id="programs" className="py-20 px-6 lg:px-16" style={{ background: "#F8FAF8" }}>
           <div className="max-w-7xl mx-auto">
-            <Reveal className="text-center mb-14">
-              <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "#01411C" }}>Our Programs</p>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-slate-900">
-                8 Specialised Allied Health<br />
-                <span style={{ color: "#01411C" }}>Disciplines</span>
-              </h2>
-              <p className="text-slate-500 max-w-lg mx-auto text-base leading-relaxed">
-                Four-year HEC-recognized BSc programs at Nishtar Medical University, Multan.
+            <Reveal className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
+              <div>
+                <SectionLabel>Our Programs</SectionLabel>
+                <h2 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">
+                  8 Allied Health<br />
+                  <span style={{ color: G }}>Disciplines</span>
+                </h2>
+              </div>
+              <p className="text-slate-500 text-[14px] max-w-xs leading-relaxed">
+                Four-year HEC-recognized BSc degrees at Nishtar Medical University, Multan.
               </p>
             </Reveal>
 
             <motion.div
               initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
-              variants={staggerContainer}
+              variants={stagger}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
             >
               {displayPrograms.map((program, i) => {
@@ -360,20 +450,23 @@ export default function Home() {
                   <motion.div
                     key={(program as any).code ?? i}
                     variants={scaleIn}
-                    whileHover={{ y: -6, boxShadow: "0 12px 40px rgba(1,65,28,0.12)" }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col gap-4 hover:border-green-200 transition-colors duration-200"
+                    whileHover={{ y: -6, boxShadow: "0 16px 48px rgba(1,65,28,0.12)" }}
+                    transition={{ type: "spring", stiffness: 300, damping: 22 }}
+                    className="bg-white rounded-2xl p-6 border border-slate-200/80 hover:border-green-200 flex flex-col gap-4 transition-all duration-200 group cursor-pointer"
                   >
-                    <div className="h-12 w-12 rounded-xl flex items-center justify-center" style={{ background: "rgba(1,65,28,0.07)" }}>
-                      <Icon className="h-6 w-6" style={{ color: "#01411C" }} />
+                    <div className="h-12 w-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200" style={{ background: `rgba(1,65,28,0.08)` }}>
+                      <Icon className="h-6 w-6" style={{ color: G }} />
                     </div>
                     <div>
-                      <h3 className="font-bold text-[14px] text-slate-900 mb-1 leading-tight">{program.name}</h3>
-                      <p className="text-xs font-mono font-bold mb-3" style={{ color: "#01411C" }}>{(program as any).code}</p>
+                      <h3 className="font-bold text-[14px] text-slate-900 mb-1 leading-snug">{program.name}</h3>
+                      <p className="text-xs font-bold font-mono mb-3" style={{ color: G }}>{(program as any).code}</p>
                       <div className="flex gap-2">
                         <span className="text-[11px] border border-slate-200 rounded-full px-2.5 py-0.5 text-slate-500 font-medium">4 Years</span>
                         <span className="text-[11px] border border-slate-200 rounded-full px-2.5 py-0.5 text-slate-500 font-medium">BSc</span>
                       </div>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs font-semibold mt-auto" style={{ color: G }}>
+                      Learn more <ChevronRight className="h-3.5 w-3.5" />
                     </div>
                   </motion.div>
                 );
@@ -383,21 +476,26 @@ export default function Home() {
         </section>
 
         {/* ══════ HOW TO APPLY ══════ */}
-        <section id="how-to-apply" className="py-20 px-6 lg:px-12 bg-white">
+        <section id="how-to-apply" className="py-20 px-6 lg:px-16 bg-white relative overflow-hidden">
+          {/* background pattern */}
+          <div className="absolute right-0 top-0 bottom-0 w-1/3 pointer-events-none" style={{ background: "rgba(1,65,28,0.02)" }} aria-hidden />
+          <Star4 size={48} className="absolute right-16 top-20 opacity-20" />
+          <Star4 size={28} className="absolute right-32 bottom-16 opacity-15" />
+
           <div className="max-w-7xl mx-auto">
             <Reveal className="text-center mb-14">
-              <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "#01411C" }}>Application Process</p>
+              <SectionLabel>Application Process</SectionLabel>
               <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-slate-900">
-                Six Steps to <span style={{ color: "#01411C" }}>Admission</span>
+                Six Steps to <span style={{ color: G }}>Admission</span>
               </h2>
-              <p className="text-slate-500 max-w-lg mx-auto text-base leading-relaxed">
-                A straightforward process from registration to merit listing.
+              <p className="text-slate-500 max-w-lg mx-auto text-[15px] leading-relaxed">
+                A simple, transparent process from registration to merit listing — done entirely online.
               </p>
             </Reveal>
 
             <motion.div
               initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
-              variants={staggerContainer}
+              variants={stagger}
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
             >
               {STEPS.map((step, i) => (
@@ -406,16 +504,17 @@ export default function Home() {
                   variants={fadeUp}
                   whileHover={{ y: -5 }}
                   transition={{ type: "spring", stiffness: 280 }}
-                  className="border border-slate-200 rounded-2xl p-6 bg-[#f9fafb] hover:border-green-200 hover:bg-white hover:shadow-md transition-all duration-200"
+                  className="relative border border-slate-200 rounded-2xl p-6 bg-white hover:border-green-200 hover:shadow-lg transition-all duration-200"
                 >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "linear-gradient(135deg, #01411C, #16a34a)" }}>
-                      <step.icon className="h-5 w-5 text-white" />
-                    </div>
-                    <span className="text-3xl font-black select-none" style={{ color: "rgba(1,65,28,0.12)" }}>0{i + 1}</span>
+                  {/* step number watermark */}
+                  <span className="absolute top-4 right-4 text-6xl font-black select-none leading-none" style={{ color: "rgba(1,65,28,0.06)" }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5" style={{ background: `linear-gradient(135deg, ${G}, ${GA})` }}>
+                    <step.icon className="h-6 w-6 text-white" />
                   </div>
                   <h3 className="font-bold text-[15px] text-slate-900 mb-2">{step.title}</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed">{step.desc}</p>
+                  <p className="text-[13px] text-slate-500 leading-relaxed">{step.desc}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -423,7 +522,7 @@ export default function Home() {
             <Reveal delay={0.3} className="text-center mt-10">
               <Link href="/register">
                 <motion.div className="inline-block" whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
-                  <Button size="lg" className="h-12 px-10 text-[15px] font-semibold gap-2 rounded-lg shadow-lg" style={{ background: "linear-gradient(135deg, #01411C, #16a34a)", boxShadow: "0 8px 24px rgba(1,65,28,0.25)" }}>
+                  <Button size="lg" className="h-12 px-10 text-[15px] font-semibold gap-2 rounded-xl text-white shadow-lg" style={{ background: G, boxShadow: "0 8px 24px rgba(1,65,28,0.25)" }}>
                     Begin Your Application <ArrowRight className="h-4 w-4" />
                   </Button>
                 </motion.div>
@@ -433,17 +532,17 @@ export default function Home() {
         </section>
 
         {/* ══════ ELIGIBILITY ══════ */}
-        <section className="py-20 px-6 lg:px-12 bg-[#f9fafb]">
+        <section className="py-20 px-6 lg:px-16" style={{ background: "#F8FAF8" }}>
           <div className="max-w-7xl mx-auto">
             <Reveal className="text-center mb-14">
-              <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "#01411C" }}>Eligibility</p>
+              <SectionLabel>Eligibility</SectionLabel>
               <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-slate-900">
-                Admission <span style={{ color: "#01411C" }}>Requirements</span>
+                Admission <span style={{ color: G }}>Requirements</span>
               </h2>
             </Reveal>
             <motion.div
               initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
-              variants={staggerContainer}
+              variants={stagger}
               className="grid md:grid-cols-2 gap-5"
             >
               {[
@@ -457,19 +556,19 @@ export default function Home() {
                   variants={scaleIn}
                   whileHover={{ y: -4 }}
                   transition={{ type: "spring", stiffness: 280 }}
-                  className="bg-white border border-slate-200 rounded-2xl p-7 hover:shadow-md transition-shadow duration-200"
+                  className="bg-white border border-slate-200/80 rounded-2xl p-7 hover:shadow-md hover:border-green-200 transition-all duration-200"
                 >
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(1,65,28,0.07)" }}>
-                      <Icon className="h-5 w-5" style={{ color: "#01411C" }} />
+                    <div className="h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(1,65,28,0.08)" }}>
+                      <Icon className="h-5 w-5" style={{ color: G }} />
                     </div>
                     <h3 className="font-bold text-[15px] text-slate-900">{title}</h3>
                   </div>
-                  <ul className="space-y-2.5">
+                  <ul className="space-y-3">
                     {items.map(item => (
-                      <li key={item} className="flex items-start gap-2.5 text-sm text-slate-600">
-                        <CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: "#16a34a" }} />
-                        <span>{item}</span>
+                      <li key={item} className="flex items-start gap-2.5 text-[13px] text-slate-600">
+                        <CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: GA }} />
+                        {item}
                       </li>
                     ))}
                   </ul>
@@ -480,19 +579,19 @@ export default function Home() {
         </section>
 
         {/* ══════ NOTICES ══════ */}
-        <section id="notices" className="py-20 px-6 lg:px-12 bg-white">
+        <section id="notices" className="py-20 px-6 lg:px-16 bg-white">
           <div className="max-w-7xl mx-auto">
             <Reveal>
               <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "#01411C" }}>Latest Updates</p>
+                  <SectionLabel>Latest Updates</SectionLabel>
                   <h2 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">
-                    Important <span style={{ color: "#01411C" }}>Notices</span>
+                    Important <span style={{ color: G }}>Notices</span>
                   </h2>
                 </div>
                 <Link href="/login">
                   <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                    <Button variant="outline" className="gap-2 rounded-lg font-medium border-slate-300">
+                    <Button variant="outline" className="gap-2 rounded-xl font-medium border-slate-300">
                       <Bell className="h-4 w-4" /> View All
                     </Button>
                   </motion.div>
@@ -503,7 +602,7 @@ export default function Home() {
             {activeNotices.length > 0 ? (
               <motion.div
                 initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
-                variants={staggerContainer}
+                variants={stagger}
                 className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
               >
                 {activeNotices.map(notice => (
@@ -512,26 +611,24 @@ export default function Home() {
                     variants={scaleIn}
                     whileHover={{ y: -5, boxShadow: "0 12px 40px rgba(0,0,0,0.08)" }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col hover:border-green-200 transition-colors duration-200 shadow-sm"
+                    className="bg-white border border-slate-200/80 rounded-2xl p-6 flex flex-col hover:border-green-200 transition-all duration-200 shadow-sm"
                   >
                     <div className="flex justify-between items-start mb-3">
                       <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${CAT_STYLES[notice.category] ?? CAT_STYLES.general}`}>
-                        {notice.category.charAt(0).toUpperCase() + notice.category.slice(1)}
+                        {notice.category}
                       </span>
-                      <span className="text-xs text-slate-400">
-                        {notice.publishedAt ? format(new Date(notice.publishedAt), "MMM d, yyyy") : format(new Date(notice.createdAt), "MMM d, yyyy")}
-                      </span>
+                      <span className="text-xs text-slate-400">{notice.publishedAt ? format(new Date(notice.publishedAt), "dd MMM yyyy") : ""}</span>
                     </div>
                     <h3 className="font-bold text-[14px] text-slate-900 mb-2 leading-snug">{notice.title}</h3>
-                    <p className="text-sm text-slate-500 line-clamp-3 flex-1 leading-relaxed">{notice.content}</p>
+                    <p className="text-[13px] text-slate-500 leading-relaxed line-clamp-3 flex-1">{notice.content}</p>
                   </motion.div>
                 ))}
               </motion.div>
             ) : (
               <Reveal>
-                <div className="text-center py-14 text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl">
-                  <Bell className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                  <p className="font-medium">No active notices at this time.</p>
+                <div className="text-center py-16 border border-dashed border-slate-200 rounded-2xl">
+                  <Bell className="h-10 w-10 mx-auto mb-3 text-slate-300" />
+                  <p className="text-slate-400 font-medium">No notices published yet. Check back soon.</p>
                 </div>
               </Reveal>
             )}
@@ -539,150 +636,178 @@ export default function Home() {
         </section>
 
         {/* ══════ MERIT SEARCH CTA ══════ */}
-        <section className="py-6 px-6 lg:px-12">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.65 }}
-            className="max-w-7xl mx-auto rounded-2xl px-10 py-14 flex flex-col lg:flex-row items-center justify-between gap-8 relative overflow-hidden"
-            style={{ background: "linear-gradient(135deg, #01411C 0%, #02591f 50%, #016624 100%)" }}
-          >
-            <div className="absolute right-0 top-0 w-64 h-64 rounded-full opacity-[0.06] pointer-events-none" style={{ background: "radial-gradient(circle, white, transparent 70%)", transform: "translate(30%, -30%)" }} />
-            <div className="relative text-center lg:text-left">
-              <p className="text-green-300 text-sm font-semibold uppercase tracking-widest mb-2">Merit Search</p>
-              <h2 className="text-3xl md:text-4xl font-black text-white mb-2">Check Your Merit Status</h2>
-              <p className="text-white/60 text-base max-w-md">
-                Search by CNIC or Application Number to instantly view your merit ranking.
+        <section className="py-20 px-6 lg:px-16 relative overflow-hidden" style={{ background: G }}>
+          <Star4 size={64} className="absolute right-20 top-8 opacity-15" />
+          <Star4 size={36} className="absolute right-36 bottom-8 opacity-10" />
+          <Star4 size={24} className="absolute left-16 top-1/2 -translate-y-1/2 opacity-10" />
+          <div className="max-w-3xl mx-auto text-center relative z-10">
+            <Reveal>
+              <SectionLabel>Merit Lists</SectionLabel>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-5">
+                Check Your Merit<br />
+                <span style={{ color: Y }}>Status Instantly</span>
+              </h2>
+              <p className="text-white/65 text-[15px] leading-relaxed mb-8 max-w-xl mx-auto">
+                Enter your CNIC to instantly check your merit position, application status, and verification schedule across all admission sessions.
               </p>
-            </div>
-            <Link href="/merit-search">
-              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}>
-                <Button size="lg" className="h-12 px-10 text-[15px] font-bold gap-2 rounded-lg shadow-xl whitespace-nowrap" style={{ background: "white", color: "#01411C" }}>
-                  <Search className="h-5 w-5" /> Search Merit List
-                </Button>
-              </motion.div>
-            </Link>
-          </motion.div>
+              <Link href="/merit-search">
+                <motion.div className="inline-block" whileHover={{ scale: 1.05, y: -3 }} whileTap={{ scale: 0.97 }}>
+                  <Button size="lg" className="h-13 px-10 text-[15px] font-bold gap-2 rounded-xl" style={{ background: Y, color: DARK, boxShadow: "0 8px 32px rgba(234,179,8,0.35)" }}>
+                    <Search className="h-5 w-5" /> Search Merit List
+                  </Button>
+                </motion.div>
+              </Link>
+            </Reveal>
+          </div>
         </section>
 
         {/* ══════ FAQ ══════ */}
-        <section id="faq" className="py-20 px-6 lg:px-12 bg-[#f9fafb]">
-          <div className="max-w-4xl mx-auto">
-            <Reveal className="text-center mb-12">
-              <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "#01411C" }}>FAQ</p>
+        <section id="faq" className="py-20 px-6 lg:px-16" style={{ background: "#F8FAF8" }}>
+          <div className="max-w-3xl mx-auto">
+            <Reveal className="text-center mb-14">
+              <SectionLabel>FAQ</SectionLabel>
               <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4 text-slate-900">
-                Frequently Asked <span style={{ color: "#01411C" }}>Questions</span>
+                Frequently Asked <span style={{ color: G }}>Questions</span>
               </h2>
-              <p className="text-slate-500 max-w-lg mx-auto">Everything you need to know about the admission process.</p>
             </Reveal>
-
-            <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={staggerContainer}>
-              <Accordion type="single" collapsible className="space-y-2.5">
-                {FAQ.map((item, i) => (
-                  <motion.div key={i} variants={fadeUp}>
-                    <AccordionItem
-                      value={`item-${i}`}
-                      className="border border-slate-200 rounded-xl px-5 bg-white hover:border-green-200 hover:shadow-sm transition-all duration-200"
-                    >
-                      <AccordionTrigger className="text-left font-semibold text-[14px] py-4 hover:no-underline text-slate-800">
-                        {item.q}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-sm text-slate-500 pb-4 leading-relaxed">
-                        {item.a}
-                      </AccordionContent>
-                    </AccordionItem>
-                  </motion.div>
-                ))}
-              </Accordion>
-            </motion.div>
+            <Accordion type="single" collapsible className="space-y-3">
+              {FAQ.map((item, i) => (
+                <Reveal key={i} delay={i * 0.04}>
+                  <AccordionItem
+                    value={`faq-${i}`}
+                    className="border border-slate-200/80 rounded-2xl overflow-hidden bg-white shadow-sm"
+                    style={{ borderLeft: `3px solid ${G}` }}
+                  >
+                    <AccordionTrigger className="px-6 py-4 text-[14px] font-semibold text-slate-900 hover:no-underline hover:text-[#01411C] text-left">
+                      {item.q}
+                    </AccordionTrigger>
+                    <AccordionContent className="px-6 pb-5 text-[13px] text-slate-500 leading-relaxed">
+                      {item.a}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Reveal>
+              ))}
+            </Accordion>
           </div>
         </section>
 
         {/* ══════ CONTACT ══════ */}
-        <section className="py-20 px-6 lg:px-12 bg-white">
+        <section className="py-20 px-6 lg:px-16 bg-white">
           <div className="max-w-7xl mx-auto">
-            <Reveal className="text-center mb-12">
-              <p className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: "#01411C" }}>Contact Us</p>
+            <Reveal className="text-center mb-14">
+              <SectionLabel>Contact</SectionLabel>
               <h2 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">
-                Admissions <span style={{ color: "#01411C" }}>Office</span>
+                Get in <span style={{ color: G }}>Touch</span>
               </h2>
             </Reveal>
             <motion.div
               initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
-              variants={staggerContainer}
+              variants={stagger}
               className="grid md:grid-cols-3 gap-5"
             >
               {[
-                { icon: Phone, title: "Phone", lines: ["+92-61-XXXXXXX", "Mon–Fri, 8:00am – 2:00pm"] },
-                { icon: Mail, title: "Email", lines: ["admissions@ahscollege.edu.pk", "Reply within 48 working hours"] },
                 { icon: MapPin, title: "Address", lines: ["Allied Health College", "Nishtar Medical University, Multan"] },
+                { icon: Phone, title: "Phone", lines: ["061-920-0174", "Mon–Fri: 8am – 2pm"] },
+                { icon: Mail, title: "Email", lines: ["admissions@ahscollege.edu.pk", "info@ahscollege.edu.pk"] },
               ].map(({ icon: Icon, title, lines }) => (
                 <motion.div
                   key={title}
                   variants={scaleIn}
                   whileHover={{ y: -5 }}
                   transition={{ type: "spring", stiffness: 280 }}
-                  className="bg-[#f9fafb] border border-slate-200 rounded-2xl p-8 text-center hover:shadow-md hover:border-green-200 transition-all duration-200"
+                  className="text-center bg-white border border-slate-200/80 rounded-2xl p-8 hover:shadow-md hover:border-green-200 transition-all duration-200"
                 >
-                  <div className="h-13 w-13 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "rgba(1,65,28,0.07)", width: 52, height: 52 }}>
-                    <Icon className="h-6 w-6" style={{ color: "#01411C" }} />
+                  <div className="h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: "rgba(1,65,28,0.08)" }}>
+                    <Icon className="h-6 w-6" style={{ color: G }} />
                   </div>
-                  <h3 className="font-bold text-[15px] text-slate-900 mb-2.5">{title}</h3>
-                  {lines.map(l => <p key={l} className="text-sm text-slate-500 leading-relaxed">{l}</p>)}
+                  <h3 className="font-bold text-[15px] text-slate-900 mb-3">{title}</h3>
+                  {lines.map(l => <p key={l} className="text-[13px] text-slate-500">{l}</p>)}
                 </motion.div>
               ))}
             </motion.div>
           </div>
         </section>
 
-        {/* ══════ FINAL CTA ══════ */}
-        <section className="py-20 px-6 lg:px-12 bg-[#f9fafb] border-t border-slate-100">
-          <Reveal className="max-w-3xl mx-auto text-center">
-            <p className="text-sm font-semibold uppercase tracking-widest mb-4" style={{ color: "#01411C" }}>Apply Today</p>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-5 text-slate-900">
-              Your Journey Begins <span style={{ color: "#01411C" }}>Here</span>
-            </h2>
-            <p className="text-slate-500 text-base mb-9 leading-relaxed">
-              Create your account and take the first step towards a rewarding career in Allied Health Sciences at Nishtar Medical University.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        {/* ══════ NEWSLETTER STRIP ══════ */}
+        <section className="py-16 px-6 lg:px-16" style={{ background: DARK }}>
+          <div className="max-w-5xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div>
+              <Star4 size={24} className="mb-3 opacity-60" />
+              <h3 className="text-3xl font-black text-white leading-snug">
+                Stay Informed on<br />
+                <span style={{ color: Y }}>Admissions Updates</span>
+              </h3>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
               <Link href="/register">
-                <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
-                  <Button size="lg" className="h-12 px-12 text-[15px] font-semibold gap-2 rounded-lg shadow-lg" style={{ background: "linear-gradient(135deg, #01411C, #16a34a)", boxShadow: "0 8px 24px rgba(1,65,28,0.25)" }}>
-                    Create Account <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </motion.div>
+                <Button size="lg" className="h-12 px-8 text-[14px] font-bold gap-2 rounded-xl w-full sm:w-auto" style={{ background: Y, color: DARK }}>
+                  <GraduationCap className="h-4 w-4" />
+                  Create Student Account
+                </Button>
               </Link>
-              <Link href="/login">
-                <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
-                  <Button size="lg" variant="outline" className="h-12 px-12 text-[15px] font-semibold rounded-lg border-slate-300">
-                    Sign In to Portal
-                  </Button>
-                </motion.div>
+              <Link href="/merit-search">
+                <Button size="lg" variant="outline" className="h-12 px-8 text-[14px] font-semibold gap-2 rounded-xl border-white/20 text-white hover:bg-white/10 w-full sm:w-auto">
+                  <Search className="h-4 w-4" />
+                  Merit Search
+                </Button>
               </Link>
             </div>
-          </Reveal>
+          </div>
         </section>
       </main>
 
-      {/* ══════ FOOTER ══════ */}
-      <footer className="border-t border-slate-200 bg-white py-8 px-6 lg:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <img src={nmuLogo} alt="NMU Logo" className="h-10 w-10 object-contain" />
+      {/* ── FOOTER ── */}
+      <footer style={{ background: DARK }}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-16 pt-14 pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+            {/* brand */}
+            <div className="md:col-span-1">
+              <div className="flex items-center gap-2.5 mb-4">
+                <img src={nmuLogo} alt="NMU Logo" className="h-11 w-11 object-contain" />
+                <div>
+                  <span className="font-extrabold text-[13px] block leading-tight text-white">Allied Health College</span>
+                  <span className="text-[11px] text-white/40">Nishtar Medical University</span>
+                </div>
+              </div>
+              <p className="text-white/40 text-[12px] leading-relaxed">
+                Premier institution for Allied Health Sciences in southern Punjab, Pakistan.
+              </p>
+            </div>
+            {/* links */}
             <div>
-              <span className="font-extrabold text-[13px] block leading-tight" style={{ color: "#01411C" }}>Allied Health College</span>
-              <span className="text-[11px] text-slate-500">Nishtar Medical University, Multan</span>
+              <p className="text-white font-bold text-[13px] mb-4">Programs</p>
+              <ul className="space-y-2">
+                {["Medical Lab Technology", "Medical Imaging", "Renal Dialysis", "Optometry"].map(l => (
+                  <li key={l}><a href="#programs" className="text-white/40 text-[12px] hover:text-white transition-colors">{l}</a></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-white font-bold text-[13px] mb-4">Quick Links</p>
+              <ul className="space-y-2">
+                {[["Merit Search", "/merit-search"], ["Apply Now", "/register"], ["Sign In", "/login"]].map(([l, h]) => (
+                  <li key={l}><Link href={h}><span className="text-white/40 text-[12px] hover:text-white transition-colors cursor-pointer">{l}</span></Link></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-white font-bold text-[13px] mb-4">Contact</p>
+              <ul className="space-y-2 text-white/40 text-[12px]">
+                <li>Allied Health College, NMU, Multan</li>
+                <li>061-920-0174</li>
+                <li>Mon–Fri: 8am – 2pm</li>
+              </ul>
             </div>
           </div>
-          <p className="text-xs text-slate-400 text-center">
-            © {new Date().getFullYear()} Allied Health College, Nishtar Medical University. All rights reserved.
-          </p>
-          <div className="flex gap-5 text-xs font-medium text-slate-500">
-            <Link href="/merit-search"><span className="hover:text-[#01411C] cursor-pointer transition-colors">Merit Search</span></Link>
-            <Link href="/login"><span className="hover:text-[#01411C] cursor-pointer transition-colors">Sign In</span></Link>
-            <Link href="/register"><span className="hover:text-[#01411C] cursor-pointer transition-colors">Apply Now</span></Link>
+
+          <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+            <p className="text-white/30 text-[12px]">
+              © {new Date().getFullYear()} Allied Health College, Nishtar Medical University. All rights reserved.
+            </p>
+            <div className="flex gap-5 text-[12px] text-white/30">
+              <span className="cursor-pointer hover:text-white transition-colors">Privacy Policy</span>
+              <span className="cursor-pointer hover:text-white transition-colors">Terms of Use</span>
+            </div>
           </div>
         </div>
       </footer>
