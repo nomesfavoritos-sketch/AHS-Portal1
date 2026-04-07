@@ -252,21 +252,49 @@ export default function Home() {
 
         {/* ══════ HERO ══════ */}
         <section className="relative overflow-hidden" style={{ background: CREAM }}>
-          {/* decorative dots — hidden on mobile */}
-          <div className="absolute top-10 left-6 grid grid-cols-5 gap-2 pointer-events-none hidden sm:grid" aria-hidden>
+          {/* decorative dots — staggered fade-in */}
+          <motion.div
+            initial="hidden" animate="show"
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.03 } } }}
+            className="absolute top-10 left-6 grid grid-cols-5 gap-2 pointer-events-none hidden sm:grid" aria-hidden
+          >
             {Array.from({ length: 25 }).map((_, i) => (
-              <span key={i} className="h-1.5 w-1.5 rounded-full" style={{ background: "rgba(1,65,28,0.12)" }} />
+              <motion.span
+                key={i}
+                variants={{ hidden: { opacity: 0, scale: 0 }, show: { opacity: 1, scale: 1, transition: { duration: 0.4 } } }}
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ background: "rgba(1,65,28,0.14)" }}
+              />
             ))}
-          </div>
-          <Star4 size={28} className="absolute top-16 right-[44%] opacity-60 hidden lg:block" />
-          <Star4 size={18} className="absolute top-32 right-[42%] opacity-40 hidden lg:block" />
+          </motion.div>
+
+          {/* Animated spinning stars */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+            className="absolute top-16 right-[44%] hidden lg:block"
+          >
+            <Star4 size={28} className="opacity-60" />
+          </motion.div>
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            className="absolute top-32 right-[42%] hidden lg:block"
+          >
+            <Star4 size={18} className="opacity-35" />
+          </motion.div>
 
           {/* ── DESKTOP: side-by-side ── */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 hidden lg:grid lg:grid-cols-2 min-h-[82vh] items-center gap-0">
 
             {/* LEFT — copy */}
             <motion.div initial="hidden" animate="show" variants={stagger} className="py-10 lg:py-0 lg:pr-12 flex flex-col z-10">
-              <motion.div variants={fadeUp} className="mb-5">
+
+              {/* Badge — bounces in */}
+              <motion.div
+                variants={{ hidden: { opacity: 0, y: -20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } } }}
+                className="mb-5"
+              >
                 <span className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold border" style={{ background: YL, color: "#854D0E", borderColor: "#FDE68A" }}>
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: Y }} />
@@ -276,37 +304,76 @@ export default function Home() {
                 </span>
               </motion.div>
 
-              <motion.h1 variants={fadeUp} className="text-[2.4rem] xl:text-[2.8rem] font-black tracking-tight leading-[1.1] mb-4 text-slate-900">
-                Begin Your Career<br />
-                <span style={{ color: G }}>in Allied Health</span><br />
-                Sciences
-              </motion.h1>
+              {/* Headline — line by line */}
+              <div className="mb-4 text-[2.4rem] xl:text-[2.8rem] font-black tracking-tight leading-[1.1] text-slate-900">
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.55, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
+                >
+                  Begin Your Career
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.55, delay: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  style={{ color: G }}
+                >
+                  in Allied Health
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.55, delay: 0.41, ease: [0.25, 0.46, 0.45, 0.94] }}
+                >
+                  Sciences
+                </motion.div>
+              </div>
 
               <motion.p variants={fadeUp} className="text-[14px] text-slate-500 leading-relaxed mb-7 max-w-[420px]">
                 Official admissions portal for Allied Health College, Nishtar Medical University, Multan — the premier institution for Allied Health Sciences in southern Punjab.
               </motion.p>
 
-              <motion.div variants={fadeUp} className="flex flex-row gap-3 mb-7">
+              {/* Buttons — slide up with spring */}
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 240, damping: 22, delay: 0.55 }}
+                className="flex flex-row gap-3 mb-7"
+              >
                 <Link href="/register">
-                  <Button size="default" className="h-11 px-7 text-[14px] font-semibold gap-2 rounded-xl text-white shadow-md" style={{ background: G, boxShadow: "0 6px 20px rgba(1,65,28,0.28)" }}>
-                    Start Application <ArrowRight className="h-4 w-4" />
-                  </Button>
+                  <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
+                    <Button size="default" className="h-11 px-7 text-[14px] font-semibold gap-2 rounded-xl text-white shadow-md" style={{ background: G, boxShadow: "0 6px 20px rgba(1,65,28,0.28)" }}>
+                      Start Application <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </motion.div>
                 </Link>
                 <Link href="/merit-search">
-                  <Button size="default" variant="outline" className="h-11 px-7 text-[14px] font-semibold gap-2 rounded-xl border-slate-300">
-                    <Search className="h-4 w-4" /> Merit Status
-                  </Button>
+                  <motion.div whileHover={{ scale: 1.04, y: -2 }} whileTap={{ scale: 0.97 }}>
+                    <Button size="default" variant="outline" className="h-11 px-7 text-[14px] font-semibold gap-2 rounded-xl border-slate-300">
+                      <Search className="h-4 w-4" /> Merit Status
+                    </Button>
+                  </motion.div>
                 </Link>
               </motion.div>
 
-              <motion.div variants={stagger} className="flex flex-wrap gap-2">
+              {/* Pill tags — pop in */}
+              <motion.div
+                initial="hidden" animate="show"
+                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08, delayChildren: 0.65 } } }}
+                className="flex flex-wrap gap-2"
+              >
                 {[
                   { icon: GraduationCap, label: "8 BSc Programs" },
                   { icon: Shield, label: "HEC Recognized" },
                   { icon: Star, label: "NMU Affiliated" },
                   { icon: Zap, label: "Merit-Based" },
                 ].map(({ icon: Icon, label }) => (
-                  <motion.div key={label} variants={scaleIn} className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-medium text-slate-600">
+                  <motion.div
+                    key={label}
+                    variants={{ hidden: { opacity: 0, scale: 0.7 }, show: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 300, damping: 18 } } }}
+                    className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-medium text-slate-600"
+                  >
                     <Icon className="h-3 w-3" style={{ color: G }} />
                     {label}
                   </motion.div>
@@ -322,25 +389,79 @@ export default function Home() {
               className="relative flex items-end justify-end h-full min-h-[82vh]"
             >
               <div className="absolute inset-0 rounded-bl-[64px]" style={{ background: `linear-gradient(160deg, ${G} 0%, ${GA} 100%)` }} />
+
+              {/* Subtle zoom-breathe on campus photo */}
               <div className="relative w-full h-full rounded-bl-[64px] overflow-hidden">
-                <img src={universityPhoto} alt="NMU Campus" className="w-full h-full object-cover object-center" style={{ mixBlendMode: "luminosity", opacity: 0.55 }} />
+                <motion.img
+                  src={universityPhoto}
+                  alt="NMU Campus"
+                  className="w-full h-full object-cover object-center"
+                  style={{ mixBlendMode: "luminosity", opacity: 0.55 }}
+                  animate={{ scale: [1, 1.04, 1] }}
+                  transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+                />
                 <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, rgba(1,65,28,0.20) 0%, rgba(1,65,28,0.55) 100%)` }} />
               </div>
-              {/* floating stat cards */}
+
+              {/* Floating left stat cards — staggered float */}
               <div className="absolute bottom-8 left-[-24px] flex flex-col gap-3">
-                {[{ label: "Programs", value: 8, suffix: "" }, { label: "Seats Available", value: 320, suffix: "" }].map(({ label, value, suffix }) => (
-                  <motion.div key={label} initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: 0.5 }} className="bg-white rounded-xl px-4 py-3 shadow-xl flex items-center gap-3" style={{ boxShadow: "0 6px 24px rgba(0,0,0,0.16)" }}>
-                    <p className="text-2xl font-black" style={{ color: G }}><AnimatedCounter to={value} suffix={suffix} /></p>
-                    <p className="text-[11px] font-semibold text-slate-500 leading-tight max-w-[60px]">{label}</p>
+                {[
+                  { label: "Programs", value: 8, suffix: "", floatDelay: 0 },
+                  { label: "Seats Available", value: 320, suffix: "", floatDelay: 0.8 },
+                ].map(({ label, value, suffix, floatDelay }) => (
+                  <motion.div
+                    key={label}
+                    initial={{ opacity: 0, x: -28 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.65, delay: 0.6 + floatDelay * 0.2 }}
+                    className="relative"
+                  >
+                    <motion.div
+                      animate={{ y: [0, -7, 0] }}
+                      transition={{ duration: 3.5 + floatDelay, repeat: Infinity, ease: "easeInOut", delay: floatDelay }}
+                      className="bg-white rounded-xl px-4 py-3 shadow-xl flex items-center gap-3"
+                      style={{ boxShadow: "0 8px 28px rgba(0,0,0,0.18)" }}
+                    >
+                      <p className="text-2xl font-black" style={{ color: G }}><AnimatedCounter to={value} suffix={suffix} /></p>
+                      <p className="text-[11px] font-semibold text-slate-500 leading-tight max-w-[60px]">{label}</p>
+                    </motion.div>
                   </motion.div>
                 ))}
               </div>
-              <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.7 }} className="absolute top-7 right-6 bg-white rounded-xl px-4 py-3 shadow-xl">
-                <p className="text-[11px] font-bold text-slate-500 mb-0.5">Students Enrolled</p>
-                <p className="text-xl font-black" style={{ color: G }}><AnimatedCounter to={1200} suffix="+" /></p>
+
+              {/* Students Enrolled badge — floats down */}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, delay: 0.8 }}
+                className="absolute top-7 right-6"
+              >
+                <motion.div
+                  animate={{ y: [0, 6, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="bg-white rounded-xl px-4 py-3 shadow-xl"
+                  style={{ boxShadow: "0 8px 28px rgba(0,0,0,0.18)" }}
+                >
+                  <p className="text-[11px] font-bold text-slate-500 mb-0.5">Students Enrolled</p>
+                  <p className="text-xl font-black" style={{ color: G }}><AnimatedCounter to={1200} suffix="+" /></p>
+                </motion.div>
               </motion.div>
-              <Star4 size={24} className="absolute top-14 left-6 opacity-80" />
-              <Star4 size={16} className="absolute top-24 left-12 opacity-50" />
+
+              {/* Stars on panel — spinning */}
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+                className="absolute top-14 left-6"
+              >
+                <Star4 size={24} className="opacity-80" />
+              </motion.div>
+              <motion.div
+                animate={{ rotate: -360 }}
+                transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
+                className="absolute top-24 left-12"
+              >
+                <Star4 size={16} className="opacity-50" />
+              </motion.div>
             </motion.div>
           </div>
 
