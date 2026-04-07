@@ -18,7 +18,7 @@ export const HealthCheckResponse = zod.object({
  * @summary Login with credentials
  */
 export const LoginBody = zod.object({
-  email: zod.string(),
+  identifier: zod.string(),
   password: zod.string(),
 });
 
@@ -34,6 +34,7 @@ export const LoginResponse = zod.object({
  * @summary Register a new student account
  */
 export const RegisterBody = zod.object({
+  cnic: zod.string(),
   email: zod.string(),
   password: zod.string(),
   fullName: zod.string(),

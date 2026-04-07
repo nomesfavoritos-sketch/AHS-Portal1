@@ -7,10 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Building2, Loader2, ArrowLeft } from "lucide-react";
+import { Building2, Loader2, ArrowLeft, CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+const cnicRegex = /^\d{5}-?\d{7}-?\d{1}$/;
+
 const registerSchema = z.object({
+  cnic: z
+    .string()
+    .min(1, "CNIC / B-Form is required")
+    .refine(
+      (v) => cnicRegex.test(v) || /^\d{13}$/.test(v.replace(/-/g, "")),
+      "Enter a valid 13-digit CNIC or B-Form number"
+    ),
   fullName: z.string().min(2, "Full name is required"),
   email: z.string().email("Please enter a valid email address"),
   phone: z.string().optional(),
@@ -31,6 +40,7 @@ export default function Register() {
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
+      cnic: "",
       fullName: "",
       email: "",
       phone: "",
@@ -41,13 +51,14 @@ export default function Register() {
 
   const onSubmit = (data: RegisterFormValues) => {
     registerMutation.mutate(
-      { 
+      {
         data: {
+          cnic: data.cnic,
           fullName: data.fullName,
           email: data.email,
-          phone: data.phone,
+          phone: data.phone || undefined,
           password: data.password,
-        }
+        },
       },
       {
         onSuccess: () => {
@@ -61,15 +72,11 @@ export default function Register() {
           const apiError = error as unknown as { status?: number; data?: { error?: string } };
           let description = "There was a problem creating your account.";
           if (apiError.status === 409) {
-            description = "An account with this email already exists. Please sign in instead.";
+            description = apiError.data?.error ?? "An account with this CNIC/B-Form or email already exists.";
           } else if (apiError.data?.error) {
             description = apiError.data.error;
           }
-          toast({
-            title: "Registration failed",
-            description,
-            variant: "destructive",
-          });
+          toast({ title: "Registration failed", description, variant: "destructive" });
         },
       }
     );
@@ -100,6 +107,33 @@ export default function Register() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
+                {/* CNIC / B-Form — required identity field */}
+                <FormField
+                  control={form.control}
+                  name="cnic"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-1.5">
+                        <CreditCard className="h-3.5 w-3.5" />
+                        CNIC / B-Form Number
+                        <span className="text-destructive ml-0.5">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="XXXXX-XXXXXXX-X"
+                          maxLength={15}
+                          {...field}
+                        />
+                      </FormControl>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        Used as your login ID. Enter with or without dashes.
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="fullName"
@@ -113,13 +147,13 @@ export default function Register() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email address</FormLabel>
+                      <FormLabel>Email Address</FormLabel>
                       <FormControl>
                         <Input placeholder="you@example.com" type="email" {...field} />
                       </FormControl>
@@ -133,7 +167,7 @@ export default function Register() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number (Optional)</FormLabel>
+                      <FormLabel>Phone Number <span className="text-muted-foreground font-normal">(Optional)</span></FormLabel>
                       <FormControl>
                         <Input placeholder="03XXXXXXXXX" {...field} />
                       </FormControl>
@@ -141,7 +175,7 @@ export default function Register() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="password"
@@ -171,9 +205,9 @@ export default function Register() {
                 />
 
                 <Button type="submit" className="w-full mt-6" disabled={registerMutation.isPending}>
-                  {registerMutation.isPending ? (
+                  {registerMutation.isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : null}
+                  )}
                   Create Account
                 </Button>
               </form>

@@ -7,11 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Building2, Loader2 } from "lucide-react";
+import { Building2, Loader2, CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  identifier: z.string().min(1, "Please enter your CNIC/B-Form or email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -24,7 +24,7 @@ export default function Login() {
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { identifier: "", password: "" },
   });
 
   const onSubmit = (data: LoginFormValues) => {
@@ -42,7 +42,7 @@ export default function Login() {
         onError: (error: any) => {
           toast({
             title: "Login failed",
-            description: error?.data?.error || "Invalid email or password.",
+            description: error?.data?.error || "Invalid credentials. Please try again.",
             variant: "destructive",
           });
         },
@@ -73,13 +73,23 @@ export default function Login() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="identifier"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email address</FormLabel>
+                      <FormLabel className="flex items-center gap-1.5">
+                        <CreditCard className="h-3.5 w-3.5" />
+                        CNIC / B-Form
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="you@example.com" type="email" autoComplete="email" {...field} />
+                        <Input
+                          placeholder="XXXXX-XXXXXXX-X"
+                          autoComplete="username"
+                          {...field}
+                        />
                       </FormControl>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        Admin staff may sign in with their email address.
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )}

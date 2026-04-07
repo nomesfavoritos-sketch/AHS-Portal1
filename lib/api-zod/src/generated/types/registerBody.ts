@@ -7,6 +7,7 @@
  */
 
 export interface RegisterBody {
+  cnic: string;
   email: string;
   password: string;
   fullName: string;

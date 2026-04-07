@@ -15,11 +15,21 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     res.status(400).json({ error: parsed.error.message });
     return;
   }
-  const { email, password } = parsed.data;
+  const { identifier, password } = parsed.data;
 
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email.toLowerCase()));
+  let user: typeof usersTable.$inferSelect | undefined;
+  const trimmed = identifier.trim();
+  if (trimmed.includes("@")) {
+    // Email-based login (admins)
+    [user] = await db.select().from(usersTable).where(eq(usersTable.email, trimmed.toLowerCase()));
+  } else {
+    // CNIC/B-Form login (students) — normalize by stripping dashes
+    const cnic = trimmed.replace(/-/g, "");
+    [user] = await db.select().from(usersTable).where(eq(usersTable.cnic, cnic));
+  }
+
   if (!user || !user.isActive) {
-    res.status(401).json({ error: "Invalid email or password" });
+    res.status(401).json({ error: "Invalid CNIC/B-Form or password" });
     return;
   }
 
@@ -60,10 +70,22 @@ router.post("/auth/register", async (req, res): Promise<void> => {
     res.status(400).json({ error: parsed.error.message });
     return;
   }
-  const { email, password, fullName, phone } = parsed.data;
+  const { cnic: rawCnic, email, password, fullName, phone } = parsed.data;
+  const cnic = rawCnic.replace(/-/g, "");
 
-  const [existing] = await db.select().from(usersTable).where(eq(usersTable.email, email.toLowerCase()));
-  if (existing) {
+  if (!/^\d{13}$/.test(cnic)) {
+    res.status(400).json({ error: "CNIC/B-Form must be exactly 13 digits" });
+    return;
+  }
+
+  const [existingCnic] = await db.select().from(usersTable).where(eq(usersTable.cnic, cnic));
+  if (existingCnic) {
+    res.status(409).json({ error: "An account with this CNIC/B-Form already exists" });
+    return;
+  }
+
+  const [existingEmail] = await db.select().from(usersTable).where(eq(usersTable.email, email.toLowerCase()));
+  if (existingEmail) {
     res.status(409).json({ error: "Email already in use" });
     return;
   }
@@ -71,6 +93,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
   const passwordHash = await bcrypt.hash(password, 12);
   const [user] = await db.insert(usersTable).values({
     email: email.toLowerCase(),
+    cnic,
     passwordHash,
     fullName,
     phone: phone ?? undefined,
