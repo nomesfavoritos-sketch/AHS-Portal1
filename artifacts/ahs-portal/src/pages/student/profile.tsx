@@ -179,7 +179,14 @@ export default function StudentProfile() {
     );
   }
 
-  const completionPercent = (profile as any)?.completionPercentage || 0;
+  const stepPercent = Math.round((step / totalSteps) * 100);
+
+  const STEPS = [
+    { n: 1, label: "Personal Info" },
+    { n: 2, label: "Classification" },
+    { n: 3, label: "Academic Details" },
+    { n: 4, label: "Review" },
+  ];
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -189,20 +196,34 @@ export default function StudentProfile() {
         <div className="mt-4 p-4 border rounded-md bg-muted/30">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">Profile Completion</span>
-            <span className="text-sm font-bold">{completionPercent}%</span>
+            <span className="text-sm font-bold">{stepPercent}%</span>
           </div>
-          <Progress value={completionPercent} className="h-2" />
+          <Progress value={stepPercent} className="h-2" />
         </div>
       </div>
 
-      <div className="flex justify-between items-center text-sm font-medium text-muted-foreground mb-4">
-        <span className={step >= 1 ? "text-primary" : ""}>1. Personal Info</span>
-        <ArrowRight className="h-4 w-4" />
-        <span className={step >= 2 ? "text-primary" : ""}>2. Classification</span>
-        <ArrowRight className="h-4 w-4" />
-        <span className={step >= 3 ? "text-primary" : ""}>3. Academic Details</span>
-        <ArrowRight className="h-4 w-4" />
-        <span className={step >= 4 ? "text-primary" : ""}>4. Review</span>
+      {/* Step indicators */}
+      <div className="flex items-center justify-between">
+        {STEPS.map((s, i) => {
+          const done = step > s.n;
+          const active = step === s.n;
+          return (
+            <div key={s.n} className="flex items-center flex-1">
+              <div className="flex flex-col items-center gap-1 min-w-0">
+                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors
+                  ${done ? "bg-green-600 text-white" : active ? "bg-primary text-primary-foreground ring-4 ring-primary/20" : "bg-muted text-muted-foreground"}`}>
+                  {done ? <Check className="h-4 w-4" /> : s.n}
+                </div>
+                <span className={`text-xs font-medium text-center hidden sm:block ${done ? "text-green-600" : active ? "text-primary" : "text-muted-foreground"}`}>
+                  {s.label}
+                </span>
+              </div>
+              {i < STEPS.length - 1 && (
+                <div className={`h-0.5 flex-1 mx-2 transition-colors ${step > s.n ? "bg-green-600" : "bg-border"}`} />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <Form {...form}>
