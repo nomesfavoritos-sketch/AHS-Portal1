@@ -34,7 +34,7 @@ pnpm workspace monorepo using TypeScript.
 
 ## Database Schema (15 tables)
 
-`users`, `programs`, `sessions` (+ correctionWindowStart/End, meritPublicationDate, joiningDeadline), `quotas`, `studentProfiles`, `applications` (+ meritScore/Raw/Breakdown), `documents`, `challans`, `meritLists` (+ quotaId, listNumber, versionNumber, isFrozen, frozenAt, eligibilityFilters), `meritListEntries` (+ matricScore, fscScore, meritScoreRaw/Normalized, meritBreakdown), `verifications`, `notices`, `auditLogs`, `joinedStudents`, **`systemSettings`**, **`programSeatMatrix`**
+`users`, `programs`, `sessions` (+ correctionWindowStart/End, meritPublicationDate, joiningDeadline), `quotas`, `studentProfiles`, `applications` (+ meritScore/Raw/Breakdown, **joiningIntentAt**), `documents`, `challans`, `meritLists` (+ quotaId, listNumber, versionNumber, isFrozen, frozenAt, eligibilityFilters), `meritListEntries` (+ matricScore, fscScore, meritScoreRaw/Normalized, meritBreakdown), `verifications`, `notices`, `auditLogs`, `joinedStudents`, **`systemSettings`**, **`programSeatMatrix`**
 
 Session table: `session` (managed by connect-pg-simple, created manually).
 
@@ -58,7 +58,9 @@ Session table: `session` (managed by connect-pg-simple, created manually).
 - `/api/settings` — GET/PATCH system settings (merit formula keys)
 - `/api/seat-matrix` — CRUD seat allocation per program+session
 - `/api/verifications`, `/api/notices`, `/api/audit-logs`, `/api/joined-students`
-- `GET /api/dashboard/summary`
+- `POST /api/applications/:id/joining-intent` — student confirms joining intent (sets joiningIntentAt timestamp)
+- `GET /api/dashboard/admin-summary` — 13 stats: totalApplications, pendingApplications, approvedApplications, rejectedApplications, totalStudents, totalPrograms, totalSessions, activeSession, pendingPayments, pendingVerifications, **joiningIntents**, **meritListedCount**, **totalJoined**
+- `GET /api/dashboard/student-summary` — includes profileCompletion, meritRank, meritScore, joiningIntentConfirmed, joiningIntentAt, applicationStatuses
 
 ## Key Commands
 
@@ -101,6 +103,14 @@ All weights stored in `system_settings` table and editable via `/admin/settings`
 - **Public Merit Search**: `/merit-search` — no auth, search by CNIC or application number
 - **Session Milestones**: correction window start/end, merit publication date, joining deadline
 - **Student Merit Page**: shows detailed rank, merit score breakdown, status per published list
+
+## Phase 4 Features (Analytics Dashboard + Joining Workflow)
+
+- **Admin Dashboard Charts**: Two rows of 4 stat cards (8 KPIs) — Total Applications, Registered Students, Pending Payments, Joining Intents, Pending Verifications, Merit Listed, Admitted, Rejected. Recharts `BarChart` for Applications by Program (with admitted overlay). Recharts `PieChart` donut for Application Status Breakdown. Recent Activity feed (newest-first, max 10 items).
+- **Student Dashboard Timeline**: Application status progress tracker rendered as a step-by-step pipeline (Draft → Submitted → Under Review → Verified → Merit Listed → Admitted). Merit badge banner shown when student has a rank. Joining confirmed banner when intent recorded.
+- **Student Joining Intent**: Students on merit-listed/admitted applications can click "Confirm Intent to Join" button (on `/student/merit`). Records `joiningIntentAt` timestamp on the application. Admin dashboard "Joining Intents" card reflects count. Audit log entry created.
+- **Student Merit Enhancements**: "Confirm Intent to Join" shown per merit entry if `status === "selected"`. Toast notification on success. Banner displayed if already confirmed.
+- **Dashboard API Improvements**: Recent activity now sorted newest-first. Student summary returns `profileCompletion`, `meritRank`, `meritScore`, `joiningIntentConfirmed`, `joiningIntentAt`, `applicationStatuses[]`. Admin summary returns `joiningIntents`, `meritListedCount`, `totalJoined`.
 
 ## Theme / Design
 

@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { useGetStudentDashboardSummary, useListMeritLists, useGetMeritList } from "@workspace/api-client-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Award, Trophy, Star, TrendingUp, Info, Search } from "lucide-react";
+import { Loader2, Award, Trophy, Star, TrendingUp, Info, Search, CheckCircle, UserCheck } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 function MeritScoreCard({ score, rank }: { score?: number | null; rank?: number | null }) {
   if (!score && !rank) return null;
@@ -19,10 +21,40 @@ function MeritScoreCard({ score, rank }: { score?: number | null; rank?: number 
   );
 }
 
-function MeritEntry({ entry }: { entry: any }) {
+function MeritEntry({ entry, canConfirmIntent, applicationId, onIntentConfirmed }: {
+  entry: any;
+  canConfirmIntent?: boolean;
+  applicationId?: number;
+  onIntentConfirmed?: () => void;
+}) {
+  const [confirming, setConfirming] = useState(false);
+  const [intentConfirmed, setIntentConfirmed] = useState(false);
+  const { toast } = useToast();
+
+  const handleConfirmIntent = async () => {
+    if (!applicationId) return;
+    setConfirming(true);
+    try {
+      const res = await fetch(`/api/applications/${applicationId}/joining-intent`, { method: "POST", credentials: "include" });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error ?? "Failed to confirm intent");
+      }
+      setIntentConfirmed(true);
+      onIntentConfirmed?.();
+      toast({ title: "Intent Confirmed", description: "Your joining intent has been recorded. The administration will contact you for the formal joining process." });
+    } catch (e: any) {
+      toast({ title: "Error", description: e.message, variant: "destructive" });
+    } finally {
+      setConfirming(false);
+    }
+  };
+
   const breakdown = entry.meritBreakdown ?? {};
+  const isSelected = entry.status === "selected";
+
   return (
-    <div className="rounded-lg border p-4 space-y-3">
+    <div className={`rounded-lg border p-4 space-y-3 ${isSelected ? "border-green-300 bg-green-50/40 dark:bg-green-950/10" : ""}`}>
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="font-semibold">{entry.application?.program?.name ?? "Program"}</p>
@@ -30,7 +62,9 @@ function MeritEntry({ entry }: { entry: any }) {
         </div>
         <div className="text-right">
           <div className="text-2xl font-bold text-primary">{(entry.meritScoreNormalized ?? entry.meritScore).toFixed(2)}%</div>
-          <Badge variant={entry.status === "selected" ? "default" : "secondary"} className="mt-1">{entry.status}</Badge>
+          <Badge variant={isSelected ? "default" : "secondary"} className={isSelected ? "bg-green-600 hover:bg-green-700 mt-1" : "mt-1"}>
+            {entry.status}
+          </Badge>
         </div>
       </div>
       <Separator />
@@ -58,11 +92,38 @@ function MeritEntry({ entry }: { entry: any }) {
           <span>{entry.meritScoreRaw.toFixed(3)}</span>
         </>}
       </div>
+
+      {isSelected && canConfirmIntent && !intentConfirmed && (
+        <div className="pt-2">
+          <Button
+            className="w-full bg-green-600 hover:bg-green-700"
+            onClick={handleConfirmIntent}
+            disabled={confirming}
+          >
+            {confirming ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserCheck className="h-4 w-4 mr-2" />}
+            Confirm Intent to Join
+          </Button>
+          <p className="text-xs text-muted-foreground mt-1.5 text-center">
+            This notifies the administration that you intend to join this program.
+          </p>
+        </div>
+      )}
+
+      {(isSelected && intentConfirmed) && (
+        <div className="flex items-center gap-2 pt-2 text-green-700 text-sm">
+          <CheckCircle className="h-4 w-4 flex-shrink-0" />
+          <span className="font-medium">Intent to join confirmed!</span>
+        </div>
+      )}
     </div>
   );
 }
 
-function PublishedMeritLists({ studentId }: { studentId?: number }) {
+function PublishedMeritLists({ studentId, joiningIntentConfirmed, onIntentConfirmed }: {
+  studentId?: number;
+  joiningIntentConfirmed?: boolean;
+  onIntentConfirmed?: () => void;
+}) {
   const { data: allLists } = useListMeritLists();
   const published = allLists?.filter((ml) => ml.isPublished) ?? [];
 
@@ -72,13 +133,26 @@ function PublishedMeritLists({ studentId }: { studentId?: number }) {
     <div className="space-y-4">
       <h2 className="text-lg font-semibold flex items-center gap-2"><TrendingUp className="h-5 w-5" />Published Merit Lists</h2>
       {published.map((ml) => (
-        <MeritListCard key={ml.id} id={ml.id} name={ml.name} studentId={studentId} />
+        <MeritListCard
+          key={ml.id}
+          id={ml.id}
+          name={ml.name}
+          studentId={studentId}
+          joiningIntentConfirmed={joiningIntentConfirmed}
+          onIntentConfirmed={onIntentConfirmed}
+        />
       ))}
     </div>
   );
 }
 
-function MeritListCard({ id, name, studentId }: { id: number; name: string; studentId?: number }) {
+function MeritListCard({ id, name, studentId, joiningIntentConfirmed, onIntentConfirmed }: {
+  id: number;
+  name: string;
+  studentId?: number;
+  joiningIntentConfirmed?: boolean;
+  onIntentConfirmed?: () => void;
+}) {
   const { data, isLoading } = useGetMeritList(id);
   if (isLoading) return <div className="flex justify-center p-4"><Loader2 className="h-5 w-5 animate-spin" /></div>;
   if (!data) return null;
@@ -98,7 +172,15 @@ function MeritListCard({ id, name, studentId }: { id: number; name: string; stud
       <CardContent>
         {myEntries.length > 0 ? (
           <div className="space-y-3">
-            {myEntries.map((entry) => <MeritEntry key={entry.id} entry={entry} />)}
+            {myEntries.map((entry) => (
+              <MeritEntry
+                key={entry.id}
+                entry={entry}
+                canConfirmIntent={!joiningIntentConfirmed}
+                applicationId={entry.applicationId}
+                onIntentConfirmed={onIntentConfirmed}
+              />
+            ))}
           </div>
         ) : (
           <div className="text-center py-4 text-muted-foreground text-sm">
@@ -112,7 +194,12 @@ function MeritListCard({ id, name, studentId }: { id: number; name: string; stud
 }
 
 export default function StudentMerit() {
-  const { data: summary, isLoading } = useGetStudentDashboardSummary();
+  const { data: summary, isLoading, refetch } = useGetStudentDashboardSummary();
+  const joiningIntentConfirmed = (summary as any)?.joiningIntentConfirmed ?? false;
+
+  const handleIntentConfirmed = () => {
+    refetch();
+  };
 
   if (isLoading) {
     return (
@@ -133,6 +220,22 @@ export default function StudentMerit() {
           <Link to="/merit-search"><Search className="mr-2 h-4 w-4" />Public Search</Link>
         </Button>
       </div>
+
+      {joiningIntentConfirmed && (
+        <Card className="border-green-200 bg-green-50 dark:bg-green-950/20 dark:border-green-800">
+          <CardContent className="pt-4 pb-4">
+            <div className="flex items-center gap-3">
+              <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0" />
+              <div>
+                <p className="font-semibold text-green-800 dark:text-green-200">Intent to Join Confirmed</p>
+                <p className="text-sm text-green-700 dark:text-green-400">
+                  The admissions office has been notified. You will be contacted regarding the formal joining process and fee submission.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className={summary?.meritRank ? "border-green-200 bg-green-50/30" : ""}>
         <CardHeader className="text-center pb-2">
@@ -169,7 +272,11 @@ export default function StudentMerit() {
         </CardContent>
       </Card>
 
-      <PublishedMeritLists studentId={(summary as any)?.userId} />
+      <PublishedMeritLists
+        studentId={(summary as any)?.userId}
+        joiningIntentConfirmed={joiningIntentConfirmed}
+        onIntentConfirmed={handleIntentConfirmed}
+      />
     </div>
   );
 }

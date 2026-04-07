@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
-import { db, applicationsTable, usersTable, programsTable, admissionSessionsTable, paymentChallansTable, verificationDecisionsTable, noticesTable, auditLogsTable, joinedStudentsTable } from "@workspace/db";
-import { eq, count, and } from "drizzle-orm";
+import { db, applicationsTable, usersTable, programsTable, admissionSessionsTable, paymentChallansTable, verificationDecisionsTable, noticesTable, auditLogsTable, joinedStudentsTable, meritListEntriesTable, studentProfilesTable } from "@workspace/db";
+import { eq, count, and, sum, desc, sql } from "drizzle-orm";
 import { requireAuth } from "../middlewares/auth";
 
 const router: IRouter = Router();
@@ -17,6 +17,9 @@ router.get("/dashboard/admin-summary", requireAuth, async (_req, res): Promise<v
     activeSessionResult,
     pendingPayments,
     pendingVerifications,
+    joiningIntents,
+    meritListedCount,
+    totalJoined,
   ] = await Promise.all([
     db.select({ count: count() }).from(applicationsTable),
     db.select({ count: count() }).from(applicationsTable).where(eq(applicationsTable.status, "submitted")),
@@ -28,6 +31,9 @@ router.get("/dashboard/admin-summary", requireAuth, async (_req, res): Promise<v
     db.select({ name: admissionSessionsTable.name }).from(admissionSessionsTable).where(eq(admissionSessionsTable.isActive, true)).limit(1),
     db.select({ count: count() }).from(paymentChallansTable).where(eq(paymentChallansTable.status, "pending")),
     db.select({ count: count() }).from(verificationDecisionsTable).where(eq(verificationDecisionsTable.status, "pending")),
+    db.select({ count: count() }).from(applicationsTable).where(sql`joining_intent_at IS NOT NULL`),
+    db.select({ count: count() }).from(applicationsTable).where(eq(applicationsTable.status, "merit_listed")),
+    db.select({ count: count() }).from(joinedStudentsTable),
   ]);
 
   res.json({
@@ -41,6 +47,9 @@ router.get("/dashboard/admin-summary", requireAuth, async (_req, res): Promise<v
     activeSession: activeSessionResult[0]?.name ?? null,
     pendingPayments: Number(pendingPayments[0]?.count ?? 0),
     pendingVerifications: Number(pendingVerifications[0]?.count ?? 0),
+    joiningIntents: Number(joiningIntents[0]?.count ?? 0),
+    meritListedCount: Number(meritListedCount[0]?.count ?? 0),
+    totalJoined: Number(totalJoined[0]?.count ?? 0),
   });
 });
 
@@ -48,28 +57,53 @@ router.get("/dashboard/student-summary", requireAuth, async (req, res): Promise<
   const sess = req.session as Record<string, unknown>;
   const userId = sess.userId as number;
 
+  const userApps = await db.select().from(applicationsTable).where(eq(applicationsTable.userId, userId));
+  const appIds = userApps.map((a) => a.id);
+
   const [
-    totalApps,
     pendingApps,
     approvedApps,
-    pendingPayments,
     activeNotices,
+    profileResult,
+    joiningIntentApp,
   ] = await Promise.all([
-    db.select({ count: count() }).from(applicationsTable).where(eq(applicationsTable.userId, userId)),
     db.select({ count: count() }).from(applicationsTable).where(and(eq(applicationsTable.userId, userId), eq(applicationsTable.status, "submitted"))),
     db.select({ count: count() }).from(applicationsTable).where(and(eq(applicationsTable.userId, userId), eq(applicationsTable.status, "admitted"))),
-    db.select({ count: count() }).from(paymentChallansTable),
     db.select({ count: count() }).from(noticesTable).where(eq(noticesTable.isActive, true)),
+    db.select({ completionPercentage: studentProfilesTable.completionPercentage }).from(studentProfilesTable).where(eq(studentProfilesTable.userId, userId)).limit(1),
+    db.select({ joiningIntentAt: applicationsTable.joiningIntentAt, id: applicationsTable.id }).from(applicationsTable)
+      .where(and(eq(applicationsTable.userId, userId), sql`joining_intent_at IS NOT NULL`)).limit(1),
   ]);
 
+  const pendingChallans = appIds.length
+    ? await db.select({ count: count() }).from(paymentChallansTable)
+        .where(and(eq(paymentChallansTable.status, "pending"), sql`application_id = ANY(ARRAY[${sql.raw(appIds.join(",") || "0")}])`))
+    : [{ count: 0 }];
+
+  const meritEntries = await db.select({
+    rank: meritListEntriesTable.rank,
+    meritScore: meritListEntriesTable.meritScore,
+  }).from(meritListEntriesTable)
+    .where(eq(meritListEntriesTable.userId, userId))
+    .orderBy(meritListEntriesTable.rank)
+    .limit(1);
+
+  const bestRank = meritEntries[0]?.rank ?? null;
+  const bestScore = meritEntries[0]?.meritScore ?? null;
+
   res.json({
-    totalApplications: Number(totalApps[0]?.count ?? 0),
+    totalApplications: userApps.length,
     pendingApplications: Number(pendingApps[0]?.count ?? 0),
     approvedApplications: Number(approvedApps[0]?.count ?? 0),
-    pendingPayments: Number(pendingPayments[0]?.count ?? 0),
+    pendingPayments: Number(pendingChallans[0]?.count ?? 0),
     pendingDocuments: 0,
     activeNotices: Number(activeNotices[0]?.count ?? 0),
-    meritRank: null,
+    profileCompletion: Number(profileResult[0]?.completionPercentage ?? 0),
+    meritRank: bestRank,
+    meritScore: bestScore,
+    joiningIntentConfirmed: joiningIntentApp.length > 0,
+    joiningIntentAt: joiningIntentApp[0]?.joiningIntentAt?.toISOString() ?? null,
+    applicationStatuses: userApps.map((a) => ({ id: a.id, status: a.status, applicationNumber: a.applicationNumber })),
   });
 });
 
@@ -82,6 +116,7 @@ router.get("/dashboard/application-stats", requireAuth, async (_req, res): Promi
     ]);
     return {
       programName: p.name,
+      programCode: p.code,
       count: Number(total[0]?.count ?? 0),
       approved: Number(approved[0]?.count ?? 0),
     };
@@ -97,7 +132,7 @@ router.get("/dashboard/application-stats", requireAuth, async (_req, res): Promi
 });
 
 router.get("/dashboard/recent-activity", requireAuth, async (_req, res): Promise<void> => {
-  const logs = await db.select().from(auditLogsTable).orderBy(auditLogsTable.createdAt).limit(20);
+  const logs = await db.select().from(auditLogsTable).orderBy(desc(auditLogsTable.createdAt)).limit(20);
 
   const items = await Promise.all(logs.map(async (l) => {
     let userName: string | null = null;

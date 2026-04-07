@@ -30,6 +30,7 @@ export const applicationsTable = pgTable("applications", {
     rawScore?: number;
     normalizedScore?: number;
   }>().default({}),
+  joiningIntentAt: timestamp("joining_intent_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });

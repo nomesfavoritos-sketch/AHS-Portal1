@@ -269,4 +269,26 @@ router.patch("/applications/:id/status", requireAuth, requireAdminRole, async (r
   res.json(await formatApplication(app));
 });
 
+router.post("/applications/:id/joining-intent", requireAuth, async (req, res): Promise<void> => {
+  const sess = req.session as Record<string, unknown>;
+  const userId = sess.userId as number;
+  const id = Number(req.params.id);
+
+  const [app] = await db.select().from(applicationsTable).where(eq(applicationsTable.id, id));
+  if (!app) { res.status(404).json({ error: "Application not found" }); return; }
+  if (app.userId !== userId) { res.status(403).json({ error: "Forbidden" }); return; }
+  if (!["merit_listed", "admitted"].includes(app.status)) {
+    res.status(400).json({ error: "Joining intent can only be confirmed for merit-listed or admitted applications" });
+    return;
+  }
+
+  const [updated] = await db.update(applicationsTable)
+    .set({ joiningIntentAt: new Date() })
+    .where(eq(applicationsTable.id, id))
+    .returning();
+
+  await logAudit({ userId, action: "joining_intent_confirmed", entityType: "application", entityId: id, ipAddress: req.ip });
+  res.json({ success: true, joiningIntentAt: updated.joiningIntentAt?.toISOString() });
+});
+
 export default router;
