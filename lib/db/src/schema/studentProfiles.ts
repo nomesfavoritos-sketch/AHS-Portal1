@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp, integer, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, timestamp, integer, boolean, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 import { usersTable } from "./users";
@@ -45,6 +45,16 @@ export const studentProfilesTable = pgTable("student_profiles", {
   interRoll: text("inter_roll"),
   interTotal: integer("inter_total"),
   interMarks: integer("inter_marks"),
+
+  // Additional qualifications (dynamic list)
+  additionalQualifications: jsonb("additional_qualifications").$type<Array<{
+    degree: string;
+    institution: string;
+    board: string;
+    year: number;
+    marksObtained: number;
+    totalMarks: number;
+  }>>().default([]),
 
   // Profile completion
   isComplete: boolean("is_complete").notNull().default(false),

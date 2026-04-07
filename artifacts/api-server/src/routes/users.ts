@@ -191,6 +191,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
     "quotaType", "minorityDetails", "disabilityDetails",
     "matricBoard", "matricYear", "matricRoll", "matricTotal", "matricMarks",
     "interBoard", "interYear", "interRoll", "interTotal", "interMarks",
+    "additionalQualifications",
   ] as const;
 
   for (const field of profileFields) {
