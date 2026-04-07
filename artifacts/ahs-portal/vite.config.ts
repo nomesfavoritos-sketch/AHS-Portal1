@@ -66,6 +66,16 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+        headers: {
+          "X-Forwarded-Proto": "https",
+        },
+      },
+    },
   },
   preview: {
     port,

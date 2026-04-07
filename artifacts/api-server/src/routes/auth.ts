@@ -8,6 +8,7 @@ import { logAudit } from "../lib/audit";
 
 const router: IRouter = Router();
 
+
 router.post("/auth/login", async (req, res): Promise<void> => {
   const parsed = LoginBody.safeParse(req.body);
   if (!parsed.success) {

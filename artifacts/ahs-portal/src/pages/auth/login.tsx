@@ -1,10 +1,8 @@
-import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useLogin, useGetMe, getGetMeQueryKey } from "@workspace/api-client-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useLogin } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,29 +20,11 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function Login() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const loginMutation = useLogin();
-
-  const { data: user, isLoading: isLoadingUser } = useGetMe({
-    query: { retry: false },
-  } as any);
-
-  useEffect(() => {
-    if (user) {
-      if (user.role === "student") {
-        setLocation("/student/dashboard");
-      } else {
-        setLocation("/admin/dashboard");
-      }
-    }
-  }, [user]);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
 
   const onSubmit = (data: LoginFormValues) => {
@@ -52,30 +32,23 @@ export default function Login() {
       { data },
       {
         onSuccess: (loggedInUser) => {
-          queryClient.setQueryData(getGetMeQueryKey(), loggedInUser);
-          toast({
-            title: "Login successful",
-            description: "Welcome back to AHS Portal.",
-          });
+          toast({ title: "Login successful", description: "Welcome back to AHS Portal." });
+          if (loggedInUser.role === "student") {
+            setLocation("/student/dashboard");
+          } else {
+            setLocation("/admin/dashboard");
+          }
         },
         onError: (error: any) => {
           toast({
             title: "Login failed",
-            description: error?.data?.error || "Invalid email or password. Please try again.",
+            description: error?.data?.error || "Invalid email or password.",
             variant: "destructive",
           });
         },
       }
     );
   };
-
-  if (isLoadingUser) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-muted/40">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4 py-12 sm:px-6 lg:px-8">
@@ -84,9 +57,7 @@ export default function Login() {
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary">
             <Building2 className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
-            AHS Portal
-          </h2>
+          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">AHS Portal</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Allied Health College, Nishtar Medical University
           </p>
@@ -95,9 +66,7 @@ export default function Login() {
         <Card className="shadow-lg border-border/50">
           <CardHeader>
             <CardTitle>Sign in to your account</CardTitle>
-            <CardDescription>
-              Enter your credentials to access the portal
-            </CardDescription>
+            <CardDescription>Enter your credentials to access the portal</CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -109,13 +78,12 @@ export default function Login() {
                     <FormItem>
                       <FormLabel>Email address</FormLabel>
                       <FormControl>
-                        <Input placeholder="you@example.com" type="email" {...field} />
+                        <Input placeholder="you@example.com" type="email" autoComplete="email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="password"
@@ -128,17 +96,14 @@ export default function Login() {
                         </Link>
                       </div>
                       <FormControl>
-                        <Input placeholder="••••••••" type="password" {...field} />
+                        <Input placeholder="••••••••" type="password" autoComplete="current-password" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
-                  {loginMutation.isPending ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : null}
+                  {loginMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Sign in
                 </Button>
               </form>
