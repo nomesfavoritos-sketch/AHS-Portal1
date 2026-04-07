@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +11,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Building2, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect } from "react";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -25,9 +24,9 @@ export default function Login() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const loginMutation = useLogin();
-  
+
   const { data: user, isLoading: isLoadingUser } = useGetMe({
-    query: { retry: false }
+    query: { retry: false },
   } as any);
 
   useEffect(() => {
@@ -38,7 +37,7 @@ export default function Login() {
         setLocation("/admin/dashboard");
       }
     }
-  }, [user, setLocation]);
+  }, [user]);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -52,22 +51,17 @@ export default function Login() {
     loginMutation.mutate(
       { data },
       {
-        onSuccess: (user) => {
-          queryClient.setQueryData(getGetMeQueryKey(), user);
+        onSuccess: (loggedInUser) => {
+          queryClient.setQueryData(getGetMeQueryKey(), loggedInUser);
           toast({
             title: "Login successful",
             description: "Welcome back to AHS Portal.",
           });
-          if (user.role === "student") {
-            setLocation("/student/dashboard");
-          } else {
-            setLocation("/admin/dashboard");
-          }
         },
-        onError: (error) => {
+        onError: (error: any) => {
           toast({
             title: "Login failed",
-            description: error.error || "Invalid email or password. Please try again.",
+            description: error?.data?.error || "Invalid email or password. Please try again.",
             variant: "destructive",
           });
         },
@@ -121,7 +115,7 @@ export default function Login() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="password"
