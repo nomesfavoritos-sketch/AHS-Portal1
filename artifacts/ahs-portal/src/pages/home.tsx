@@ -545,8 +545,8 @@ export default function Home() {
         {/* ══════ ABOUT STRIP ══════ */}
         <section className="py-20 px-6 lg:px-16 bg-white">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-            {/* left — image */}
-            <Reveal>
+            {/* left — image (hidden on mobile) */}
+            <Reveal className="hidden lg:block">
               <div className="relative rounded-3xl overflow-hidden h-[400px]">
                 <img
                   src={universityPhoto}
