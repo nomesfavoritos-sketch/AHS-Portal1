@@ -262,7 +262,7 @@ export default function Home() {
           <Star4 size={18} className="absolute top-32 right-[42%] opacity-40 hidden lg:block" />
 
           {/* ── DESKTOP: side-by-side ── */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 hidden lg:grid lg:grid-cols-2 min-h-[72vh] items-center gap-0">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 hidden lg:grid lg:grid-cols-2 min-h-[82vh] items-center gap-0">
 
             {/* LEFT — copy */}
             <motion.div initial="hidden" animate="show" variants={stagger} className="py-10 lg:py-0 lg:pr-12 flex flex-col z-10">
@@ -319,7 +319,7 @@ export default function Home() {
               initial={{ opacity: 0, x: 60 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="relative flex items-end justify-end h-full min-h-[72vh]"
+              className="relative flex items-end justify-end h-full min-h-[82vh]"
             >
               <div className="absolute inset-0 rounded-bl-[64px]" style={{ background: `linear-gradient(160deg, ${G} 0%, ${GA} 100%)` }} />
               <div className="relative w-full h-full rounded-bl-[64px] overflow-hidden">
@@ -414,20 +414,23 @@ export default function Home() {
           <motion.div
             initial="hidden" whileInView="show" viewport={{ once: true }}
             variants={stagger}
-            className="max-w-6xl mx-auto px-6 lg:px-16 py-5 flex flex-wrap items-center justify-center gap-0 divide-x divide-white/20"
+            className="max-w-5xl mx-auto px-6 lg:px-16 py-5 flex flex-wrap items-center justify-center gap-0"
           >
             {[
               { icon: GraduationCap, label: "8 Programs", sub: "Allied Health Sciences" },
               { icon: Award, label: "320 Seats", sub: "Per Admission Session" },
               { icon: Shield, label: "HEC Recognized", sub: "Fully Accredited" },
               { icon: BookOpen, label: "Established 2022", sub: "Nishtar Medical University" },
-            ].map(({ icon: Icon, label, sub }) => (
-              <motion.div key={label} variants={fadeUp} className="flex items-center gap-3 px-8 py-1.5">
-                <Icon className="h-5 w-5 flex-shrink-0" style={{ color: Y }} />
-                <div>
-                  <p className="text-white font-bold text-[13px] leading-tight">{label}</p>
-                  <p className="text-white/50 text-[11px] leading-tight">{sub}</p>
-                </div>
+            ].map(({ icon: Icon, label, sub }, i, arr) => (
+              <motion.div
+                key={label}
+                variants={fadeUp}
+                className="flex flex-col items-center text-center px-10 py-2"
+                style={{ borderRight: i < arr.length - 2 ? "1px solid rgba(255,255,255,0.20)" : "none" }}
+              >
+                <Icon className="h-5 w-5 mb-1.5" style={{ color: Y }} />
+                <p className="text-white font-bold text-[13px] leading-tight">{label}</p>
+                <p className="text-white/50 text-[11px] leading-tight">{sub}</p>
               </motion.div>
             ))}
           </motion.div>
