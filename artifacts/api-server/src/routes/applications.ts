@@ -306,4 +306,23 @@ router.post("/applications/:id/joining-intent", requireAuth, async (req, res): P
   res.json({ success: true, joiningIntentAt: updated.joiningIntentAt?.toISOString() });
 });
 
+router.delete("/applications/:id", requireAuth, async (req, res): Promise<void> => {
+  const sess = req.session as Record<string, unknown>;
+  const userId = sess.userId as number;
+  const userRole = sess.userRole as string;
+  const id = parseInt(req.params.id as string, 10);
+
+  const [app] = await db.select().from(applicationsTable).where(eq(applicationsTable.id, id));
+  if (!app) { res.status(404).json({ error: "Application not found" }); return; }
+  if (userRole === "student" && app.userId !== userId) { res.status(403).json({ error: "Forbidden" }); return; }
+  if (userRole === "student" && app.status !== "draft") {
+    res.status(400).json({ error: "Only draft applications can be deleted. Contact admissions to withdraw." });
+    return;
+  }
+
+  await db.delete(applicationsTable).where(eq(applicationsTable.id, id));
+  await logAudit({ userId, action: "application_deleted", entityType: "application", entityId: id, ipAddress: req.ip });
+  res.json({ success: true });
+});
+
 export default router;

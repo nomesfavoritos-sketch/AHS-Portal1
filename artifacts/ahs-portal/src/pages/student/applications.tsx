@@ -29,7 +29,14 @@ import {
   Loader2, Plus, CheckCircle, UploadCloud, AlertTriangle,
   ClipboardCheck, PartyPopper, XCircle, Clock, UserCheck,
   Printer, Eye, FileCheck2, CreditCard, Send, Zap,
+  Pencil, Trash2,
 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { ObjectUploader } from "@workspace/object-storage-web";
 
@@ -394,6 +401,216 @@ function SubmitChallanDialog({ app, challan, onUploadComplete, onFinalSubmit, is
   );
 }
 
+function ViewApplicationDialog({ app, challan }: { app: any; challan?: any }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button title="View Application"
+          className="h-8 w-8 rounded-md bg-sky-500 hover:bg-sky-600 text-white flex items-center justify-center transition-colors">
+          <Eye className="h-3.5 w-3.5" />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Application Details</DialogTitle>
+          <DialogDescription>Full details of your application.</DialogDescription>
+        </DialogHeader>
+        <div className="divide-y text-sm">
+          {[
+            ["Application #", app.applicationNumber],
+            ["Program", app.program?.name],
+            ["Program Code", app.program?.code ?? "—"],
+            ["Session", app.session?.name],
+            ["Quota", app.quota?.name ?? "Open Merit"],
+            ["Status", app.status?.replace(/_/g, " ")],
+            ["Applied On", app.createdAt ? format(new Date(app.createdAt), "dd MMM yyyy, hh:mm a") : "—"],
+            ...(challan ? [
+              ["Challan #", challan.challanNumber],
+              ["Fee Amount", `PKR ${Number(challan.amount).toLocaleString()}`],
+              ["Due Date", challan.dueDate ? format(new Date(challan.dueDate), "dd MMM yyyy") : "—"],
+              ["Payment Status", challan.isPaid ? "Paid" : "Unpaid"],
+            ] : []),
+            ...(app.remarks ? [["Remarks", app.remarks]] : []),
+          ].map(([label, value]) => (
+            <div key={label} className="flex justify-between py-2 gap-4">
+              <span className="text-muted-foreground font-medium shrink-0">{label}</span>
+              <span className="text-right font-medium">{value}</span>
+            </div>
+          ))}
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>Close</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function EditApplicationDialog({ app, programs, quotas, onSuccess }: {
+  app: any; programs: any[]; quotas: any[]; onSuccess: () => void;
+}) {
+  const { toast } = useToast();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const baseUrl = import.meta.env.BASE_URL;
+  const canEdit = app.status !== "submitted" && app.status !== "under_review" && app.status !== "verified"
+    && app.status !== "merit_listed" && app.status !== "selected_for_verification"
+    && app.status !== "admitted" && app.status !== "rejected";
+
+  const form = useForm<{ programId: string; quotaId: string }>({
+    defaultValues: { programId: String(app.program?.id ?? ""), quotaId: String(app.quota?.id ?? "none") },
+  });
+
+  const onSubmit = async (data: { programId: string; quotaId: string }) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${baseUrl}api/applications/${app.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          programId: Number(data.programId),
+          quotaId: data.quotaId === "none" ? null : Number(data.quotaId),
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        toast({ title: "Update failed", description: err.error, variant: "destructive" });
+      } else {
+        toast({ title: "Application updated" });
+        setOpen(false);
+        onSuccess();
+      }
+    } catch {
+      toast({ title: "Network error", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button
+          title={canEdit ? "Edit Application" : "Cannot edit at this stage"}
+          disabled={!canEdit}
+          className={`h-8 w-8 rounded-md flex items-center justify-center transition-colors text-white
+            ${canEdit ? "bg-amber-500 hover:bg-amber-600 cursor-pointer" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}>
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Edit Application</DialogTitle>
+          <DialogDescription>Update the program or quota for {app.applicationNumber}.</DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField control={form.control} name="programId" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Program</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl><SelectTrigger><SelectValue placeholder="Select Program" /></SelectTrigger></FormControl>
+                  <SelectContent>
+                    {programs?.filter(p => p.isActive).map(p => (
+                      <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="quotaId" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Quota Category</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl><SelectTrigger><SelectValue placeholder="Open Merit" /></SelectTrigger></FormControl>
+                  <SelectContent>
+                    <SelectItem value="none">Open Merit (Default)</SelectItem>
+                    {quotas?.filter(q => q.isActive).map(q => (
+                      <SelectItem key={q.id} value={String(q.id)}>{q.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )} />
+            <DialogFooter>
+              <Button variant="outline" type="button" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button type="submit" disabled={loading}>
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Save Changes
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function DeleteApplicationButton({ app, onSuccess }: { app: any; onSuccess: () => void }) {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const baseUrl = import.meta.env.BASE_URL;
+  const canDelete = app.status === "draft";
+
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${baseUrl}api/applications/${app.id}`, {
+        method: "DELETE", credentials: "include",
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        toast({ title: "Delete failed", description: err.error, variant: "destructive" });
+      } else {
+        toast({ title: "Application deleted" });
+        onSuccess();
+      }
+    } catch {
+      toast({ title: "Network error", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!canDelete) {
+    return (
+      <button
+        title="Only draft applications can be deleted"
+        disabled
+        className="h-8 w-8 rounded-md bg-gray-200 text-gray-400 cursor-not-allowed flex items-center justify-center">
+        <Trash2 className="h-3.5 w-3.5" />
+      </button>
+    );
+  }
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <button title="Delete Application"
+          className="h-8 w-8 rounded-md bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-colors">
+          {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+        </button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Application?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will permanently delete application <strong>{app.applicationNumber}</strong> for{" "}
+            <strong>{app.program?.name}</strong>. This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction className="bg-red-600 hover:bg-red-700 text-white" onClick={handleDelete}>
+            Yes, Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
 function StatusMessage({ app }: { app: any }) {
   switch (app.status) {
     case "merit_listed":
@@ -666,25 +883,28 @@ export default function StudentApplications() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-wrap gap-2 items-center">
-                          {showGenerate && (
-                            <GenerateChallanButton appId={app.id} onSuccess={refreshApps} />
-                          )}
-                          {showPrint && (
-                            <PrintChallanWindow app={app} challan={challan} profile={profileData} user={userData} />
-                          )}
-                          {showSubmit && (
-                            <SubmitChallanDialog
-                              app={app}
-                              challan={challan}
-                              onUploadComplete={handleUploadComplete}
-                              onFinalSubmit={handleFinalSubmit}
-                              isSubmitting={isSubmitting}
-                            />
-                          )}
-                          {!showGenerate && !showPrint && !showSubmit && (
-                            <StatusMessage app={app} />
-                          )}
+                        <div className="flex flex-col gap-2">
+                          {/* 3 icon action buttons always shown */}
+                          <div className="flex items-center gap-1.5">
+                            <ViewApplicationDialog app={app} challan={challan} />
+                            <EditApplicationDialog app={app} programs={programs ?? []} quotas={quotas ?? []} onSuccess={refreshApps} />
+                            <DeleteApplicationButton app={app} onSuccess={refreshApps} />
+                          </div>
+                          {/* Workflow buttons depending on status */}
+                          <div className="flex flex-wrap gap-1.5 items-center">
+                            {showGenerate && <GenerateChallanButton appId={app.id} onSuccess={refreshApps} />}
+                            {showPrint && <PrintChallanWindow app={app} challan={challan} profile={profileData} user={userData} />}
+                            {showSubmit && (
+                              <SubmitChallanDialog
+                                app={app}
+                                challan={challan}
+                                onUploadComplete={handleUploadComplete}
+                                onFinalSubmit={handleFinalSubmit}
+                                isSubmitting={isSubmitting}
+                              />
+                            )}
+                            {!showGenerate && !showPrint && !showSubmit && <StatusMessage app={app} />}
+                          </div>
                         </div>
                       </TableCell>
                     </TableRow>
