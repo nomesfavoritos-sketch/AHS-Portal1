@@ -11,6 +11,7 @@ import {
   useListPrograms,
   useListQuotas,
   useListChallans,
+  getListChallansQueryKey,
   useGetMyProfile,
   useGetMe,
 } from "@workspace/api-client-react";
@@ -858,7 +859,7 @@ export default function StudentApplications() {
         return;
       }
       toast({ title: "Application submitted successfully", description: "Your application is now under review." });
-      queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey() });
+      refreshAll();
     } catch (e: any) {
       toast({ title: "Submission failed", description: e?.message || "Network error", variant: "destructive" });
     } finally {
@@ -877,7 +878,7 @@ export default function StudentApplications() {
         });
         if (response.ok) {
           toast({ title: "Paid slip uploaded successfully" });
-          queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey() });
+          refreshAll();
         } else {
           throw new Error("Failed to update paid slip");
         }
@@ -892,7 +893,11 @@ export default function StudentApplications() {
   const hasDraft = apps.some(a => a.status === "draft" || a.status === "challan_generated");
   const latestApp = apps[apps.length - 1];
 
-  const refreshApps = () => queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey() });
+  const refreshAll = () => {
+    queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey() });
+    queryClient.invalidateQueries({ queryKey: getListChallansQueryKey() });
+  };
+  const refreshApps = refreshAll;
 
   return (
     <div className="space-y-4 w-full">
