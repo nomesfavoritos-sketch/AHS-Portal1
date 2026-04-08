@@ -56,29 +56,29 @@ const additionalQualSchema = z.object({
 
 const profileSchema = z.object({
   fullName: z.string().optional().or(z.literal("")),
-  fatherName: z.string().optional().or(z.literal("")),
-  motherName: z.string().optional().or(z.literal("")),
-  dateOfBirth: z.string().optional().or(z.literal("")),
-  gender: z.string().optional().or(z.literal("")),
-  maritalStatus: z.string().optional().or(z.literal("")),
-  cnic: z.string().optional().or(z.literal("")),
-  contactNumber: z.string().optional().or(z.literal("")),
-  guardianContactNumber: z.string().optional().or(z.literal("")),
-  address: z.string().optional().or(z.literal("")),
-  city: z.string().optional().or(z.literal("")),
-  domicile: z.string().optional().or(z.literal("")),
-  province: z.string().optional().or(z.literal("")),
-  religion: z.string().optional().or(z.literal("")),
-  nationality: z.string().optional().or(z.literal("")),
+  fatherName: z.string().min(1, "Father's name is required"),
+  motherName: z.string().min(1, "Mother's name is required"),
+  dateOfBirth: z.string().min(1, "Date of birth is required"),
+  gender: z.string().min(1, "Gender is required"),
+  maritalStatus: z.string().min(1, "Marital status is required"),
+  cnic: z.string().min(1, "CNIC / B-Form is required"),
+  contactNumber: z.string().min(1, "Mobile number is required"),
+  guardianContactNumber: z.string().min(1, "Guardian mobile number is required"),
+  address: z.string().min(1, "Permanent address is required"),
+  city: z.string().min(1, "City is required"),
+  domicile: z.string().min(1, "Domicile district is required"),
+  province: z.string().min(1, "Province is required"),
+  religion: z.string().min(1, "Religion is required"),
+  nationality: z.string().min(1, "Nationality is required"),
   photoPath: z.string().optional().or(z.literal("")),
-  matricMarks: z.coerce.number().optional().or(z.literal(0)),
-  matricTotal: z.coerce.number().optional().or(z.literal(0)),
-  matricYear: z.coerce.number().optional().or(z.literal(0)),
-  matricBoard: z.string().optional().or(z.literal("")),
-  interMarks: z.coerce.number().optional().or(z.literal(0)),
-  interTotal: z.coerce.number().optional().or(z.literal(0)),
-  interYear: z.coerce.number().optional().or(z.literal(0)),
-  interBoard: z.string().optional().or(z.literal("")),
+  matricMarks: z.coerce.number().min(1, "Marks obtained is required"),
+  matricTotal: z.coerce.number().min(1, "Total marks is required"),
+  matricYear: z.coerce.number().min(1, "Passing year is required"),
+  matricBoard: z.string().min(1, "Board is required"),
+  interMarks: z.coerce.number().min(1, "Marks obtained is required"),
+  interTotal: z.coerce.number().min(1, "Total marks is required"),
+  interYear: z.coerce.number().min(1, "Passing year is required"),
+  interBoard: z.string().min(1, "Board is required"),
   additionalQualifications: z.array(additionalQualSchema).optional().default([]),
 });
 
@@ -392,8 +392,9 @@ export default function StudentProfile() {
                         <FormField control={form.control} name="motherName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Mother's Name</FormLabel>
+                              <FormLabel><RequiredLabel>Mother's Name</RequiredLabel></FormLabel>
                               <FormControl><Input {...field} placeholder="Enter mother's name" /></FormControl>
+                              <FormMessage />
                             </FormItem>
                           )} />
                         <FormField control={form.control} name="cnic"
@@ -401,6 +402,7 @@ export default function StudentProfile() {
                             <FormItem>
                               <FormLabel><RequiredLabel>CNIC / B-Form No.</RequiredLabel></FormLabel>
                               <FormControl><Input {...field} placeholder="3220296239841" /></FormControl>
+                              <FormMessage />
                             </FormItem>
                           )} />
                         <FormField control={form.control} name="dateOfBirth"
@@ -408,6 +410,7 @@ export default function StudentProfile() {
                             <FormItem>
                               <FormLabel><RequiredLabel>Date of Birth</RequiredLabel></FormLabel>
                               <FormControl><Input type="date" {...field} /></FormControl>
+                              <FormMessage />
                             </FormItem>
                           )} />
                         <FormField control={form.control} name="gender"
@@ -421,12 +424,13 @@ export default function StudentProfile() {
                                   <SelectItem value="female">Female</SelectItem>
                                 </SelectContent>
                               </Select>
+                              <FormMessage />
                             </FormItem>
                           )} />
                         <FormField control={form.control} name="maritalStatus"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Marital Status</FormLabel>
+                              <FormLabel><RequiredLabel>Marital Status</RequiredLabel></FormLabel>
                               <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl><SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger></FormControl>
                                 <SelectContent>
@@ -434,6 +438,7 @@ export default function StudentProfile() {
                                   <SelectItem value="married">Married</SelectItem>
                                 </SelectContent>
                               </Select>
+                              <FormMessage />
                             </FormItem>
                           )} />
                         <FormField control={form.control} name="religion"
@@ -449,13 +454,15 @@ export default function StudentProfile() {
                                   <SelectItem value="Other">Other</SelectItem>
                                 </SelectContent>
                               </Select>
+                              <FormMessage />
                             </FormItem>
                           )} />
                         <FormField control={form.control} name="nationality"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Nationality</FormLabel>
+                              <FormLabel><RequiredLabel>Nationality</RequiredLabel></FormLabel>
                               <FormControl><Input {...field} placeholder="Pakistani" /></FormControl>
+                              <FormMessage />
                             </FormItem>
                           )} />
                       </FieldRow>
@@ -466,29 +473,33 @@ export default function StudentProfile() {
                         <FormField control={form.control} name="contactNumber"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Applicant's Mobile No.</FormLabel>
+                              <FormLabel><RequiredLabel>Applicant's Mobile No.</RequiredLabel></FormLabel>
                               <FormControl><Input {...field} placeholder="03XX-XXXXXXX" /></FormControl>
+                              <FormMessage />
                             </FormItem>
                           )} />
                         <FormField control={form.control} name="guardianContactNumber"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Father/Guardian Mobile No.</FormLabel>
+                              <FormLabel><RequiredLabel>Father/Guardian Mobile No.</RequiredLabel></FormLabel>
                               <FormControl><Input {...field} placeholder="03XX-XXXXXXX" /></FormControl>
+                              <FormMessage />
                             </FormItem>
                           )} />
                         <FormField control={form.control} name="city"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>City</FormLabel>
+                              <FormLabel><RequiredLabel>City</RequiredLabel></FormLabel>
                               <FormControl><Input {...field} placeholder="e.g. Multan" /></FormControl>
+                              <FormMessage />
                             </FormItem>
                           )} />
                         <FormField control={form.control} name="address"
                           render={({ field }) => (
                             <FormItem className="md:col-span-2">
-                              <FormLabel>Permanent Address</FormLabel>
+                              <FormLabel><RequiredLabel>Permanent Address</RequiredLabel></FormLabel>
                               <FormControl><Input {...field} placeholder="House No, Street, Mohalla, City" /></FormControl>
+                              <FormMessage />
                             </FormItem>
                           )} />
                       </FieldRow>
@@ -537,13 +548,14 @@ export default function StudentProfile() {
                         <FormField control={form.control} name="province"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Province</FormLabel>
+                              <FormLabel><RequiredLabel>Province</RequiredLabel></FormLabel>
                               <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl><SelectTrigger><SelectValue placeholder="Select province" /></SelectTrigger></FormControl>
                                 <SelectContent>
                                   {PROVINCES.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                                 </SelectContent>
                               </Select>
+                              <FormMessage />
                             </FormItem>
                           )} />
                       </FieldRow>
