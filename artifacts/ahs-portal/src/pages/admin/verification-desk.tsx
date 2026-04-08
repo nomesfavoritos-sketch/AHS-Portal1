@@ -466,9 +466,9 @@ export default function AdminVerificationDesk() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge variant="outline" className="text-xs">{doc.status}</Badge>
-                        {(doc.fileUrl || doc.filePath) && (
+                        {doc.filePath && (
                           <a
-                            href={doc.fileUrl ?? `/api${doc.filePath}`}
+                            href={`${import.meta.env.BASE_URL}api/storage/objects/${doc.filePath}`}
                             target="_blank"
                             rel="noreferrer"
                           >

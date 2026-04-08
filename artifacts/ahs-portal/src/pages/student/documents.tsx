@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, FileUp, CheckCircle, AlertCircle } from "lucide-react";
+import { Loader2, FileUp, CheckCircle, AlertCircle, ExternalLink } from "lucide-react";
 import { ObjectUploader } from "@workspace/object-storage-web";
 import { useToast } from "@/hooks/use-toast";
 
@@ -89,11 +89,23 @@ export default function StudentDocuments() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {isUploaded ? (
-                  <Badge variant="default" className="bg-emerald-500 mb-2">Uploaded ({uploadedDoc.status})</Badge>
-                ) : (
-                  <Badge variant="outline" className="border-amber-500 text-amber-600 mb-2">Required</Badge>
-                )}
+                <div className="flex items-center gap-2 mb-2">
+                  {isUploaded ? (
+                    <Badge variant="default" className="bg-emerald-500">Uploaded</Badge>
+                  ) : (
+                    <Badge variant="outline" className="border-amber-500 text-amber-600">Required</Badge>
+                  )}
+                  {isUploaded && uploadedDoc.filePath && (
+                    <a
+                      href={`${import.meta.env.BASE_URL}api/storage/objects/${uploadedDoc.filePath}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 underline"
+                    >
+                      <ExternalLink className="h-3 w-3" /> View
+                    </a>
+                  )}
+                </div>
                 <div className="text-xs text-muted-foreground">
                   Accepted formats: PDF, JPG, PNG. Max size: 5MB.
                 </div>
