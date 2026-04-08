@@ -28,7 +28,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import {
   Loader2, Plus, CheckCircle, UploadCloud, AlertTriangle,
   ClipboardCheck, PartyPopper, XCircle, Clock, UserCheck,
-  Printer, Eye,
+  Printer, Eye, FileCheck2, CreditCard, Send, Zap,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ObjectUploader } from "@workspace/object-storage-web";
@@ -56,6 +56,85 @@ function getStatusBadge(status: string) {
     case "admitted": return <Badge className="bg-green-700 text-white">Admitted</Badge>;
     default: return <Badge variant="outline">{status.replace(/_/g, " ")}</Badge>;
   }
+}
+
+const G = "#01411C";
+
+const FLOW_STEPS = [
+  { icon: FileCheck2, label: "Apply", desc: "Create application" },
+  { icon: CreditCard, label: "Challan", desc: "Generate fee challan" },
+  { icon: Printer, label: "Pay", desc: "Pay at HBL & upload slip" },
+  { icon: Send, label: "Submit", desc: "Submit for review" },
+];
+
+function ApplicationFlowGuide({ currentStatus }: { currentStatus?: string }) {
+  const activeIdx = currentStatus === "draft" ? 0
+    : currentStatus === "challan_generated" ? 1
+    : currentStatus === "slip_uploaded" ? 2
+    : currentStatus === "submitted" || currentStatus === "under_review" ? 3 : 3;
+
+  return (
+    <div className="rounded-xl border bg-white p-4 mb-4">
+      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Application Process</p>
+      <div className="flex items-center">
+        {FLOW_STEPS.map((step, i) => {
+          const done = i < activeIdx;
+          const active = i === activeIdx;
+          return (
+            <div key={i} className="flex items-center flex-1">
+              <div className="flex flex-col items-center gap-1.5">
+                <div className={`h-9 w-9 rounded-full flex items-center justify-center transition-all
+                  ${done ? "bg-green-500 text-white" : active ? "text-white" : "bg-gray-100 text-gray-400"}`}
+                  style={active ? { background: G } : {}}>
+                  <step.icon className="h-4 w-4" />
+                </div>
+                <span className={`text-xs font-semibold ${done ? "text-green-600" : active ? "text-gray-900" : "text-gray-400"}`}>{step.label}</span>
+                <span className="text-[10px] text-gray-400 hidden sm:block text-center">{step.desc}</span>
+              </div>
+              {i < FLOW_STEPS.length - 1 && (
+                <div className={`h-0.5 flex-1 mx-2 mb-5 rounded-full ${done ? "bg-green-400" : "bg-gray-200"}`} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function GenerateChallanButton({ appId, onSuccess }: { appId: number; onSuccess: () => void }) {
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const baseUrl = import.meta.env.BASE_URL;
+
+  const handleGenerate = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${baseUrl}api/applications/${appId}/generate-challan`, {
+        method: "POST", credentials: "include", headers: { "Content-Type": "application/json" },
+      });
+      const body = await res.json();
+      if (!res.ok) {
+        toast({ title: "Failed to generate challan", description: body?.error || "An error occurred", variant: "destructive" });
+        return;
+      }
+      toast({ title: "Fee challan generated!", description: `Challan # ${body.challanNumber} — PKR ${Number(body.amount).toLocaleString()}` });
+      onSuccess();
+    } catch (e: any) {
+      toast({ title: "Error", description: e?.message || "Network error", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Button size="sm" onClick={handleGenerate} disabled={loading}
+      className="gap-1.5 text-white"
+      style={{ background: G }}>
+      {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+      Generate Challan
+    </Button>
+  );
 }
 
 function PrintChallanWindow({ app, challan, profile, user }: { app: any; challan: any; profile: any; user: any }) {
@@ -298,6 +377,9 @@ export default function StudentApplications() {
   const openSessions = sessions?.filter(s => s.status === "open" && s.isActive) || [];
   const apps = applicationsData?.applications ?? [];
   const hasDraft = apps.some(a => a.status === "draft" || a.status === "challan_generated");
+  const latestApp = apps[apps.length - 1];
+
+  const refreshApps = () => queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey() });
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
@@ -393,6 +475,9 @@ export default function StudentApplications() {
         </Dialog>
       </div>
 
+      {/* Application Flow Guide */}
+      {apps.length > 0 && <ApplicationFlowGuide currentStatus={latestApp?.status} />}
+
       {/* Applications Table */}
       {isLoadingApps ? (
         <div className="flex justify-center p-12">
@@ -439,6 +524,7 @@ export default function StudentApplications() {
               <TableBody>
                 {apps.map((app, idx) => {
                   const challan = challansData?.find(c => c.applicationId === app.id);
+                  const showGenerate = app.status === "draft";
                   const showPrint = challan && (app.status === "challan_generated" || app.status === "slip_uploaded" || app.status === "submitted" || app.status === "under_review" || app.status === "verified" || app.status === "admitted");
                   const showSubmit = app.status === "challan_generated" || app.status === "slip_uploaded";
 
@@ -459,6 +545,9 @@ export default function StudentApplications() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-2 items-center">
+                          {showGenerate && (
+                            <GenerateChallanButton appId={app.id} onSuccess={refreshApps} />
+                          )}
                           {showPrint && (
                             <PrintChallanWindow app={app} challan={challan} profile={profileData} user={userData} />
                           )}
@@ -471,7 +560,7 @@ export default function StudentApplications() {
                               isSubmitting={isSubmitting}
                             />
                           )}
-                          {!showPrint && !showSubmit && (
+                          {!showGenerate && !showPrint && !showSubmit && (
                             <StatusMessage app={app} />
                           )}
                         </div>
