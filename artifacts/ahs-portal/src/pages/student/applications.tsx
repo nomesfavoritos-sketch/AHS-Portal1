@@ -721,7 +721,7 @@ export default function StudentApplications() {
   const refreshApps = () => queryClient.invalidateQueries({ queryKey: getListApplicationsQueryKey() });
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
+    <div className="space-y-4 w-full">
 
       {/* Profile Completion Gate */}
       {!profileComplete && (
@@ -849,6 +849,7 @@ export default function StudentApplications() {
             <CardTitle className="text-base">My Program Applications</CardTitle>
           </CardHeader>
           <CardContent className="pt-3 px-0">
+            <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
@@ -912,6 +913,7 @@ export default function StudentApplications() {
                 })}
               </TableBody>
             </Table>
+            </div>
             <div className="px-6 pt-2 pb-1 text-xs text-muted-foreground">
               Showing {apps.length} of {apps.length} {apps.length === 1 ? "entry" : "entries"}
             </div>

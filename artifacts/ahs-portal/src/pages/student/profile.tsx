@@ -223,7 +223,7 @@ export default function StudentProfile() {
   const pctColor = pct < 40 ? "#ef4444" : pct < 80 ? "#f59e0b" : "#16a34a";
 
   return (
-    <div className="max-w-4xl mx-auto space-y-5 pb-10">
+    <div className="w-full space-y-5 pb-10">
 
       {/* Header card */}
       <div className="rounded-xl overflow-hidden shadow-sm border">

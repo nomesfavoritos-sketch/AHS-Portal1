@@ -140,7 +140,7 @@ export function StudentLayout({ children }: StudentLayoutProps) {
 
         {/* Scrollable main content */}
         <main className="flex-1 overflow-y-auto">
-          <div className="p-5 md:p-6">
+          <div className="p-4 md:px-5 md:py-4">
             {children}
           </div>
         </main>
