@@ -175,30 +175,36 @@ export default function AdminVerificationDesk() {
     enabled: historyDialog,
   });
 
-  const saveChecklist = async () => {
+  const saveChecklist = async (silent = false) => {
     if (!checklistItems) return;
-    setSavingChecklist(true);
+    if (!silent) setSavingChecklist(true);
     try {
-      const res = await fetch(`/api/verification-desk/${applicationId}/checklist`, {
+      const res = await fetch(`${import.meta.env.BASE_URL}api/verification-desk/${applicationId}/checklist`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ items: checklistItems }),
       });
       if (!res.ok) throw new Error("Failed to save");
-      toast({ title: "Checklist saved" });
-      queryClient.invalidateQueries({ queryKey: ["verification-desk", applicationId] });
+      if (!silent) {
+        toast({ title: "Checklist saved" });
+        queryClient.invalidateQueries({ queryKey: ["verification-desk", applicationId] });
+      }
     } catch {
-      toast({ title: "Failed to save checklist", variant: "destructive" });
+      if (!silent) toast({ title: "Failed to save checklist", variant: "destructive" });
     } finally {
-      setSavingChecklist(false);
+      if (!silent) setSavingChecklist(false);
     }
   };
 
   const submitDecision = async () => {
     try {
-      const res = await fetch(`/api/verification-desk/${applicationId}/decision`, {
+      // Always persist latest checklist state before evaluating the decision
+      await saveChecklist(true);
+      const res = await fetch(`${import.meta.env.BASE_URL}api/verification-desk/${applicationId}/decision`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ decision: decisionType, remarks: decisionRemarks }),
       });
       const json = await res.json();
