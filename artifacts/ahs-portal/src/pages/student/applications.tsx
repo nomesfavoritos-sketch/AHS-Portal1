@@ -137,50 +137,172 @@ function GenerateChallanButton({ appId, onSuccess }: { appId: number; onSuccess:
   );
 }
 
+function amountToWords(amount: number): string {
+  const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+    "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+  const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+  if (amount === 0) return "Zero Rupees Only";
+  const convert = (n: number): string => {
+    if (n < 20) return ones[n];
+    if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+    if (n < 1000) return ones[Math.floor(n / 100)] + " Hundred" + (n % 100 ? " " + convert(n % 100) : "");
+    if (n < 100000) return convert(Math.floor(n / 1000)) + " Thousand" + (n % 1000 ? " " + convert(n % 1000) : "");
+    return convert(Math.floor(n / 100000)) + " Lakh" + (n % 100000 ? " " + convert(n % 100000) : "");
+  };
+  return convert(amount) + " Rupees Only";
+}
+
 function PrintChallanWindow({ app, challan, profile, user }: { app: any; challan: any; profile: any; user: any }) {
   const handlePrint = () => {
-    const win = window.open("", "_blank", "width=800,height=600");
+    const win = window.open("", "_blank", "width=1100,height=800");
     if (!win) return;
+    const dueDate = challan.dueDate ? format(new Date(challan.dueDate), "dd MMM, yyyy") : "—";
+    const sessionName = app.session?.name ?? "";
+    const amount = Number(challan.amount ?? 0);
+    const amountStr = amount.toLocaleString();
+    const amountWords = amountToWords(amount);
+    const studentName = user?.fullName ?? "";
+    const fatherName = profile?.fatherName ?? "";
+    const cnic = profile?.cnic ?? "";
+    const challanNo = challan.challanNumber ?? "";
+    const appNo = app.applicationNumber ?? "";
+    const program = app.program?.name ?? "";
+
+    const copyHtml = (copyLabel: string) => `
+<div class="copy">
+  <div class="copy-label">${copyLabel}</div>
+  <div class="copy-title">Application Challan Form – ${sessionName}</div>
+  <div class="logo-block">
+    <div class="logo-badge">AHS</div>
+    <div class="logo-text">
+      <div class="inst-name">Allied Health Sciences College</div>
+      <div class="inst-sub">Nishtar Medical University, Multan</div>
+    </div>
+  </div>
+  <div class="date-row">
+    <div class="date-field">
+      <span class="field-label">Payment Date:</span>
+      <span class="date-boxes"><span class="box"></span><span class="box"></span> / <span class="box"></span><span class="box"></span> / <span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span></span>
+    </div>
+    <div class="due-date">Due Date: <strong>${dueDate}</strong></div>
+  </div>
+
+  <div class="section-head">For Cash Payment</div>
+  <div class="bank-info">
+    <div><strong>A/C Title:</strong> Allied Health Sciences College – NMU Admissions Fee</div>
+    <div><strong>Bank:</strong> Habib Bank Limited (Any Branch)</div>
+    <div><strong>A/C No:</strong> 0001-7939840154 <em>(only posted thru AHS Portal)</em></div>
+  </div>
+
+  <div class="section-head">For Online Payment</div>
+  <div class="bank-info">
+    <div><strong>JazzCash / EasyPaisa:</strong> 0300-1234567</div>
+    <div><strong>Reference:</strong> CNIC No. (without dashes)</div>
+  </div>
+
+  <div class="challan-no-row">Challan No: <strong>${challanNo}</strong></div>
+
+  <table class="info-table">
+    <tr><td class="lbl">Student Name:</td><td>${studentName}</td></tr>
+    <tr><td class="lbl">Father Name:</td><td>${fatherName}</td></tr>
+    <tr><td class="lbl">CNIC / B-Form:</td><td>${cnic}</td></tr>
+    <tr><td class="lbl">Program:</td><td>${program}</td></tr>
+    <tr><td class="lbl">Application No:</td><td>${appNo}</td></tr>
+    <tr><td class="lbl">Processing Fee:</td><td>Rs ${amountStr}/-</td></tr>
+    <tr><td class="lbl">Other Charges:</td><td>Rs 0/-</td></tr>
+    <tr><td class="lbl total-row">Total Amount:</td><td class="total-row">Rs ${amountStr}/-</td></tr>
+    <tr><td class="lbl">In Words:</td><td>${amountWords}</td></tr>
+  </table>
+
+  <div class="sig-row">
+    <div class="sig-block">Deposited By: <span class="underline-field"></span></div>
+    <div class="sig-block">Bank Stamp</div>
+    <div class="sig-block">Signature</div>
+  </div>
+</div>`;
+
     const html = `<!DOCTYPE html>
 <html>
 <head>
-  <title>Fee Challan – ${challan.challanNumber}</title>
+  <meta charset="utf-8"/>
+  <title>Fee Challan – ${challanNo}</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-    .page { width: 190mm; margin: 10mm auto; border: 1px solid #333; }
-    .header { background: #01411C; color: white; padding: 12px 16px; text-align: center; }
-    .header h2 { margin: 0; font-size: 16px; }
-    .header p { margin: 4px 0 0; font-size: 12px; opacity: 0.85; }
-    .challan-no { background: #f0f0f0; padding: 8px 16px; text-align: center; font-size: 14px; font-weight: bold; border-bottom: 1px solid #ccc; }
-    table { width: 100%; border-collapse: collapse; }
-    td, th { border: 1px solid #ccc; padding: 7px 10px; font-size: 12px; }
-    th { background: #f5f5f5; font-weight: bold; width: 40%; }
-    .amount-row td { font-size: 16px; font-weight: bold; text-align: center; background: #fffbeb; }
-    .footer { text-align: center; font-size: 11px; color: #555; padding: 8px; border-top: 1px solid #ccc; }
-    @media print { body { margin: 0; } }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; font-size: 11px; background: #fff; color: #111; }
+    .page-wrapper { padding: 12px 10px; }
+
+    /* top bar */
+    .top-bar { display: flex; justify-content: center; gap: 12px; margin-bottom: 14px; }
+    .btn { padding: 6px 16px; border: 1px solid #ccc; background: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 12px; }
+    .btn.primary { background: #01411C; color: #fff; border-color: #01411C; }
+    @media print { .top-bar { display: none; } }
+
+    /* three copies */
+    .copies-row { display: flex; gap: 0; border: 1px solid #aaa; }
+    .copy { flex: 1; border-right: 1px dashed #aaa; padding: 8px 9px; min-height: 460px; }
+    .copy:last-child { border-right: none; }
+
+    .copy-label { text-align: center; font-weight: bold; font-size: 12px; border-bottom: 1px solid #ccc; padding-bottom: 4px; margin-bottom: 4px; color: #01411C; }
+    .copy-title { text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 7px; }
+
+    .logo-block { display: flex; align-items: center; gap: 7px; justify-content: center; margin-bottom: 6px; }
+    .logo-badge { width: 36px; height: 36px; background: #01411C; color: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; letter-spacing: -0.5px; flex-shrink: 0; }
+    .logo-text { text-align: left; }
+    .inst-name { font-size: 10px; font-weight: bold; line-height: 1.3; }
+    .inst-sub { font-size: 9px; color: #555; }
+
+    .date-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 10px; border: 1px solid #ccc; padding: 3px 5px; }
+    .date-field { display: flex; align-items: center; gap: 5px; }
+    .field-label { font-weight: bold; }
+    .box { display: inline-block; width: 12px; height: 14px; border: 1px solid #333; margin: 0 1px; }
+    .due-date { font-size: 10px; }
+
+    .section-head { text-align: center; font-weight: bold; font-size: 10.5px; margin: 5px 0 3px; background: #f0f0f0; padding: 2px 0; border: 1px solid #ccc; }
+    .bank-info { font-size: 9.5px; line-height: 1.5; border: 1px solid #eee; border-top: none; padding: 3px 5px; margin-bottom: 0; }
+
+    .challan-no-row { text-align: center; background: #ddd; padding: 3px; font-size: 11px; margin: 5px 0 5px; border: 1px solid #bbb; }
+
+    .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+    .info-table td { padding: 2.5px 4px; border: 1px solid #ccc; }
+    .info-table .lbl { font-weight: bold; background: #f8f8f8; width: 40%; }
+    .info-table .total-row { font-weight: bold; background: #fffbeb; }
+
+    .sig-row { display: flex; justify-content: space-between; margin-top: 8px; border-top: 1px solid #ccc; padding-top: 5px; font-size: 9px; }
+    .sig-block { flex: 1; text-align: center; }
+    .underline-field { display: inline-block; width: 60px; border-bottom: 1px solid #333; }
+
+    /* instructions */
+    .instructions { margin-top: 12px; border: 1px solid #ccc; padding: 8px 10px; font-size: 9.5px; line-height: 1.7; }
+    .instructions strong { font-size: 10px; }
+    .instructions ol { padding-left: 16px; }
+    .footer-cr { text-align: center; font-size: 9px; color: #888; margin-top: 8px; }
   </style>
 </head>
 <body>
-<div class="page">
-  <div class="header">
-    <h2>Allied Health Sciences College – Nishtar Medical University</h2>
-    <p>Bank Copy – Fee Deposit Challan</p>
+<div class="page-wrapper">
+  <div class="top-bar">
+    <button class="btn" onclick="window.close()">✕ Close</button>
+    <button class="btn primary" onclick="window.print()">🖨 Print</button>
   </div>
-  <div class="challan-no">Challan # ${challan.challanNumber}</div>
-  <table>
-    <tr><th>Applicant Name</th><td>${profile?.fatherName ? user?.fullName ?? "" : user?.fullName ?? ""}</td></tr>
-    <tr><th>CNIC / B-Form</th><td>${profile?.cnic ?? ""}</td></tr>
-    <tr><th>Program Applied</th><td>${app.program.name}</td></tr>
-    <tr><th>Session</th><td>${app.session.name}</td></tr>
-    <tr><th>Application #</th><td>${app.applicationNumber}</td></tr>
-    <tr><th>Due Date</th><td>${challan.dueDate ? format(new Date(challan.dueDate), "dd MMM yyyy") : "—"}</td></tr>
-  </table>
-  <table style="margin-top:10px;">
-    <tr class="amount-row"><td colspan="2">Fee Amount: PKR ${Number(challan.amount).toLocaleString()}</td></tr>
-  </table>
-  <div class="footer">
-    Deposit at any HBL branch. Keep this challan as receipt. Non-refundable.
+
+  <div class="copies-row">
+    ${copyHtml("Student Copy")}
+    ${copyHtml("University Copy")}
+    ${copyHtml("Bank Copy")}
   </div>
+
+  <div class="instructions">
+    <strong>Instructions:</strong>
+    <ol>
+      <li>Application Processing Fee can be deposited at any branch of Habib Bank Limited (HBL).</li>
+      <li>Fee can also be paid via JazzCash or EasyPaisa using the mobile number provided above. Enter your CNIC as reference.</li>
+      <li>In case of Direct transfer / IBFT / RTGS, payment traceability issues may cause failure to verify your application.</li>
+      <li>Due to missing information and non-traceable payment, a candidate may not be able to complete the admissions process.</li>
+      <li>After payment, upload the bank-stamped deposit slip on the AHS Student Portal immediately.</li>
+      <li>In case of payment through Mobile/Digital Banking App, please share your payment proof at <strong>admissions@ahscollege.edu.pk</strong></li>
+    </ol>
+  </div>
+  <div class="footer-cr">© All Rights Reserved – Allied Health Sciences College, NMU ${new Date().getFullYear()}</div>
 </div>
 <script>window.onload = () => { window.print(); }</script>
 </body>
