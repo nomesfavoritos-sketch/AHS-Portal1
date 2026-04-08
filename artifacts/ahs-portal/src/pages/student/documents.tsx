@@ -1,4 +1,4 @@
-import { useListDocuments, useUploadDocument, getListDocumentsQueryKey } from "@workspace/api-client-react";
+import { useListDocuments, getListDocumentsQueryKey } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -22,34 +22,32 @@ export default function StudentDocuments() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { data: documentsData, isLoading } = useListDocuments();
-  const uploadDocument = useUploadDocument();
 
   const handleUploadComplete = async (result: any, docType: string) => {
     const successful = result.successful?.[0];
-    if (successful) {
-      const objectPath = successful.response?.uploadURL?.split("?")[0]?.split("/").slice(-2).join("/") ?? "";
-      
-      uploadDocument.mutate({
-        data: {
-          docType,
-          filePath: objectPath,
-          // If the API expects more fields, supply them here. 
-          // Note: createDocument API schema may differ from useUploadDocument,
-          // assuming useUploadDocument maps to the correct body format
-        } as any
-      }, {
-        onSuccess: () => {
-          toast({ title: "Document uploaded successfully" });
-          queryClient.invalidateQueries({ queryKey: getListDocumentsQueryKey() });
-        },
-        onError: (error) => {
-          toast({
-            title: "Failed to record document",
-            description: error.error || "An error occurred",
-            variant: "destructive",
-          });
-        }
+    if (!successful) return;
+
+    const uploadURL: string = successful.response?.uploadURL ?? "";
+    const objectPath = uploadURL.split("?")[0].split("/").slice(-2).join("/");
+    const fileName: string = successful.name ?? successful.data?.name ?? objectPath.split("/").pop() ?? "document";
+    const mimeType: string = successful.type ?? successful.data?.type ?? "application/octet-stream";
+
+    const baseUrl = (window as any).__BASE_URL__ ?? import.meta.env.BASE_URL ?? "/";
+    try {
+      const res = await fetch(`${baseUrl}api/documents`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ docType, fileName, filePath: objectPath, mimeType }),
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Server error ${res.status}`);
+      }
+      toast({ title: "Document uploaded successfully" });
+      queryClient.invalidateQueries({ queryKey: getListDocumentsQueryKey() });
+    } catch (e: any) {
+      toast({ title: "Failed to record document", description: e.message || "An error occurred", variant: "destructive" });
     }
   };
 
