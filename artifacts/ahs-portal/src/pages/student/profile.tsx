@@ -249,7 +249,7 @@ export default function StudentProfile() {
       <div className="bg-white border rounded-xl px-6 py-4 shadow-sm">
         <div className="flex items-center">
           {STEPS.map((s, i) => {
-            const done = step > s.n;
+            const done = step > s.n || (step === totalSteps && s.n === totalSteps);
             const active = step === s.n;
             return (
               <div key={s.n} className="flex items-center flex-1">
