@@ -18,6 +18,7 @@ const NAV_GROUPS = [
       { name: "Dashboard",    href: "/student/dashboard",    icon: LayoutDashboard, sub: "Overview & Metrics" },
       { name: "My Profile",   href: "/student/profile",      icon: User,            sub: "Personal Information" },
       { name: "Applications", href: "/student/applications", icon: FileText,        sub: "Program Applications" },
+      { name: "Documents",    href: "/student/documents",    icon: FileUp,          sub: "Upload Documents" },
       { name: "Fee Challans", href: "/student/challans",     icon: CreditCard,      sub: "Payment History" },
     ],
   },
@@ -25,7 +26,6 @@ const NAV_GROUPS = [
     label: "ACADEMIC",
     items: [
       { name: "Merit Status", href: "/student/merit",        icon: Award,           sub: "Merit List Position" },
-      { name: "Documents",    href: "/student/documents",    icon: FileUp,          sub: "Upload Documents" },
     ],
   },
   {
