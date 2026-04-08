@@ -30,7 +30,7 @@ import {
   Loader2, Plus, CheckCircle, UploadCloud, AlertTriangle,
   ClipboardCheck, PartyPopper, XCircle, Clock, UserCheck,
   Printer, Eye, FileCheck2, CreditCard, Send, Zap,
-  Pencil, Trash2, User, GraduationCap,
+  Pencil, Trash2, User, GraduationCap, BookOpen,
 } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
@@ -431,10 +431,15 @@ function ViewApplicationDialog({ app, challan, profile, user }: {
   const u = user ?? {};
   const photoUrl = p.photoPath ? `${baseUrl}api/storage/objects/${p.photoPath}` : null;
 
+  const matricPct = p.matricTotal && p.matricMarks ? ((p.matricMarks / p.matricTotal) * 100).toFixed(1) + "%" : "—";
+  const interPct  = p.interTotal  && p.interMarks  ? ((p.interMarks  / p.interTotal)  * 100).toFixed(1) + "%" : "—";
+
   const handlePrint = () => {
     const dob = p.dateOfBirth ? format(new Date(p.dateOfBirth), "dd MMM yyyy") : "—";
     const appliedOn = app.createdAt ? format(new Date(app.createdAt), "dd MMM yyyy, hh:mm a") : "—";
     const dueDate = challan?.dueDate ? format(new Date(challan.dueDate), "dd MMM yyyy") : "—";
+    const mPct = p.matricTotal && p.matricMarks ? ((p.matricMarks / p.matricTotal)*100).toFixed(1)+"%" : "—";
+    const iPct = p.interTotal  && p.interMarks  ? ((p.interMarks  / p.interTotal) *100).toFixed(1)+"%" : "—";
     const win = window.open("", "_blank", "width=960,height=700");
     if (!win) return;
     win.document.write(`<!DOCTYPE html><html><head><title>Application Form — ${app.applicationNumber}</title>
@@ -479,6 +484,22 @@ function ViewApplicationDialog({ app, challan, profile, user }: {
   <div class="field"><label>Province</label><span>${p.province || "—"}</span></div>
   <div class="field"><label>Address</label><span>${p.address || "—"}</span></div>
 </div>
+<div class="section-head">Education Details</div>
+<table>
+  <thead><tr><th>Examination</th><th>Board / University</th><th>Roll No.</th><th>Year</th><th>Total Marks</th><th>Marks Obtained</th><th>Percentage</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Matriculation</strong></td>
+      <td>${p.matricBoard || "—"}</td><td>${p.matricRoll || "—"}</td><td>${p.matricYear || "—"}</td>
+      <td>${p.matricTotal || "—"}</td><td>${p.matricMarks || "—"}</td><td>${mPct}</td>
+    </tr>
+    <tr>
+      <td><strong>FSc / Intermediate</strong></td>
+      <td>${p.interBoard || "—"}</td><td>${p.interRoll || "—"}</td><td>${p.interYear || "—"}</td>
+      <td>${p.interTotal || "—"}</td><td>${p.interMarks || "—"}</td><td>${iPct}</td>
+    </tr>
+  </tbody>
+</table>
 <div class="section-head">Program Selection</div>
 <table>
   <thead><tr><th>Program Name</th><th>Program Code</th><th>Session</th><th>Quota</th><th>Status</th></tr></thead>
@@ -566,8 +587,42 @@ ${challan ? `
             <AppInfoField label="Permanent Address" value={p.address} />
           </div>
 
+          {/* Education Details */}
+          <AppSectionHead icon={<GraduationCap className="h-3.5 w-3.5" />} title="Education Details" />
+          <div className="border rounded-lg overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 border-b">
+                  {["Examination", "Board / University", "Roll No.", "Year", "Total Marks", "Marks Obtained", "Percentage"].map(h => (
+                    <th key={h} className="px-3 py-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                <tr>
+                  <td className="px-3 py-2.5 font-semibold text-gray-800">Matriculation</td>
+                  <td className="px-3 py-2.5 text-gray-600">{p.matricBoard || "—"}</td>
+                  <td className="px-3 py-2.5 text-gray-600">{p.matricRoll || "—"}</td>
+                  <td className="px-3 py-2.5 text-gray-600">{p.matricYear || "—"}</td>
+                  <td className="px-3 py-2.5 text-gray-600">{p.matricTotal || "—"}</td>
+                  <td className="px-3 py-2.5 text-gray-600">{p.matricMarks || "—"}</td>
+                  <td className="px-3 py-2.5 font-medium text-gray-800">{matricPct}</td>
+                </tr>
+                <tr>
+                  <td className="px-3 py-2.5 font-semibold text-gray-800">FSc / Intermediate</td>
+                  <td className="px-3 py-2.5 text-gray-600">{p.interBoard || "—"}</td>
+                  <td className="px-3 py-2.5 text-gray-600">{p.interRoll || "—"}</td>
+                  <td className="px-3 py-2.5 text-gray-600">{p.interYear || "—"}</td>
+                  <td className="px-3 py-2.5 text-gray-600">{p.interTotal || "—"}</td>
+                  <td className="px-3 py-2.5 text-gray-600">{p.interMarks || "—"}</td>
+                  <td className="px-3 py-2.5 font-medium text-gray-800">{interPct}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
           {/* Program Selection */}
-          <AppSectionHead icon={<GraduationCap className="h-3.5 w-3.5" />} title="Program Selection" />
+          <AppSectionHead icon={<BookOpen className="h-3.5 w-3.5" />} title="Program Selection" />
           <div className="border rounded-lg overflow-hidden">
             <table className="w-full text-sm">
               <thead>
