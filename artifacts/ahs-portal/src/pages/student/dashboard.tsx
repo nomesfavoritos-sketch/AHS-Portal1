@@ -8,23 +8,23 @@ const G = "#01411C";
 
 /* ───────── Stat Card ───────── */
 function StatCard({
-  label, value, sub, icon: Icon, color, href,
+  label, value, sub, icon: Icon, bg, border, text, iconBg, href,
 }: {
   label: string; value: string | number; sub: string;
-  icon: React.ElementType; color: string; href?: string;
+  icon: React.ElementType;
+  bg: string; border: string; text: string; iconBg: string;
+  href?: string;
 }) {
   const inner = (
-    <div className="rounded-xl p-5 text-white relative overflow-hidden cursor-pointer group transition-transform hover:-translate-y-0.5" style={{ background: color }}>
-      <div className="absolute -right-4 -top-4 h-20 w-20 rounded-full opacity-10 bg-white" />
-      <div className="absolute -right-2 bottom-2 h-12 w-12 rounded-full opacity-10 bg-white" />
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest opacity-75 mb-1">{label}</p>
-          <p className="text-3xl font-black leading-none">{value}</p>
-          <p className="text-xs opacity-70 mt-1.5">{sub}</p>
+    <div className={`rounded-xl p-4 border cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-md ${bg} ${border}`}>
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <p className={`text-[10px] font-bold uppercase tracking-widest mb-2 ${text} opacity-60`}>{label}</p>
+          <p className={`text-2xl font-black leading-none truncate ${text}`}>{value}</p>
+          <p className={`text-[11px] mt-1.5 leading-tight ${text} opacity-55`}>{sub}</p>
         </div>
-        <div className="h-10 w-10 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(255,255,255,0.2)" }}>
-          <Icon className="h-5 w-5 text-white" />
+        <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${iconBg}`}>
+          <Icon className={`h-4 w-4 ${text}`} />
         </div>
       </div>
     </div>
@@ -216,13 +216,13 @@ export default function StudentDashboard() {
       )}
 
       {/* ── 6 Stat Cards ── */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <StatCard
           label="My Applications"
           value={totalApps}
           sub={totalApps === 0 ? "No applications yet" : `${totalApps} program(s) applied`}
           icon={FileText}
-          color="#4f46e5"
+          bg="bg-indigo-50" border="border-indigo-100" text="text-indigo-700" iconBg="bg-indigo-100"
           href="/student/applications"
         />
         <StatCard
@@ -230,7 +230,7 @@ export default function StudentDashboard() {
           value={latestApp ? latestApp.status.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()) : "—"}
           sub={latestApp?.applicationNumber ?? "No application"}
           icon={TrendingUp}
-          color="#0d9488"
+          bg="bg-teal-50" border="border-teal-100" text="text-teal-700" iconBg="bg-teal-100"
           href="/student/applications"
         />
         <StatCard
@@ -238,7 +238,7 @@ export default function StudentDashboard() {
           value={pendingPay}
           sub={pendingPay === 0 ? "All challans cleared" : `${pendingPay} challan(s) pending`}
           icon={CreditCard}
-          color="#f97316"
+          bg="bg-orange-50" border="border-orange-100" text="text-orange-700" iconBg="bg-orange-100"
           href="/student/challans"
         />
         <StatCard
@@ -246,7 +246,7 @@ export default function StudentDashboard() {
           value={meritRank ? `#${meritRank}` : "—"}
           sub={meritScore ? `Score: ${Number(meritScore).toFixed(2)}` : "Not listed yet"}
           icon={Award}
-          color="#7c3aed"
+          bg="bg-violet-50" border="border-violet-100" text="text-violet-700" iconBg="bg-violet-100"
           href="/student/merit"
         />
         <StatCard
@@ -254,7 +254,7 @@ export default function StudentDashboard() {
           value={`${completion}%`}
           sub={completion >= 100 ? "Fully complete ✓" : `${14 - Math.round(completion * 14 / 100)} fields remaining`}
           icon={User}
-          color={completion >= 100 ? "#16a34a" : G}
+          bg="bg-emerald-50" border="border-emerald-100" text="text-emerald-700" iconBg="bg-emerald-100"
           href="/student/profile"
         />
         <StatCard
@@ -262,7 +262,7 @@ export default function StudentDashboard() {
           value={activeNotices}
           sub={activeNotices === 0 ? "No new notices" : "Important announcements"}
           icon={Bell}
-          color="#e11d48"
+          bg="bg-rose-50" border="border-rose-100" text="text-rose-700" iconBg="bg-rose-100"
           href="/student/notices"
         />
       </div>
