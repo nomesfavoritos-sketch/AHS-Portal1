@@ -29,7 +29,7 @@ import {
   Loader2, Plus, CheckCircle, UploadCloud, AlertTriangle,
   ClipboardCheck, PartyPopper, XCircle, Clock, UserCheck,
   Printer, Eye, FileCheck2, CreditCard, Send, Zap,
-  Pencil, Trash2,
+  Pencil, Trash2, User, GraduationCap,
 } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
@@ -401,8 +401,114 @@ function SubmitChallanDialog({ app, challan, onUploadComplete, onFinalSubmit, is
   );
 }
 
-function ViewApplicationDialog({ app, challan }: { app: any; challan?: any }) {
+const G_COLOR = "#01411C";
+
+function AppSectionHead({ icon, title }: { icon: React.ReactNode; title: string }) {
+  return (
+    <div className="flex items-center gap-2 px-3 py-2 rounded-md" style={{ background: G_COLOR }}>
+      <span className="text-white opacity-80">{icon}</span>
+      <span className="text-white font-semibold text-sm tracking-wide uppercase">{title}</span>
+    </div>
+  );
+}
+
+function AppInfoField({ label, value }: { label: string; value?: string | null }) {
+  return (
+    <div className="min-w-0">
+      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{label}</p>
+      <p className="text-sm font-medium text-gray-800 break-words">{value || "—"}</p>
+    </div>
+  );
+}
+
+function ViewApplicationDialog({ app, challan, profile, user }: {
+  app: any; challan?: any; profile?: any; user?: any;
+}) {
   const [open, setOpen] = useState(false);
+  const baseUrl = import.meta.env.BASE_URL;
+  const p = profile ?? {};
+  const u = user ?? {};
+  const photoUrl = p.photoPath ? `${baseUrl}api/storage/objects/${p.photoPath}` : null;
+
+  const handlePrint = () => {
+    const dob = p.dateOfBirth ? format(new Date(p.dateOfBirth), "dd MMM yyyy") : "—";
+    const appliedOn = app.createdAt ? format(new Date(app.createdAt), "dd MMM yyyy, hh:mm a") : "—";
+    const dueDate = challan?.dueDate ? format(new Date(challan.dueDate), "dd MMM yyyy") : "—";
+    const win = window.open("", "_blank", "width=960,height=700");
+    if (!win) return;
+    win.document.write(`<!DOCTYPE html><html><head><title>Application Form — ${app.applicationNumber}</title>
+<style>
+  body{font-family:Arial,sans-serif;font-size:12px;color:#111;margin:0;padding:20px;}
+  .header{background:#01411C;color:white;padding:12px 16px;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;align-items:center;}
+  .header h1{margin:0;font-size:14px;font-weight:700;letter-spacing:.5px;}
+  .header p{margin:0;font-size:11px;opacity:.8;}
+  .section-head{background:#01411C;color:white;padding:6px 12px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:14px 0 10px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 20px;margin-bottom:10px;}
+  .field label{display:block;font-size:9px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+  .field span{font-size:12px;font-weight:600;color:#111;}
+  .photo-row{display:flex;gap:16px;align-items:flex-start;}
+  .photo{width:80px;height:96px;border:2px solid #01411C;object-fit:cover;border-radius:4px;background:#eee;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  th{background:#f3f4f6;text-align:left;padding:7px 10px;font-size:10px;font-weight:700;text-transform:uppercase;color:#555;border:1px solid #e5e7eb;}
+  td{padding:7px 10px;border:1px solid #e5e7eb;color:#111;}
+  .footer{margin-top:24px;text-align:center;font-size:10px;color:#888;border-top:1px solid #e5e7eb;padding-top:10px;}
+  @media print{body{padding:10px;}button{display:none;}}
+</style></head><body>
+<div class="header">
+  <div><h1>Application Form</h1><p>Allied Health Sciences College — Nishtar Medical University</p></div>
+  <div style="text-align:right"><h1>${app.applicationNumber}</h1><p>Status: ${(app.status ?? "").replace(/_/g, " ")}</p></div>
+</div>
+<div class="section-head">Personal Information</div>
+<div class="photo-row">
+  ${photoUrl ? `<img class="photo" src="${photoUrl}" />` : `<div class="photo" style="color:#ccc;font-size:10px;text-align:center;padding-top:30px;">No Photo</div>`}
+  <div class="grid" style="flex:1">
+    <div class="field"><label>Applicant Name</label><span>${u.fullName || "—"}</span></div>
+    <div class="field"><label>Father's Name</label><span>${p.fatherName || "—"}</span></div>
+    <div class="field"><label>Mother's Name</label><span>${p.motherName || "—"}</span></div>
+    <div class="field"><label>CNIC / B-Form</label><span>${p.cnic || "—"}</span></div>
+    <div class="field"><label>Date of Birth</label><span>${dob}</span></div>
+    <div class="field"><label>Gender</label><span>${p.gender || "—"}</span></div>
+    <div class="field"><label>Religion</label><span>${p.religion || "—"}</span></div>
+    <div class="field"><label>Email Address</label><span>${u.email || "—"}</span></div>
+    <div class="field"><label>Phone</label><span>${p.phone || "—"}</span></div>
+  </div>
+</div>
+<div class="grid" style="margin-top:10px">
+  <div class="field"><label>Domicile District</label><span>${p.domicileDistrict || "—"}</span></div>
+  <div class="field"><label>Province</label><span>${p.province || "—"}</span></div>
+  <div class="field"><label>Address</label><span>${p.address || "—"}</span></div>
+</div>
+<div class="section-head">Program Selection</div>
+<table>
+  <thead><tr><th>Program Name</th><th>Program Code</th><th>Session</th><th>Quota</th><th>Status</th></tr></thead>
+  <tbody><tr>
+    <td>${app.program?.name || "—"}</td>
+    <td>${app.program?.code || "—"}</td>
+    <td>${app.session?.name || "—"}</td>
+    <td>${app.quota?.name || "Open Merit"}</td>
+    <td>${(app.status ?? "").replace(/_/g, " ")}</td>
+  </tr></tbody>
+</table>
+<div class="section-head">Application Details</div>
+<div class="grid">
+  <div class="field"><label>Application #</label><span>${app.applicationNumber}</span></div>
+  <div class="field"><label>Applied On</label><span>${appliedOn}</span></div>
+  <div class="field"><label>Remarks</label><span>${app.remarks || "—"}</span></div>
+</div>
+${challan ? `
+<div class="section-head">Fee Challan Details</div>
+<div class="grid">
+  <div class="field"><label>Challan #</label><span>${challan.challanNumber}</span></div>
+  <div class="field"><label>Fee Amount</label><span>PKR ${Number(challan.amount).toLocaleString()}</span></div>
+  <div class="field"><label>Due Date</label><span>${dueDate}</span></div>
+  <div class="field"><label>Payment Status</label><span>${challan.isPaid ? "Paid" : "Unpaid"}</span></div>
+</div>` : ""}
+<div class="footer">Allied Health Sciences College, Nishtar Medical University, Multan &nbsp;|&nbsp; Printed: ${new Date().toLocaleString("en-PK")}</div>
+<script>window.onload=function(){window.print();}</script>
+</body></html>`);
+    win.document.close();
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -411,37 +517,105 @@ function ViewApplicationDialog({ app, challan }: { app: any; challan?: any }) {
           <Eye className="h-3.5 w-3.5" />
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle>Application Details</DialogTitle>
-          <DialogDescription>Full details of your application.</DialogDescription>
-        </DialogHeader>
-        <div className="divide-y text-sm">
-          {[
-            ["Application #", app.applicationNumber],
-            ["Program", app.program?.name],
-            ["Program Code", app.program?.code ?? "—"],
-            ["Session", app.session?.name],
-            ["Quota", app.quota?.name ?? "Open Merit"],
-            ["Status", app.status?.replace(/_/g, " ")],
-            ["Applied On", app.createdAt ? format(new Date(app.createdAt), "dd MMM yyyy, hh:mm a") : "—"],
-            ...(challan ? [
-              ["Challan #", challan.challanNumber],
-              ["Fee Amount", `PKR ${Number(challan.amount).toLocaleString()}`],
-              ["Due Date", challan.dueDate ? format(new Date(challan.dueDate), "dd MMM yyyy") : "—"],
-              ["Payment Status", challan.isPaid ? "Paid" : "Unpaid"],
-            ] : []),
-            ...(app.remarks ? [["Remarks", app.remarks]] : []),
-          ].map(([label, value]) => (
-            <div key={label} className="flex justify-between py-2 gap-4">
-              <span className="text-muted-foreground font-medium shrink-0">{label}</span>
-              <span className="text-right font-medium">{value}</span>
-            </div>
-          ))}
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0 overflow-hidden gap-0">
+        {/* ── Header ── */}
+        <div className="px-6 py-4 border-b flex items-center justify-between shrink-0">
+          <div>
+            <DialogTitle className="text-base font-bold text-gray-900">Application Form</DialogTitle>
+            <p className="text-xs text-gray-400 mt-0.5">{app.applicationNumber} &nbsp;·&nbsp; Applied: {app.createdAt ? format(new Date(app.createdAt), "dd MMM yyyy") : "—"}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" onClick={handlePrint} className="gap-1.5 text-xs h-8">
+              <Printer className="h-3.5 w-3.5" /> Print
+            </Button>
+          </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>Close</Button>
-        </DialogFooter>
+
+        {/* ── Scrollable body ── */}
+        <div className="overflow-y-auto flex-1 px-6 py-5 space-y-5">
+
+          {/* Personal Information */}
+          <AppSectionHead icon={<User className="h-3.5 w-3.5" />} title="Personal Information" />
+          <div className="flex gap-5">
+            {/* Photo */}
+            <div className="shrink-0">
+              <div className="h-28 w-24 rounded-lg border-2 overflow-hidden bg-gray-100 flex items-center justify-center"
+                style={{ borderColor: G_COLOR }}>
+                {photoUrl
+                  ? <img src={photoUrl} alt="Student" className="h-full w-full object-cover" />
+                  : <User className="h-10 w-10 text-gray-300" />}
+              </div>
+            </div>
+            {/* Top fields */}
+            <div className="flex-1 grid grid-cols-3 gap-x-6 gap-y-4">
+              <AppInfoField label="Applicant Name" value={u.fullName} />
+              <AppInfoField label="Father's Name" value={p.fatherName} />
+              <AppInfoField label="Mother's Name" value={p.motherName} />
+              <AppInfoField label="CNIC / B-Form" value={p.cnic} />
+              <AppInfoField label="Date of Birth" value={p.dateOfBirth ? format(new Date(p.dateOfBirth), "dd MMM yyyy") : null} />
+              <AppInfoField label="Gender" value={p.gender} />
+              <AppInfoField label="Religion" value={p.religion} />
+              <AppInfoField label="Email Address" value={u.email} />
+              <AppInfoField label="Phone" value={p.phone} />
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-x-6 gap-y-4">
+            <AppInfoField label="Domicile District" value={p.domicileDistrict} />
+            <AppInfoField label="Province" value={p.province} />
+            <AppInfoField label="Permanent Address" value={p.address} />
+          </div>
+
+          {/* Program Selection */}
+          <AppSectionHead icon={<GraduationCap className="h-3.5 w-3.5" />} title="Program Selection" />
+          <div className="border rounded-lg overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 border-b">
+                  {["Program Name", "Program Code", "Session", "Quota", "Status"].map(h => (
+                    <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="px-4 py-3 font-semibold text-gray-800">{app.program?.name || "—"}</td>
+                  <td className="px-4 py-3 text-gray-600">{app.program?.code || "—"}</td>
+                  <td className="px-4 py-3 text-gray-600">{app.session?.name || "—"}</td>
+                  <td className="px-4 py-3 text-gray-600">{app.quota?.name || "Open Merit"}</td>
+                  <td className="px-4 py-3">{getStatusBadge(app.status)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Application Details */}
+          <AppSectionHead icon={<FileCheck2 className="h-3.5 w-3.5" />} title="Application Details" />
+          <div className="grid grid-cols-3 gap-x-6 gap-y-4">
+            <AppInfoField label="Application #" value={app.applicationNumber} />
+            <AppInfoField label="Applied On" value={app.createdAt ? format(new Date(app.createdAt), "dd MMM yyyy, hh:mm a") : "—"} />
+            <AppInfoField label="Current Status" value={(app.status ?? "").replace(/_/g, " ")} />
+            {app.remarks && <AppInfoField label="Remarks" value={app.remarks} />}
+          </div>
+
+          {/* Fee Challan */}
+          {challan && (
+            <>
+              <AppSectionHead icon={<CreditCard className="h-3.5 w-3.5" />} title="Fee Challan Details" />
+              <div className="grid grid-cols-3 gap-x-6 gap-y-4">
+                <AppInfoField label="Challan #" value={challan.challanNumber} />
+                <AppInfoField label="Fee Amount" value={`PKR ${Number(challan.amount).toLocaleString()}`} />
+                <AppInfoField label="Due Date" value={challan.dueDate ? format(new Date(challan.dueDate), "dd MMM yyyy") : "—"} />
+                <AppInfoField label="Payment Status" value={challan.isPaid ? "✓ Paid" : "Unpaid"} />
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* ── Footer ── */}
+        <div className="px-6 py-3 border-t flex items-center justify-between shrink-0 bg-gray-50">
+          <span className="text-xs text-gray-400">Allied Health Sciences College — Nishtar Medical University, Multan</span>
+          <Button variant="outline" size="sm" onClick={() => setOpen(false)}>Close</Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
@@ -885,7 +1059,7 @@ export default function StudentApplications() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <ViewApplicationDialog app={app} challan={challan} />
+                          <ViewApplicationDialog app={app} challan={challan} profile={profileData} user={userData} />
                           <EditApplicationDialog app={app} programs={programs ?? []} quotas={quotas ?? []} onSuccess={refreshApps} />
                           <DeleteApplicationButton app={app} onSuccess={refreshApps} />
                           {showGenerate && <GenerateChallanButton appId={app.id} onSuccess={refreshApps} />}
