@@ -80,13 +80,15 @@ router.get("/dashboard/student-summary", requireAuth, async (req, res): Promise<
         .where(and(eq(paymentChallansTable.status, "pending"), sql`application_id = ANY(ARRAY[${sql.raw(appIds.join(",") || "0")}])`))
     : [{ count: 0 }];
 
-  const meritEntries = await db.select({
-    rank: meritListEntriesTable.rank,
-    meritScore: meritListEntriesTable.meritScore,
-  }).from(meritListEntriesTable)
-    .where(eq(meritListEntriesTable.userId, userId))
-    .orderBy(meritListEntriesTable.rank)
-    .limit(1);
+  const meritEntries = appIds.length
+    ? await db.select({
+        rank: meritListEntriesTable.rank,
+        meritScore: meritListEntriesTable.meritScore,
+      }).from(meritListEntriesTable)
+        .where(sql`application_id = ANY(ARRAY[${sql.raw(appIds.join(","))}])`)
+        .orderBy(meritListEntriesTable.rank)
+        .limit(1)
+    : [];
 
   const bestRank = meritEntries[0]?.rank ?? null;
   const bestScore = meritEntries[0]?.meritScore ?? null;
