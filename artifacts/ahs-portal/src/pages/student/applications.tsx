@@ -884,28 +884,22 @@ export default function StudentApplications() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-col gap-2">
-                          {/* 3 icon action buttons always shown */}
-                          <div className="flex items-center gap-1.5">
-                            <ViewApplicationDialog app={app} challan={challan} />
-                            <EditApplicationDialog app={app} programs={programs ?? []} quotas={quotas ?? []} onSuccess={refreshApps} />
-                            <DeleteApplicationButton app={app} onSuccess={refreshApps} />
-                          </div>
-                          {/* Workflow buttons depending on status */}
-                          <div className="flex flex-wrap gap-1.5 items-center">
-                            {showGenerate && <GenerateChallanButton appId={app.id} onSuccess={refreshApps} />}
-                            {showPrint && <PrintChallanWindow app={app} challan={challan} profile={profileData} user={userData} />}
-                            {showSubmit && (
-                              <SubmitChallanDialog
-                                app={app}
-                                challan={challan}
-                                onUploadComplete={handleUploadComplete}
-                                onFinalSubmit={handleFinalSubmit}
-                                isSubmitting={isSubmitting}
-                              />
-                            )}
-                            {!showGenerate && !showPrint && !showSubmit && <StatusMessage app={app} />}
-                          </div>
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <ViewApplicationDialog app={app} challan={challan} />
+                          <EditApplicationDialog app={app} programs={programs ?? []} quotas={quotas ?? []} onSuccess={refreshApps} />
+                          <DeleteApplicationButton app={app} onSuccess={refreshApps} />
+                          {showGenerate && <GenerateChallanButton appId={app.id} onSuccess={refreshApps} />}
+                          {showPrint && <PrintChallanWindow app={app} challan={challan} profile={profileData} user={userData} />}
+                          {showSubmit && (
+                            <SubmitChallanDialog
+                              app={app}
+                              challan={challan}
+                              onUploadComplete={handleUploadComplete}
+                              onFinalSubmit={handleFinalSubmit}
+                              isSubmitting={isSubmitting}
+                            />
+                          )}
+                          {!showGenerate && !showPrint && !showSubmit && <StatusMessage app={app} />}
                         </div>
                       </TableCell>
                     </TableRow>
