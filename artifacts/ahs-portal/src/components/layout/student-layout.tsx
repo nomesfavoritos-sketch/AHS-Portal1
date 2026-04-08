@@ -105,7 +105,7 @@ export function StudentLayout({ children }: StudentLayoutProps) {
 
   return (
     /* Full-screen app shell — no gaps */
-    <div className="flex h-screen w-screen overflow-hidden" style={{ background: "#f5f6fa" }}>
+    <div className="flex h-screen w-screen overflow-hidden bg-white">
 
       {/* ── Desktop Sidebar (fixed height, no scroll on page) ── */}
       <aside className="w-60 h-full shrink-0 hidden md:block">
@@ -139,8 +139,8 @@ export function StudentLayout({ children }: StudentLayoutProps) {
         <TopHeader />
 
         {/* Scrollable main content */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="p-4 md:px-5 md:py-4">
+        <main className="flex-1 overflow-y-auto bg-slate-50">
+          <div className="p-4 md:p-5">
             {children}
           </div>
         </main>
