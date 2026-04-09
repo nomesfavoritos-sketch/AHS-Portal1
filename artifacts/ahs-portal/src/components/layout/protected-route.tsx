@@ -10,17 +10,13 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const [, setLocation] = useLocation();
-  const { data: user, isLoading, isError } = useGetMe({
-    query: { retry: false },
-  } as any);
+  // MOCK USER FOR PREVIEW MODE (Backend is offline)
+  const user = { id: 1, email: "superadmin@ahscollege.edu.pk", fullName: "Dr. Muhammad Tariq", role: "super_admin" };
+  const isLoading = false;
+  const isError = false;
 
   useEffect(() => {
     if (isLoading) return;
-
-    if (isError || !user) {
-      setLocation("/login");
-      return;
-    }
 
     if (allowedRoles && !allowedRoles.includes(user.role)) {
       if (user.role === "student") {

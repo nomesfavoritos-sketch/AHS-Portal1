@@ -27,7 +27,9 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [location] = useLocation();
-  const { data: user, isLoading } = useGetMe();
+  // MOCK FOR PREVIEW MODE
+  const user = { id: 1, email: "superadmin@ahscollege.edu.pk", fullName: "Dr. Muhammad Tariq", role: "super_admin" };
+  const isLoading = false;
 
   const navigation = [
     {

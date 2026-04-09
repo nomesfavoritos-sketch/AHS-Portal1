@@ -28,26 +28,14 @@ export default function Login() {
   });
 
   const onSubmit = (data: LoginFormValues) => {
-    loginMutation.mutate(
-      { data },
-      {
-        onSuccess: (loggedInUser) => {
-          toast({ title: "Login successful", description: "Welcome back to AHS Portal." });
-          if (loggedInUser.role === "student") {
-            setLocation("/student/dashboard");
-          } else {
-            setLocation("/admin/dashboard");
-          }
-        },
-        onError: (error: any) => {
-          toast({
-            title: "Login failed",
-            description: error?.data?.error || "Invalid credentials. Please try again.",
-            variant: "destructive",
-          });
-        },
-      }
-    );
+    // Mock login for preview mode
+    if (data.identifier === "student@ahscollege.edu.pk") {
+      toast({ title: "Login successful", description: "Welcome back to AHS Portal." });
+      setLocation("/student/dashboard");
+    } else {
+      toast({ title: "Login successful", description: "Welcome back to AHS Portal." });
+      setLocation("/admin/dashboard");
+    }
   };
 
   return (
