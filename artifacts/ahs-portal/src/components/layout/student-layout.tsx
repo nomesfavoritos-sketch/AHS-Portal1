@@ -1,9 +1,10 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation } from "wouter";
+import { useLogout } from "@workspace/api-client-react";
 import { TopHeader } from "./top-header";
 import {
   LayoutDashboard, User, FileText, CreditCard,
-  FileUp, Award, Bell, Menu,
+  FileUp, Award, Bell, Menu, LogOut, Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +38,12 @@ const NAV_GROUPS = [
 ];
 
 function SidebarContent({ onClose }: { onClose?: () => void }) {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
+  const logout = useLogout();
+
+  const handleLogout = () => {
+    logout.mutate(undefined, { onSuccess: () => setLocation("/login") });
+  };
 
   return (
     <div className="flex flex-col h-full bg-white border-r select-none">
@@ -88,7 +94,21 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         ))}
       </nav>
 
-      {/* Footer status */}
+      {/* Logout + Footer */}
+      <div className="px-3 pb-2 shrink-0">
+        <button
+          onClick={() => { handleLogout(); onClose?.(); }}
+          disabled={logout.isPending}
+          className="flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors"
+        >
+          {logout.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <LogOut className="h-4 w-4" />
+          )}
+          Logout
+        </button>
+      </div>
       <div className="px-4 py-3 border-t bg-gray-50 shrink-0">
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
