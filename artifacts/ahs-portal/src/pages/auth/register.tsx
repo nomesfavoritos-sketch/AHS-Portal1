@@ -80,7 +80,7 @@ export default function Register() {
       {/* Left panel */}
       <div
         className="hidden lg:flex flex-col justify-between w-[38%] p-10 relative overflow-hidden"
-        style={{ background: "linear-gradient(160deg, #01411C 0%, #006C35 60%, #013220 100%)" }}
+        style={{ background: "#01411C" }}
       >
         <div
           className="absolute -top-20 -right-20 h-56 w-56 rounded-full opacity-10"
