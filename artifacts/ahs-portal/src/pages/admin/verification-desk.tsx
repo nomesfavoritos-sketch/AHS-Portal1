@@ -426,7 +426,7 @@ export default function AdminVerificationDesk() {
                     {c.bankName && <div className="text-xs text-muted-foreground">{c.bankName} {c.transactionRef && `— Ref: ${c.transactionRef}`}</div>}
                     {c.paidSlipPath && (
                       <a
-                        href={`/api${c.paidSlipPath}`}
+                        href={`${import.meta.env.BASE_URL}api/storage/objects/${c.paidSlipPath}`}
                         target="_blank"
                         rel="noreferrer"
                         className="text-xs text-primary flex items-center gap-1 hover:underline"

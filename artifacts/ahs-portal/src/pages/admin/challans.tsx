@@ -58,7 +58,7 @@ function getStatusBadge(status: string) {
 }
 
 function SlipPreviewModal({ challan, onClose }: { challan: any; onClose: () => void }) {
-  const slipUrl = challan.paidSlipPath ? `/api${challan.paidSlipPath}` : null;
+  const slipUrl = challan.paidSlipPath ? `${import.meta.env.BASE_URL}api/storage/objects/${challan.paidSlipPath}` : null;
 
   return (
     <Dialog open onOpenChange={() => onClose()}>
