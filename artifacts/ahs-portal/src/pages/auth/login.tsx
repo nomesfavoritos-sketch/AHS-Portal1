@@ -65,12 +65,12 @@ export default function Login() {
 
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div
-            className="h-14 w-14 rounded-2xl flex items-center justify-center text-[14px] font-black text-white mb-4"
-            style={{ background: "linear-gradient(135deg, #01411C 0%, #16A34A 100%)", boxShadow: "0 8px 24px rgba(1,65,28,0.30)" }}
-          >
-            AHS
-          </div>
+          <img
+            src={import.meta.env.BASE_URL + "logo.webp"}
+            alt="AHS Logo"
+            className="h-14 w-14 rounded-2xl object-contain bg-white p-1 mb-4"
+            style={{ boxShadow: "0 8px 24px rgba(1,65,28,0.30)" }}
+          />
           <h1 className="text-xl font-bold text-[#0F172A]">AHS Admissions Portal</h1>
           <p className="text-[13px] text-[#64748B] mt-1">Allied Health College · Nishtar Medical University</p>
         </div>

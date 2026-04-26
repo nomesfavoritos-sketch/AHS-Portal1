@@ -35,12 +35,11 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
       {/* Logo */}
       <div className="px-5 py-5 shrink-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div className="flex items-center gap-3">
-          <div
-            className="h-10 w-10 rounded-xl flex items-center justify-center text-[11px] font-black text-white shrink-0"
-            style={{ background: "linear-gradient(135deg, #16A34A, #006C35)", boxShadow: "0 4px 12px rgba(22,163,74,0.40)" }}
-          >
-            AHS
-          </div>
+          <img
+            src={import.meta.env.BASE_URL + "logo.webp"}
+            alt="AHS Logo"
+            className="h-10 w-10 rounded-xl object-contain shrink-0 bg-white p-0.5"
+          />
           <div className="min-w-0 flex-1">
             <p className="text-white font-bold text-[15px] leading-tight">Allied Health Sciences</p>
             <p className="text-[12px] leading-tight" style={{ color: "rgba(255,255,255,0.50)" }}>
@@ -182,12 +181,11 @@ export function StudentLayout({ children }: StudentLayoutProps) {
           <button onClick={() => setMobileOpen(true)} className="text-white/70 hover:text-white">
             <Menu className="h-5 w-5" />
           </button>
-          <div
-            className="h-6 w-6 rounded-md flex items-center justify-center text-[9px] font-black text-white"
-            style={{ background: "linear-gradient(135deg, #16A34A, #006C35)" }}
-          >
-            AHS
-          </div>
+          <img
+            src={import.meta.env.BASE_URL + "logo.webp"}
+            alt="AHS Logo"
+            className="h-6 w-6 rounded-md object-contain bg-white p-px"
+          />
           <span className="text-sm font-bold text-white">Student Portal</span>
         </div>
 

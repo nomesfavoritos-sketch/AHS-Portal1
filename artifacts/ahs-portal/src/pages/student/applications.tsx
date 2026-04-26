@@ -195,12 +195,13 @@ function PrintChallanWindow({ app, challan, profile, user }: { app: any; challan
     const appNo = app.applicationNumber ?? "";
     const program = app.program?.name ?? "";
 
+    const logoUrl = window.location.origin + import.meta.env.BASE_URL + "logo.webp";
     const copyHtml = (copyLabel: string) => `
 <div class="copy">
   <div class="copy-label">${copyLabel}</div>
   <div class="copy-title">Application Challan Form – ${sessionName}</div>
   <div class="logo-block">
-    <div class="logo-badge">AHS</div>
+    <img src="${logoUrl}" class="logo-badge" style="object-fit:contain;background:#fff;padding:2px;border-radius:4px;" />
     <div class="logo-text">
       <div class="inst-name">Allied Health Sciences College</div>
       <div class="inst-sub">Nishtar Medical University, Multan</div>
@@ -378,10 +379,13 @@ function PrintApplicationButton({ app, challan, profile, user }: { app: any; cha
   @media print{body{padding:10px;}button{display:none;}}
 </style></head><body>
 <div class="header">
-  <div>
-    <h1>Application Form</h1>
-    <p>Allied Health Sciences College — Nishtar Medical University, Multan</p>
-    <span class="stamp">✓ ${(app.status ?? "").replace(/_/g," ").toUpperCase()}</span>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <img src="${window.location.origin + baseUrl + 'logo.webp'}" style="height:42px;width:42px;object-fit:contain;background:#fff;padding:3px;border-radius:5px;flex-shrink:0;" />
+    <div>
+      <h1>Application Form</h1>
+      <p>Allied Health Sciences College — Nishtar Medical University, Multan</p>
+      <span class="stamp">✓ ${(app.status ?? "").replace(/_/g," ").toUpperCase()}</span>
+    </div>
   </div>
   <div style="text-align:right">
     <h1>${app.applicationNumber}</h1>

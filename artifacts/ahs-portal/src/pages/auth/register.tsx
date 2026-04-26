@@ -93,12 +93,11 @@ export default function Register() {
 
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-10">
-            <div
-              className="h-12 w-12 rounded-2xl flex items-center justify-center text-[13px] font-black text-white shrink-0"
-              style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.20)" }}
-            >
-              AHS
-            </div>
+            <img
+              src={import.meta.env.BASE_URL + "logo.webp"}
+              alt="AHS Logo"
+              className="h-12 w-12 rounded-2xl object-contain shrink-0 bg-white p-1"
+            />
             <div>
               <p className="text-white font-bold text-[17px] leading-tight">AHS Admissions Portal</p>
               <p className="text-[12px]" style={{ color: "rgba(255,255,255,0.55)" }}>Allied Health College · NMU</p>
@@ -144,12 +143,11 @@ export default function Register() {
 
         {/* Mobile logo */}
         <div className="lg:hidden flex items-center gap-2 mb-6">
-          <div
-            className="h-9 w-9 rounded-xl flex items-center justify-center text-[10px] font-black text-white"
-            style={{ background: "linear-gradient(135deg, #01411C, #16A34A)" }}
-          >
-            AHS
-          </div>
+          <img
+            src={import.meta.env.BASE_URL + "logo.webp"}
+            alt="AHS Logo"
+            className="h-9 w-9 rounded-xl object-contain bg-white p-0.5"
+          />
           <div>
             <p className="text-[13px] font-bold text-[#0F172A]">AHS Portal</p>
             <p className="text-[10px] text-[#64748B]">Allied Health College · NMU</p>
