@@ -200,12 +200,12 @@ function SidebarContent({ user, onClose }: { user: any; onClose?: () => void }) 
                 <div
                   className="h-8 w-8 rounded-lg flex items-center justify-center shrink-0"
                   style={{
-                    background: isActive ? "rgba(22,163,74,0.30)" : "rgba(255,255,255,0.07)",
+                    background: isActive ? "rgba(240,180,41,0.20)" : "rgba(255,255,255,0.07)",
                   }}
                 >
                   <item.icon
                     className="h-4 w-4"
-                    style={{ color: isActive ? "#4ade80" : "rgba(255,255,255,0.55)" }}
+                    style={{ color: isActive ? "#F0B429" : "rgba(255,255,255,0.55)" }}
                   />
                 </div>
                 <span
@@ -215,7 +215,7 @@ function SidebarContent({ user, onClose }: { user: any; onClose?: () => void }) 
                   {item.name}
                 </span>
                 {isActive && (
-                  <ChevronRight className="h-3.5 w-3.5 shrink-0" style={{ color: "#4ade80" }} />
+                  <ChevronRight className="h-3.5 w-3.5 shrink-0" style={{ color: "#F0B429" }} />
                 )}
               </div>
             </Link>
