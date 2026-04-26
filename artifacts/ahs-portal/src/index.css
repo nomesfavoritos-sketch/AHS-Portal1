@@ -53,7 +53,7 @@
 
   --color-gold: #D4AF37;
   --color-gold-light: #F5E6B8;
-  --color-pakistan-green: #01411C;
+  --color-pakistan-green: #01722C;
   --color-emerald: #16A34A;
 
   --font-sans: var(--app-font-sans);
@@ -81,7 +81,7 @@
   --foreground: 222 47% 11%;
   --border: 220 13% 91%;
   --input: 220 13% 91%;
-  --ring: 152 97% 14%;
+  --ring: 143 98% 23%;
 
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
@@ -91,13 +91,13 @@
   --popover-foreground: 222 47% 11%;
   --popover-border: 220 13% 91%;
 
-  /* Primary = Pakistan Green #01411C */
-  --primary: 152 97% 14%;
+  /* Primary = Pakistan Green #01722C */
+  --primary: 143 98% 23%;
   --primary-foreground: 0 0% 100%;
 
   /* Secondary = Soft gray-green */
   --secondary: 150 10% 95%;
-  --secondary-foreground: 152 97% 14%;
+  --secondary-foreground: 143 98% 23%;
 
   --muted: 210 20% 96%;
   --muted-foreground: 215 16% 47%;
@@ -112,14 +112,14 @@
   /* Sidebar = Deep Pakistan Green */
   --sidebar: 152 97% 10%;
   --sidebar-foreground: 0 0% 100%;
-  --sidebar-border: 152 60% 18%;
+  --sidebar-border: 143 60% 27%;
   --sidebar-primary: 0 0% 100%;
   --sidebar-primary-foreground: 152 97% 10%;
-  --sidebar-accent: 152 60% 16%;
+  --sidebar-accent: 143 60% 25%;
   --sidebar-accent-foreground: 0 0% 100%;
   --sidebar-ring: 43 65% 52%;
 
-  --chart-1: 152 97% 14%;
+  --chart-1: 143 98% 23%;
   --chart-2: 43 65% 52%;
   --chart-3: 142 76% 36%;
   --chart-4: 199 89% 48%;
@@ -145,7 +145,7 @@
   --foreground: 210 40% 98%;
   --border: 217 33% 17%;
   --input: 217 33% 17%;
-  --ring: 152 97% 14%;
+  --ring: 143 98% 23%;
 
   --card: 222 47% 11%;
   --card-foreground: 210 40% 98%;
@@ -217,7 +217,7 @@
 }
 
 .gov-gradient {
-  background: linear-gradient(135deg, #01411C 0%, #02612a 100%);
+  background: linear-gradient(135deg, #01722C 0%, #038C3A 100%);
 }
 
 .premium-card {

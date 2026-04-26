@@ -80,8 +80,8 @@ function AppTimeline({ status }: { status: string }) {
                 <div
                   className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all shadow-sm"
                   style={{
-                    background: warn ? "#f97316" : done ? "#16a34a" : active ? "#01411C" : "#f8fafc",
-                    borderColor: warn ? "#f97316" : done ? "#16a34a" : active ? "#01411C" : "#e2e8f0",
+                    background: warn ? "#f97316" : done ? "#16a34a" : active ? "#01722C" : "#f8fafc",
+                    borderColor: warn ? "#f97316" : done ? "#16a34a" : active ? "#01722C" : "#e2e8f0",
                     color: done || active || warn ? "white" : "#94a3b8",
                   }}
                 >
@@ -89,7 +89,7 @@ function AppTimeline({ status }: { status: string }) {
                 </div>
                 <span
                   className="text-[9px] whitespace-nowrap font-semibold"
-                  style={{ color: warn ? "#f97316" : done ? "#16a34a" : active ? "#01411C" : "#94a3b8" }}
+                  style={{ color: warn ? "#f97316" : done ? "#16a34a" : active ? "#01722C" : "#94a3b8" }}
                 >
                   {step.label}
                 </span>
@@ -392,7 +392,7 @@ export default function StudentDashboard() {
         <CardContent className="p-5">
           <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
             <QuickCard icon={FileText}  label="Applications"  sub="Apply for programs"  href="/student/applications" color="#4f46e5" />
-            <QuickCard icon={User}      label="My Profile"    sub="Update your info"    href="/student/profile"      color="#01411C" />
+            <QuickCard icon={User}      label="My Profile"    sub="Update your info"    href="/student/profile"      color="#01722C" />
             <QuickCard icon={CreditCard}label="Fee Challans"  sub="Pay fees"            href="/student/challans"     color="#f97316" />
             <QuickCard icon={FileUp}    label="Documents"     sub="Upload files"        href="/student/documents"    color="#0d9488" />
             <QuickCard icon={Award}     label="Merit Status"  sub="Check your rank"     href="/student/merit"        color="#7c3aed" />

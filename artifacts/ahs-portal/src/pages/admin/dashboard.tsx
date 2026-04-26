@@ -29,7 +29,7 @@ const STATUS_LABELS: Record<string, string> = {
   rejected: "Rejected",
 };
 
-const CHART_COLORS = ["#01411C", "#16A34A", "#D4AF37", "#3b82f6", "#8b5cf6", "#f59e0b", "#ef4444", "#06b6d4"];
+const CHART_COLORS = ["#01722C", "#16A34A", "#D4AF37", "#3b82f6", "#8b5cf6", "#f59e0b", "#ef4444", "#06b6d4"];
 
 function StatCard({ title, value, sub, icon: Icon, accent, trend }: { title: string; value: number | string; sub?: string; icon: React.ElementType; accent?: string; trend?: "up" | "down" }) {
   return (
@@ -136,7 +136,7 @@ export default function AdminDashboard() {
                     formatter={(v: number, name: string) => [v, name === "count" ? "Total" : "Admitted"]}
                     contentStyle={{ borderRadius: "12px", border: "1px solid #e5e7eb", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}
                   />
-                  <Bar dataKey="count" fill="#01411C" name="Total" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="count" fill="#01722C" name="Total" radius={[6, 6, 0, 0]} />
                   <Bar dataKey="approved" fill="#16A34A" name="Admitted" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
