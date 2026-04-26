@@ -344,6 +344,128 @@ function PrintChallanWindow({ app, challan, profile, user }: { app: any; challan
   );
 }
 
+function PrintApplicationButton({ app, challan, profile, user }: { app: any; challan?: any; profile?: any; user?: any }) {
+  const baseUrl = import.meta.env.BASE_URL;
+  const p = profile ?? {};
+  const u = user ?? {};
+  const photoUrl = p.photoPath ? `${baseUrl}api/storage/objects/${p.photoPath}` : null;
+
+  const handlePrint = () => {
+    const dob = p.dateOfBirth ? format(new Date(p.dateOfBirth), "dd MMM yyyy") : "—";
+    const appliedOn = app.createdAt ? format(new Date(app.createdAt), "dd MMM yyyy, hh:mm a") : "—";
+    const submittedOn = app.submittedAt ? format(new Date(app.submittedAt), "dd MMM yyyy, hh:mm a") : "—";
+    const dueDate = challan?.dueDate ? format(new Date(challan.dueDate), "dd MMM yyyy") : "—";
+    const mPct = p.matricTotal && p.matricMarks ? ((p.matricMarks / p.matricTotal)*100).toFixed(1)+"%" : "—";
+    const iPct = p.interTotal  && p.interMarks  ? ((p.interMarks  / p.interTotal) *100).toFixed(1)+"%" : "—";
+    const priority = (app as any).priority ?? 1;
+    const priorityLabel = ["","1st Choice","2nd Choice","3rd Choice","4th Choice","5th Choice"][priority] ?? `Choice ${priority}`;
+
+    const win = window.open("", "_blank", "width=960,height=700");
+    if (!win) return;
+    win.document.write(`<!DOCTYPE html><html><head><title>Application Form — ${app.applicationNumber}</title>
+<style>
+  *{box-sizing:border-box;}
+  body{font-family:Arial,sans-serif;font-size:12px;color:#111;margin:0;padding:20px;}
+  .header{background:#01411C;color:white;padding:14px 18px;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;align-items:flex-start;}
+  .header h1{margin:0;font-size:15px;font-weight:700;letter-spacing:.5px;}
+  .header p{margin:2px 0 0;font-size:11px;opacity:.8;}
+  .stamp{display:inline-block;padding:3px 10px;border:2px solid #16a34a;color:#16a34a;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:6px;}
+  .section-head{background:#01411C;color:white;padding:6px 12px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:16px 0 10px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 20px;margin-bottom:10px;}
+  .field label{display:block;font-size:9px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+  .field span{font-size:12px;font-weight:600;color:#111;}
+  .photo-row{display:flex;gap:16px;align-items:flex-start;}
+  .photo{width:80px;height:96px;border:2px solid #01411C;object-fit:cover;border-radius:4px;background:#eee;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:#ccc;text-align:center;padding-top:28px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:4px;}
+  th{background:#f3f4f6;text-align:left;padding:7px 10px;font-size:10px;font-weight:700;text-transform:uppercase;color:#555;border:1px solid #e5e7eb;}
+  td{padding:7px 10px;border:1px solid #e5e7eb;color:#111;}
+  .badge{display:inline-block;background:#01411C;color:white;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;}
+  .sig-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:30px;margin-top:30px;}
+  .sig-box{border-top:1px solid #555;padding-top:6px;font-size:10px;color:#555;text-align:center;}
+  .footer{margin-top:20px;text-align:center;font-size:10px;color:#888;border-top:1px solid #e5e7eb;padding-top:10px;}
+  @media print{body{padding:10px;}button{display:none;}}
+</style></head><body>
+<div class="header">
+  <div>
+    <h1>Application Form</h1>
+    <p>Allied Health Sciences College — Nishtar Medical University, Multan</p>
+    <span class="stamp">✓ ${(app.status ?? "").replace(/_/g," ").toUpperCase()}</span>
+  </div>
+  <div style="text-align:right">
+    <h1>${app.applicationNumber}</h1>
+    <p>Applied: ${appliedOn}</p>
+    ${app.submittedAt ? `<p>Submitted: ${submittedOn}</p>` : ""}
+  </div>
+</div>
+<div class="section-head">Personal Information</div>
+<div class="photo-row">
+  ${photoUrl ? `<img class="photo" src="${photoUrl}" style="padding:0;" />` : `<div class="photo">No<br>Photo</div>`}
+  <div class="grid" style="flex:1">
+    <div class="field"><label>Applicant Name</label><span>${u.fullName || "—"}</span></div>
+    <div class="field"><label>Father's Name</label><span>${p.fatherName || "—"}</span></div>
+    <div class="field"><label>Mother's Name</label><span>${p.motherName || "—"}</span></div>
+    <div class="field"><label>CNIC / B-Form</label><span>${p.cnic || "—"}</span></div>
+    <div class="field"><label>Date of Birth</label><span>${dob}</span></div>
+    <div class="field"><label>Gender</label><span>${p.gender || "—"}</span></div>
+    <div class="field"><label>Religion</label><span>${p.religion || "—"}</span></div>
+    <div class="field"><label>Email</label><span>${u.email || "—"}</span></div>
+    <div class="field"><label>Phone</label><span>${p.phone || "—"}</span></div>
+  </div>
+</div>
+<div class="grid" style="margin-top:10px">
+  <div class="field"><label>Domicile District</label><span>${p.domicileDistrict || "—"}</span></div>
+  <div class="field"><label>Province</label><span>${p.province || "—"}</span></div>
+  <div class="field"><label>Permanent Address</label><span>${p.address || "—"}</span></div>
+</div>
+<div class="section-head">Academic Qualifications</div>
+<table>
+  <thead><tr><th>Examination</th><th>Board / University</th><th>Roll No.</th><th>Year</th><th>Total</th><th>Obtained</th><th>%age</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Matriculation (SSC)</strong></td><td>${p.matricBoard||"—"}</td><td>${p.matricRoll||"—"}</td><td>${p.matricYear||"—"}</td><td>${p.matricTotal||"—"}</td><td>${p.matricMarks||"—"}</td><td>${mPct}</td></tr>
+    <tr><td><strong>Intermediate (FSc/ICS)</strong></td><td>${p.interBoard||"—"}</td><td>${p.interRoll||"—"}</td><td>${p.interYear||"—"}</td><td>${p.interTotal||"—"}</td><td>${p.interMarks||"—"}</td><td>${iPct}</td></tr>
+  </tbody>
+</table>
+<div class="section-head">Program Details</div>
+<table>
+  <thead><tr><th>Program Name</th><th>Program Code</th><th>Duration</th><th>Session</th><th>Quota Category</th><th>Priority</th></tr></thead>
+  <tbody><tr>
+    <td><strong>${app.program?.name||"—"}</strong></td>
+    <td>${app.program?.code||"—"}</td>
+    <td>${app.program?.duration||"—"}</td>
+    <td>${app.session?.name||"—"}</td>
+    <td>${app.quota?.name||"Open Merit"}</td>
+    <td>${priorityLabel}</td>
+  </tr></tbody>
+</table>
+${challan ? `
+<div class="section-head">Fee Payment Details</div>
+<table>
+  <thead><tr><th>Challan #</th><th>Amount (PKR)</th><th>Due Date</th><th>Payment Status</th></tr></thead>
+  <tbody><tr>
+    <td>${challan.challanNumber}</td>
+    <td><strong>PKR ${Number(challan.amount).toLocaleString()}</strong></td>
+    <td>${dueDate}</td>
+    <td>${challan.status?.replace(/_/g," ")||"—"}</td>
+  </tr></tbody>
+</table>` : ""}
+<div class="sig-row">
+  <div class="sig-box">Applicant Signature</div>
+  <div class="sig-box">Verification Officer</div>
+  <div class="sig-box">Admissions Controller</div>
+</div>
+<div class="footer">Allied Health Sciences College, Nishtar Medical University, Multan &nbsp;|&nbsp; Printed: ${new Date().toLocaleString("en-PK")}<br>This is a computer-generated document. No signature is required for authenticity.</div>
+<script>window.onload=function(){window.print();}</script>
+</body></html>`);
+    win.document.close();
+  };
+
+  return (
+    <Button size="sm" className="gap-1.5 text-white" style={{ background: "#01411C" }} onClick={handlePrint}>
+      <FileCheck2 className="h-3.5 w-3.5" /> Print Application
+    </Button>
+  );
+}
+
 function SubmitChallanDialog({ app, challan, onUploadComplete, onFinalSubmit, isSubmitting }: {
   app: any; challan: any;
   onUploadComplete: (result: any, challanId: number, appId: number) => Promise<void>;
@@ -1164,6 +1286,7 @@ export default function StudentApplications() {
                   const challan = challansData?.find(c => c.applicationId === app.id);
                   const showGenerate = app.status === "draft";
                   const showPrint = challan && (app.status === "challan_generated" || app.status === "slip_uploaded" || app.status === "submitted" || app.status === "under_review" || app.status === "verified" || app.status === "admitted");
+                  const showPrintApp = ["submitted","under_review","verified","merit_listed","selected_for_verification","admitted","rejected"].includes(app.status);
                   const showSubmit = app.status === "challan_generated" || app.status === "slip_uploaded";
 
                   return (
@@ -1195,6 +1318,7 @@ export default function StudentApplications() {
                           <DeleteApplicationButton app={app} onSuccess={refreshApps} />
                           {showGenerate && <GenerateChallanButton appId={app.id} onSuccess={refreshApps} />}
                           {showPrint && <PrintChallanWindow app={app} challan={challan} profile={profileData} user={userData} />}
+                          {showPrintApp && <PrintApplicationButton app={app} challan={challan} profile={profileData} user={userData} />}
                           {showSubmit && (
                             <SubmitChallanDialog
                               app={app}
