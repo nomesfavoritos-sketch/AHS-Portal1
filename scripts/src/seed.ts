@@ -7,7 +7,7 @@ async function seed() {
 
   // Users
   const users = [
-    { email: "superadmin@ahscollege.edu.pk", fullName: "Dr. Muhammad Tariq", role: "super_admin", password: "Admin@1234" },
+    { email: "superadmin@ahscollege.edu.pk", fullName: "Dr. Muhammad Kashid", role: "super_admin", password: "Admin@1234" },
     { email: "admissions@ahscollege.edu.pk", fullName: "Ms. Sana Malik", role: "admission_admin", password: "Admin@1234" },
     { email: "verification@ahscollege.edu.pk", fullName: "Mr. Asif Raza", role: "verification_officer", password: "Admin@1234" },
     { email: "finance@ahscollege.edu.pk", fullName: "Mr. Bilal Ahmad", role: "finance_verifier", password: "Admin@1234" },
