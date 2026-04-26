@@ -42,7 +42,10 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
   const logout = useLogout();
 
   const handleLogout = () => {
-    logout.mutate(undefined, { onSuccess: () => setLocation("/login") });
+    logout.mutate(undefined, {
+      onSuccess: () => setLocation("/login"),
+      onError: () => setLocation("/login"),
+    });
   };
 
   return (

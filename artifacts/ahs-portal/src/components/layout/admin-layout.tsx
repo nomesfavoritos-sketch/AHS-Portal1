@@ -34,7 +34,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const isLoading = false;
 
   const handleLogout = () => {
-    logout.mutate(undefined, { onSuccess: () => setLocation("/login") });
+    logout.mutate(undefined, {
+      onSuccess: () => setLocation("/login"),
+      onError: () => setLocation("/login"),
+    });
   };
 
   const navigation = [
