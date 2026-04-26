@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useState, useRef } from "react";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   useListMeritLists,
   useCreateMeritList,
@@ -23,12 +23,13 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Plus, ListOrdered, Eye, Send, Lock, RefreshCw, Download, Award, ChevronDown, ChevronUp, Trophy } from "lucide-react";
+import { Loader2, Plus, ListOrdered, Eye, Send, Lock, RefreshCw, Download, Award, ChevronDown, ChevronUp, Trophy, Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const createSchema = z.object({
@@ -162,6 +163,11 @@ export default function AdminMeritLists() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
+  const [editTarget, setEditTarget] = useState<{ id: number; name: string } | null>(null);
+  const [editName, setEditName] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<{ id: number; name: string } | null>(null);
+  const editInputRef = useRef<HTMLInputElement>(null);
+
   const { data: meritLists, isLoading } = useListMeritLists();
   const { data: sessions } = useListSessions();
   const { data: programs } = useListPrograms();
@@ -171,6 +177,46 @@ export default function AdminMeritLists() {
   const publishMeritList = usePublishMeritList();
   const freezeMeritList = useFreezeMeritList();
   const recalculateMeritList = useRecalculateMeritList();
+
+  const BASE_URL = import.meta.env.BASE_URL;
+
+  const editMeritList = useMutation({
+    mutationFn: async ({ id, name }: { id: number; name: string }) => {
+      const res = await fetch(`${BASE_URL}api/merit-lists/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ name }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Edit failed");
+      return json;
+    },
+    onSuccess: () => {
+      toast({ title: "Merit list renamed successfully" });
+      setEditTarget(null);
+      queryClient.invalidateQueries({ queryKey: getListMeritListsQueryKey() });
+    },
+    onError: (e: any) => toast({ title: "Rename failed", description: e.message, variant: "destructive" }),
+  });
+
+  const deleteMeritList = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await fetch(`${BASE_URL}api/merit-lists/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Delete failed");
+      return json;
+    },
+    onSuccess: () => {
+      toast({ title: "Merit list deleted" });
+      setDeleteTarget(null);
+      queryClient.invalidateQueries({ queryKey: getListMeritListsQueryKey() });
+    },
+    onError: (e: any) => toast({ title: "Delete failed", description: e.message, variant: "destructive" }),
+  });
 
   const form = useForm<CreateValues>({
     resolver: zodResolver(createSchema),
@@ -378,6 +424,24 @@ export default function AdminMeritLists() {
                         <Lock className="mr-2 h-3 w-3" />Freeze
                       </Button>
                     )}
+                    {!ml.isFrozen && (
+                      <Button
+                        size="sm" variant="outline"
+                        className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                        onClick={() => { setEditTarget({ id: ml.id, name: ml.name }); setEditName(ml.name); setTimeout(() => editInputRef.current?.focus(), 50); }}
+                      >
+                        <Pencil className="h-3 w-3 mr-1" />Edit
+                      </Button>
+                    )}
+                    {!ml.isFrozen && !ml.isPublished && (
+                      <Button
+                        size="sm" variant="outline"
+                        className="text-red-600 border-red-200 hover:bg-red-50"
+                        onClick={() => setDeleteTarget({ id: ml.id, name: ml.name })}
+                      >
+                        <Trash2 className="h-3 w-3 mr-1" />Delete
+                      </Button>
+                    )}
                     <Button size="sm" variant="ghost" onClick={() => setExpandedId(expandedId === ml.id ? null : ml.id)}>
                       {expandedId === ml.id ? <><ChevronUp className="mr-1 h-4 w-4" />Hide</> : <><Eye className="mr-1 h-4 w-4" />View</>}
                     </Button>
@@ -394,6 +458,61 @@ export default function AdminMeritLists() {
           ))}
         </div>
       )}
+
+      {/* Edit (Rename) Dialog */}
+      <Dialog open={!!editTarget} onOpenChange={(o) => !o && setEditTarget(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Rename Merit List</DialogTitle>
+            <DialogDescription>Enter a new name for this merit list.</DialogDescription>
+          </DialogHeader>
+          <div className="py-2">
+            <Input
+              ref={editInputRef}
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              placeholder="Merit list name"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && editTarget && editName.trim())
+                  editMeritList.mutate({ id: editTarget.id, name: editName.trim() });
+              }}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditTarget(null)}>Cancel</Button>
+            <Button
+              disabled={!editName.trim() || editMeritList.isPending}
+              onClick={() => editTarget && editMeritList.mutate({ id: editTarget.id, name: editName.trim() })}
+            >
+              {editMeritList.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Pencil className="h-4 w-4 mr-2" />}
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => !o && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Merit List?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete <strong>{deleteTarget?.name}</strong> and all its entries. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700 text-white"
+              onClick={() => deleteTarget && deleteMeritList.mutate(deleteTarget.id)}
+              disabled={deleteMeritList.isPending}
+            >
+              {deleteMeritList.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

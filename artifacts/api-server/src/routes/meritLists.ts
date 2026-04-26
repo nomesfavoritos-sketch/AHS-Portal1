@@ -273,6 +273,32 @@ router.post("/merit-lists/:id/recalculate", requireAuth, requireAdminRole, async
   res.json({ message: "Recalculated", count: scored.length });
 });
 
+router.patch("/merit-lists/:id", requireAuth, requireAdminRole, async (req, res): Promise<void> => {
+  const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
+  const [meritList] = await db.select().from(meritListsTable).where(eq(meritListsTable.id, id));
+  if (!meritList) { res.status(404).json({ error: "Not found" }); return; }
+  if (meritList.isFrozen) { res.status(400).json({ error: "Cannot edit a frozen list" }); return; }
+  const { name } = req.body;
+  if (!name || typeof name !== "string" || !name.trim()) { res.status(400).json({ error: "Name is required" }); return; }
+  const [updated] = await db.update(meritListsTable).set({ name: name.trim() }).where(eq(meritListsTable.id, id)).returning();
+  const userId = (req.session as any).userId;
+  await logAudit(db, userId, "merit_list_edited", "merit_list", id, { name: name.trim() });
+  res.json(fmtList(updated));
+});
+
+router.delete("/merit-lists/:id", requireAuth, requireAdminRole, async (req, res): Promise<void> => {
+  const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id, 10);
+  const [meritList] = await db.select().from(meritListsTable).where(eq(meritListsTable.id, id));
+  if (!meritList) { res.status(404).json({ error: "Not found" }); return; }
+  if (meritList.isFrozen) { res.status(400).json({ error: "Cannot delete a frozen list" }); return; }
+  if (meritList.isPublished) { res.status(400).json({ error: "Cannot delete a published list. Freeze it first." }); return; }
+  await db.delete(meritListEntriesTable).where(eq(meritListEntriesTable.meritListId, id));
+  await db.delete(meritListsTable).where(eq(meritListsTable.id, id));
+  const userId = (req.session as any).userId;
+  await logAudit(db, userId, "merit_list_deleted", "merit_list", id, {});
+  res.json({ ok: true });
+});
+
 router.get("/merit-search", async (req, res): Promise<void> => {
   const query = (req.query.query as string | undefined)?.trim();
   if (!query || query.length < 4) { res.status(400).json({ error: "Query must be at least 4 characters" }); return; }
