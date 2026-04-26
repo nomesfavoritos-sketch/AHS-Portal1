@@ -10,13 +10,15 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const [, setLocation] = useLocation();
-  // MOCK USER FOR PREVIEW MODE (Backend is offline)
-  const user = { id: 1, email: "superadmin@ahscollege.edu.pk", fullName: "Dr. Muhammad Tariq", role: "super_admin" };
-  const isLoading = false;
-  const isError = false;
+  const { data: user, isLoading, isError } = useGetMe();
 
   useEffect(() => {
     if (isLoading) return;
+
+    if (isError || !user) {
+      setLocation("/login");
+      return;
+    }
 
     if (allowedRoles && !allowedRoles.includes(user.role)) {
       if (user.role === "student") {
@@ -29,8 +31,16 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   if (isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex h-screen w-full items-center justify-center bg-[#F8FAFC]">
+        <div className="flex flex-col items-center gap-3">
+          <div
+            className="h-12 w-12 rounded-xl flex items-center justify-center font-black text-[13px] text-white"
+            style={{ background: "linear-gradient(135deg, #01411C, #16A34A)" }}
+          >
+            AHS
+          </div>
+          <Loader2 className="h-5 w-5 animate-spin" style={{ color: "#01411C" }} />
+        </div>
       </div>
     );
   }

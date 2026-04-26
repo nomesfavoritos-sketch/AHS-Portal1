@@ -56,13 +56,9 @@ function StatCard({ title, value, sub, icon: Icon, accent, iconBg }: { title: st
 }
 
 export default function AdminDashboard() {
-  // MOCK FOR PREVIEW MODE
-  const summary = { totalApplications: 150, pendingApplications: 20, totalStudents: 300, totalPrograms: 8, activeSession: "2025-26 Fall Session", pendingPayments: 5, joiningIntents: 200, pendingVerifications: 12, meritListedCount: 120, approvedApplications: 280, rejectedApplications: 15 };
-  const activity = [{id: 1, description: "Preview Mode initialized", userName: "Admin", createdAt: new Date().toISOString()}];
-  const stats = { byProgram: [{ programCode: "CS", count: 120, approved: 100 }, { programCode: "BBA", count: 80, approved: 70 }], byStatus: [{ status: "draft", count: 10 }, { status: "admitted", count: 150 }] };
-  const isLoadingSummary = false;
-  const isLoadingActivity = false;
-  const isLoadingStats = false;
+  const { data: summary, isLoading: isLoadingSummary } = useGetAdminDashboardSummary();
+  const { data: activity, isLoading: isLoadingActivity } = useGetRecentActivity();
+  const { data: stats, isLoading: isLoadingStats } = useGetApplicationStats();
 
   if (isLoadingSummary || isLoadingActivity || isLoadingStats) {
     return (
