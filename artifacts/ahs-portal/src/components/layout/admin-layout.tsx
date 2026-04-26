@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
 const SIDEBAR_BG = "#013220";
 const ACTIVE_BG = "rgba(22,163,74,0.22)";
 const ACTIVE_BORDER = "#16A34A";
-const HOVER_BG = "rgba(255,255,255,0.06)";
+const HOVER_BG = "rgba(22,163,74,0.15)";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -205,7 +205,7 @@ function SidebarContent({ user, onClose }: { user: any; onClose?: () => void }) 
                 >
                   <item.icon
                     className="h-4 w-4"
-                    style={{ color: isActive ? "#F0B429" : "rgba(255,255,255,0.55)" }}
+                    style={{ color: "#F0B429" }}
                   />
                 </div>
                 <span
