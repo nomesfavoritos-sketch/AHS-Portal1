@@ -13,10 +13,14 @@ const STATUS_COLORS: Record<string, string> = {
   draft: "#94a3b8",
   submitted: "#3b82f6",
   under_review: "#f59e0b",
-  verified: "#10b981",
+  verified: "#16A34A",
   merit_listed: "#8b5cf6",
-  admitted: "#059669",
+  admitted: "#01411C",
   rejected: "#ef4444",
+  challan_generated: "#f97316",
+  slip_uploaded: "#06b6d4",
+  selected_for_verification: "#0ea5e9",
+  clarification_required: "#f59e0b",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -29,18 +33,23 @@ const STATUS_LABELS: Record<string, string> = {
   rejected: "Rejected",
 };
 
-const CHART_COLORS = ["#1e3a5f", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe", "#dbeafe", "#eff6ff"];
+const CHART_COLORS = ["#01411C", "#006C35", "#16A34A", "#22c55e", "#4ade80", "#86efac", "#bbf7d0", "#dcfce7"];
 
-function StatCard({ title, value, sub, icon: Icon, accent }: { title: string; value: number | string; sub?: string; icon: any; accent?: string }) {
+function StatCard({ title, value, sub, icon: Icon, accent, iconBg }: { title: string; value: number | string; sub?: string; icon: any; accent?: string; iconBg?: string }) {
   return (
-    <Card>
+    <Card className="card-hover" style={{ border: "1px solid #E5E7EB" }}>
       <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className={`h-4 w-4 ${accent ?? "text-muted-foreground"}`} />
+        <CardTitle className="text-[12px] font-semibold text-[#64748B] uppercase tracking-wide">{title}</CardTitle>
+        <div
+          className="h-9 w-9 rounded-xl flex items-center justify-center"
+          style={{ background: iconBg ?? "rgba(1,65,28,0.08)" }}
+        >
+          <Icon className={`h-4.5 w-4.5 ${accent ?? "text-[#01411C]"}`} />
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {sub && <p className="text-xs text-muted-foreground mt-1">{sub}</p>}
+        <div className="text-2xl font-black text-[#0F172A]">{value}</div>
+        {sub && <p className="text-[11px] text-[#94A3B8] mt-1">{sub}</p>}
       </CardContent>
     </Card>
   );
@@ -69,13 +78,22 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          {summary?.activeSession
-            ? <>Active session: <span className="font-medium text-foreground">{summary.activeSession}</span></>
-            : "No active session"}
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-[#0F172A]">Administration Dashboard</h1>
+          <p className="text-[13px] text-[#64748B] mt-0.5">
+            {summary?.activeSession
+              ? <>Active Session: <span className="font-semibold" style={{ color: "#01411C" }}>{summary.activeSession}</span></>
+              : "No active admission session"}
+          </p>
+        </div>
+        <div
+          className="hidden sm:flex items-center gap-2 rounded-xl px-4 py-2"
+          style={{ background: "rgba(1,65,28,0.08)", border: "1px solid rgba(1,65,28,0.15)" }}
+        >
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-[12px] font-semibold" style={{ color: "#01411C" }}>Portal Live</span>
+        </div>
       </div>
 
       {/* Stat Cards */}
@@ -111,8 +129,8 @@ export default function AdminDashboard() {
                   <XAxis dataKey="programCode" tick={{ fontSize: 11 }} />
                   <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
                   <Tooltip formatter={(v: any, name: string) => [v, name === "count" ? "Total" : "Admitted"]} />
-                  <Bar dataKey="count" fill="#1e3a5f" name="Total" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="approved" fill="#10b981" name="Admitted" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="count" fill="#006C35" name="Total" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="approved" fill="#D4AF37" name="Admitted" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}

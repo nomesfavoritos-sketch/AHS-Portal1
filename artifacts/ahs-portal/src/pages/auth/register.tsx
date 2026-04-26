@@ -5,10 +5,14 @@ import { z } from "zod";
 import { useRegister } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Building2, Loader2, ArrowLeft, CreditCard } from "lucide-react";
+import {
+  Loader2, ArrowLeft, CreditCard, User,
+  Mail, Phone, Lock, Eye, EyeOff, Shield,
+  CheckCircle,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 const cnicRegex = /^\d{5}-?\d{7}-?\d{1}$/;
 
@@ -32,50 +36,38 @@ const registerSchema = z.object({
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
+const REQUIREMENTS = [
+  "FSc Pre-Medical with ≥50% marks",
+  "Valid CNIC or B-Form (13 digits)",
+  "Punjab domicile certificate",
+  "PKR 500 application fee",
+];
+
 export default function Register() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const registerMutation = useRegister();
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: {
-      cnic: "",
-      fullName: "",
-      email: "",
-      phone: "",
-      password: "",
-      confirmPassword: "",
-    },
+    defaultValues: { cnic: "", fullName: "", email: "", phone: "", password: "", confirmPassword: "" },
   });
 
   const onSubmit = (data: RegisterFormValues) => {
     registerMutation.mutate(
-      {
-        data: {
-          cnic: data.cnic,
-          fullName: data.fullName,
-          email: data.email,
-          phone: data.phone || undefined,
-          password: data.password,
-        },
-      },
+      { data: { cnic: data.cnic, fullName: data.fullName, email: data.email, phone: data.phone || undefined, password: data.password } },
       {
         onSuccess: () => {
-          toast({
-            title: "Registration successful",
-            description: "Your student account has been created. Redirecting to dashboard...",
-          });
+          toast({ title: "Account created!", description: "Welcome to AHS Portal. Redirecting to your dashboard..." });
           setLocation("/student/dashboard");
         },
         onError: (error) => {
-          const apiError = error as unknown as { status?: number; data?: { error?: string } };
+          const apiError = error as any;
           let description = "There was a problem creating your account.";
-          if (apiError.status === 409) {
-            description = apiError.data?.error ?? "An account with this CNIC/B-Form or email already exists.";
-          } else if (apiError.data?.error) {
-            description = apiError.data.error;
-          }
+          if (apiError.status === 409) description = apiError.data?.error ?? "An account with this CNIC or email already exists.";
+          else if (apiError.data?.error) description = apiError.data.error;
           toast({ title: "Registration failed", description, variant: "destructive" });
         },
       }
@@ -83,148 +75,276 @@ export default function Register() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary">
-            <Building2 className="h-8 w-8 text-primary-foreground" />
+    <div className="min-h-screen flex bg-[#F8FAFC]">
+
+      {/* Left panel */}
+      <div
+        className="hidden lg:flex flex-col justify-between w-[38%] p-10 relative overflow-hidden"
+        style={{ background: "linear-gradient(160deg, #01411C 0%, #006C35 60%, #013220 100%)" }}
+      >
+        <div
+          className="absolute -top-20 -right-20 h-56 w-56 rounded-full opacity-10"
+          style={{ background: "radial-gradient(circle, #16A34A, transparent)" }}
+        />
+        <div
+          className="absolute bottom-20 -left-16 h-64 w-64 rounded-full opacity-10"
+          style={{ background: "radial-gradient(circle, #D4AF37, transparent)" }}
+        />
+
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-10">
+            <div
+              className="h-11 w-11 rounded-2xl flex items-center justify-center text-[12px] font-black text-white"
+              style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.20)" }}
+            >
+              AHS
+            </div>
+            <div>
+              <p className="text-white font-bold text-[14px] leading-tight">AHS Admissions Portal</p>
+              <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.50)" }}>Allied Health College · NMU</p>
+            </div>
           </div>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
-            Student Registration
+
+          <h2 className="text-3xl font-black text-white leading-tight mb-3">
+            Start Your<br />
+            <span style={{ color: "#D4AF37" }}>Application</span>
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Create an account to apply for admissions
+          <p className="text-[13px] mb-8 max-w-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.60)" }}>
+            Create your student account to apply for admission to one of 8 Allied Health Sciences programs.
           </p>
+
+          <div className="space-y-3">
+            <p className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: "rgba(255,255,255,0.40)" }}>
+              Eligibility Requirements
+            </p>
+            {REQUIREMENTS.map((req) => (
+              <div key={req} className="flex items-start gap-2.5">
+                <div
+                  className="h-5 w-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                  style={{ background: "rgba(22,163,74,0.25)" }}
+                >
+                  <CheckCircle className="h-3 w-3" style={{ color: "#4ade80" }} />
+                </div>
+                <p className="text-[13px]" style={{ color: "rgba(255,255,255,0.70)" }}>{req}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <Card className="shadow-lg border-border/50">
-          <CardHeader>
-            <CardTitle>Account Details</CardTitle>
-            <CardDescription>
-              Please provide your accurate information as per your official documents.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <div className="relative z-10 flex items-center gap-2">
+          <Shield className="h-4 w-4" style={{ color: "rgba(255,255,255,0.35)" }} />
+          <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>
+            Government of Punjab · HEC Recognized
+          </p>
+        </div>
+      </div>
 
-                {/* CNIC / B-Form — required identity field */}
-                <FormField
-                  control={form.control}
-                  name="cnic"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1.5">
-                        <CreditCard className="h-3.5 w-3.5" />
-                        CNIC / B-Form Number
-                        <span className="text-destructive ml-0.5">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="XXXXX-XXXXXXX-X"
-                          maxLength={15}
-                          {...field}
-                        />
-                      </FormControl>
-                      <p className="text-[11px] text-muted-foreground mt-1">
-                        Used as your login ID. Enter with or without dashes.
-                      </p>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+      {/* Right panel — form */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-10 overflow-y-auto">
 
-                <FormField
-                  control={form.control}
-                  name="fullName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Full Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="As per Matriculation Certificate" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+        {/* Mobile logo */}
+        <div className="lg:hidden flex items-center gap-2 mb-6">
+          <div
+            className="h-9 w-9 rounded-xl flex items-center justify-center text-[10px] font-black text-white"
+            style={{ background: "linear-gradient(135deg, #01411C, #16A34A)" }}
+          >
+            AHS
+          </div>
+          <div>
+            <p className="text-[13px] font-bold text-[#0F172A]">AHS Portal</p>
+            <p className="text-[10px] text-[#64748B]">Allied Health College · NMU</p>
+          </div>
+        </div>
 
+        <div className="w-full max-w-[420px]">
+          <div className="mb-7">
+            <Link href="/login">
+              <span className="inline-flex items-center gap-1.5 text-[12px] font-medium cursor-pointer mb-4 hover:underline" style={{ color: "#01411C" }}>
+                <ArrowLeft className="h-3.5 w-3.5" /> Back to Sign In
+              </span>
+            </Link>
+            <h2 className="text-2xl font-bold text-[#0F172A] mb-1">Create Student Account</h2>
+            <p className="text-[13px] text-[#64748B]">Fill in your details accurately as per official documents</p>
+          </div>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+
+              <FormField
+                control={form.control}
+                name="cnic"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[13px] font-medium text-[#374151] flex items-center gap-1.5">
+                      <CreditCard className="h-3.5 w-3.5 text-[#01411C]" />
+                      CNIC / B-Form <span className="text-red-500 ml-0.5">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="XXXXX-XXXXXXX-X"
+                        maxLength={15}
+                        className="h-11 rounded-xl text-[13px]"
+                        style={{ border: "1.5px solid #E5E7EB" }}
+                        {...field}
+                      />
+                    </FormControl>
+                    <p className="text-[11px] text-[#94A3B8] mt-0.5">This will be your login ID. Enter with or without dashes.</p>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="fullName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[13px] font-medium text-[#374151] flex items-center gap-1.5">
+                      <User className="h-3.5 w-3.5 text-[#01411C]" />
+                      Full Name <span className="text-red-500 ml-0.5">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="As per Matriculation Certificate"
+                        className="h-11 rounded-xl text-[13px]"
+                        style={{ border: "1.5px solid #E5E7EB" }}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-3">
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email Address</FormLabel>
+                      <FormLabel className="text-[13px] font-medium text-[#374151] flex items-center gap-1.5">
+                        <Mail className="h-3.5 w-3.5 text-[#01411C]" />
+                        Email <span className="text-red-500 ml-0.5">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="you@example.com" type="email" {...field} />
+                        <Input
+                          placeholder="you@email.com"
+                          type="email"
+                          className="h-11 rounded-xl text-[13px]"
+                          style={{ border: "1.5px solid #E5E7EB" }}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number <span className="text-muted-foreground font-normal">(Optional)</span></FormLabel>
+                      <FormLabel className="text-[13px] font-medium text-[#374151] flex items-center gap-1.5">
+                        <Phone className="h-3.5 w-3.5 text-[#64748B]" />
+                        Phone <span className="text-[#94A3B8] text-[11px] font-normal">(Optional)</span>
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="03XXXXXXXXX" {...field} />
+                        <Input
+                          placeholder="03XXXXXXXXX"
+                          className="h-11 rounded-xl text-[13px]"
+                          style={{ border: "1.5px solid #E5E7EB" }}
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+              </div>
 
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input placeholder="••••••••" type="password" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[13px] font-medium text-[#374151] flex items-center gap-1.5">
+                      <Lock className="h-3.5 w-3.5 text-[#01411C]" />
+                      Password <span className="text-red-500 ml-0.5">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          placeholder="Min. 6 characters"
+                          type={showPass ? "text" : "password"}
+                          className="h-11 rounded-xl text-[13px] pr-10"
+                          style={{ border: "1.5px solid #E5E7EB" }}
+                          {...field}
+                        />
+                        <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#64748B]" onClick={() => setShowPass(v => !v)} tabIndex={-1}>
+                          {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
-                      <FormControl>
-                        <Input placeholder="••••••••" type="password" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[13px] font-medium text-[#374151] flex items-center gap-1.5">
+                      <Lock className="h-3.5 w-3.5 text-[#01411C]" />
+                      Confirm Password <span className="text-red-500 ml-0.5">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          placeholder="Re-enter password"
+                          type={showConfirm ? "text" : "password"}
+                          className="h-11 rounded-xl text-[13px] pr-10"
+                          style={{ border: "1.5px solid #E5E7EB" }}
+                          {...field}
+                        />
+                        <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#64748B]" onClick={() => setShowConfirm(v => !v)} tabIndex={-1}>
+                          {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <Button type="submit" className="w-full mt-6" disabled={registerMutation.isPending}>
-                  {registerMutation.isPending && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  Create Account
-                </Button>
-              </form>
-            </Form>
-          </CardContent>
-          <CardFooter className="flex flex-col gap-4 border-t p-6">
-            <p className="text-sm text-center text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/login" className="font-medium text-primary hover:underline">
-                Sign in
-              </Link>
-            </p>
-            <Link href="/" className="text-sm text-center text-muted-foreground flex items-center justify-center hover:text-foreground">
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
+              <Button
+                type="submit"
+                className="w-full h-11 rounded-xl text-[14px] font-semibold text-white mt-2"
+                disabled={registerMutation.isPending}
+                style={{
+                  background: "linear-gradient(135deg, #01411C 0%, #006C35 100%)",
+                  boxShadow: "0 4px 15px rgba(1,65,28,0.35)",
+                }}
+              >
+                {registerMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Create Account & Apply
+              </Button>
+            </form>
+          </Form>
+
+          <p className="text-[12px] text-center text-[#94A3B8] mt-6">
+            Already have an account?{" "}
+            <Link href="/login">
+              <span className="font-semibold cursor-pointer hover:underline" style={{ color: "#01411C" }}>Sign in</span>
             </Link>
-          </CardFooter>
-        </Card>
+          </p>
+
+          <div className="flex items-center justify-center gap-1.5 mt-4">
+            <Shield className="h-3.5 w-3.5 text-[#94A3B8]" />
+            <p className="text-[11px] text-[#94A3B8]">Secured by AHS Portal · Government of Punjab</p>
+          </div>
+        </div>
       </div>
     </div>
   );

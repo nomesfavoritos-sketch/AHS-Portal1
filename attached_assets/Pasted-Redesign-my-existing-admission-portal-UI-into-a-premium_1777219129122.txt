@@ -1,0 +1,305 @@
+Redesign my existing admission portal UI into a **premium, elegant, modern Pakistan government SaaS product** inspired by the **NADRA Pak ID App green branding style**.
+
+IMPORTANT RULES:
+
+* Keep ALL existing functionality exactly the same
+* Keep database exactly the same
+* Keep routes exactly the same
+* Keep backend exactly the same
+* Keep forms, workflows, APIs, calculations, merit logic, challan system, verification system unchanged
+* ONLY improve UI / UX / frontend styling
+
+This project is an Allied Health Sciences Admission Portal for a government medical university in Pakistan.
+
+---
+
+# DESIGN GOAL
+
+Transform the current portal into a **10 million dollar SaaS quality dashboard** with:
+
+* Official Pakistan government trust feeling
+* NADRA app inspired premium green identity
+* Modern enterprise dashboard style
+* Highly polished professional interface
+* Better spacing, typography, hierarchy, consistency
+* Expensive and premium look
+
+Think:
+
+**NADRA Pak ID App + Stripe Dashboard + Modern Government SaaS**
+
+---
+
+# COLOR THEME (MANDATORY)
+
+Use this premium Pakistan government palette:
+
+* Primary Green: #01411C
+* NADRA App Green: #006C35
+* Secondary Emerald: #16A34A
+* Accent Gold: #D4AF37
+* Background: #F8FAFC
+* Cards: #FFFFFF
+* Border: #E5E7EB
+* Text Primary: #0F172A
+* Text Secondary: #64748B
+* Sidebar Dark Green: #013220
+
+Use gradients carefully:
+
+* Green gradient buttons
+* Soft header glow
+* Elegant hover highlights
+
+---
+
+# GLOBAL UI IMPROVEMENTS
+
+* Use Inter font
+* Large premium AI-generated icons
+* Government style clean icon system
+* Smooth rounded corners (18px to 22px)
+* Soft layered shadows
+* Better whitespace
+* Better alignment everywhere
+* Smooth transitions
+* Elegant hover animations
+* Responsive mobile + desktop
+* Premium loading skeletons
+* Better empty states
+
+---
+
+# ICON SYSTEM (IMPORTANT)
+
+Use modern premium AI-quality icons.
+
+Requirements:
+
+* Large clean icons
+* Government style professional icons
+* Outlined + filled mixed style
+* Consistent stroke width
+* Elegant green icon backgrounds
+* 3D subtle premium look if possible
+
+Use icons for:
+
+* Dashboard
+* Admissions
+* Applications
+* Payments
+* Challan
+* Merit Lists
+* Verification
+* Reports
+* Students
+* Notifications
+* Settings
+* Profile
+* Upload Documents
+
+---
+
+# SIDEBAR REDESIGN
+
+Redesign sidebar visually only.
+
+* Deep NADRA green background
+* White text/icons
+* Active menu glowing green badge
+* Rounded selected menu item
+* Hover animation
+* University logo at top
+* Government premium branding
+* Collapsible mobile sidebar
+
+Do NOT change routes or menu structure.
+
+---
+
+# HEADER REDESIGN
+
+* White premium top navbar
+* Search bar with icon
+* Notification bell
+* User profile dropdown
+* Session badge: Admissions 2025-26
+* Sticky top header
+* Soft bottom border
+* Elegant clean spacing
+
+---
+
+# DASHBOARD REDESIGN
+
+Keep same data/functions.
+
+Redesign widgets into premium cards:
+
+* Total Applicants
+* Pending Verification
+* Verified Payments
+* Merit Lists Published
+* Joined Students
+* Revenue / Fee Collection
+
+Use:
+
+* AI icons
+* Trend indicators
+* Mini charts
+* Progress rings
+* Soft shadows
+* Hover lift effects
+
+---
+
+# TABLES REDESIGN
+
+Keep data same.
+
+Improve only styling:
+
+* Rounded table container
+* Sticky headers
+* Zebra rows
+* Hover highlight rows
+* Search bar styling
+* Filter dropdown redesign
+* Premium pagination
+* Status badges
+* Better spacing
+
+---
+
+# FORMS REDESIGN
+
+Keep fields same.
+
+Improve:
+
+* Modern labels
+* Floating inputs
+* Better spacing
+* Step progress tracker
+* Clean upload boxes
+* Drag & drop uploads
+* Better validation messages
+* Premium action buttons
+
+---
+
+# BUTTON SYSTEM
+
+Primary:
+Green gradient premium buttons
+
+Secondary:
+White outline buttons
+
+Danger:
+Soft red buttons
+
+All buttons:
+
+* Rounded XL
+* Better padding
+* Hover glow
+* Press animation
+* Premium shadows
+
+---
+
+# STATUS BADGES
+
+Create elegant badges:
+
+* Pending = Amber
+* Approved = Green
+* Rejected = Red
+* Verified = Blue
+* Draft = Gray
+* Paid = Emerald
+* Unpaid = Soft Red
+
+---
+
+# PAGE SPECIFIC REDESIGN
+
+## Student Portal
+
+Modern progress tracker:
+
+Profile → Apply → Challan → Upload Slip → Submit → Merit
+
+## Admin Portal
+
+Enterprise control room style with:
+
+* KPI cards
+* Filters
+* Verification queues
+* Fraud alerts
+* Approval actions
+
+## Merit List Page
+
+Public premium government layout with searchable merit tables.
+
+## Challan Page
+
+Clean official printable challan with Pakistan govt style header.
+
+## Verification Page
+
+Split layout:
+
+Left = student data
+Right = uploaded documents preview
+
+---
+
+# UX REQUIREMENTS
+
+* Every page must feel expensive
+* Official Pakistan govt authority feel
+* Premium trust building interface
+* Remove outdated styling
+* Improve readability
+* Improve spacing
+* Improve navigation clarity
+* Fast and modern experience
+
+---
+
+# TECH REQUIREMENTS
+
+Use current stack only.
+
+Do frontend refactor only.
+
+Preferred:
+
+* Tailwind CSS
+* Reusable components
+* Theme tokens
+* Clean scalable code
+
+---
+
+# OUTPUT REQUIRED
+
+1. Fully redesigned frontend
+2. NADRA-inspired green premium theme
+3. AI-quality icon system
+4. Responsive polished layout
+5. Production-ready modern UI
+
+---
+
+# FINAL RULE
+
+Do NOT break any existing feature.
+
+Only transform current portal visually into a premium modern Pakistan government SaaS product inspired by NADRA app green identity.
