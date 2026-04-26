@@ -625,9 +625,7 @@ export default function AdminVerificationDesk() {
             <div className="space-y-1.5">
               <Label htmlFor="dec-remarks">
                 Remarks{" "}
-                <span className="text-muted-foreground text-xs">
-                  {decisionType === "accept_joining" ? "(optional)" : "(required)"}
-                </span>
+                <span className="text-muted-foreground text-xs">(optional)</span>
               </Label>
               <Textarea
                 id="dec-remarks"
@@ -645,10 +643,7 @@ export default function AdminVerificationDesk() {
             <Button
               variant={decisionType === "reject_joining" ? "destructive" : "default"}
               onClick={submitDecision}
-              disabled={
-                (decisionType === "accept_joining" && !allMandatoryVerified) ||
-                (decisionType !== "accept_joining" && !decisionRemarks.trim())
-              }
+              disabled={decisionType === "accept_joining" && !allMandatoryVerified}
             >
               {decisionType === "accept_joining" ? (
                 <CheckCircle className="h-4 w-4 mr-2" />
