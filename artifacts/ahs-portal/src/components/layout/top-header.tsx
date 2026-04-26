@@ -63,9 +63,16 @@ export function TopHeader() {
   const now = new Date();
   const dateStr = now.toLocaleDateString("en-PK", { weekday: "short", year: "numeric", month: "short", day: "numeric" });
 
-  const initials = user?.fullName
-    ? user.fullName.split(" ").slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()
-    : "U";
+  const TITLES = ["Dr.", "Mr.", "Ms.", "Mrs.", "Prof.", "Engr."];
+  const nameParts = user?.fullName?.split(" ") ?? [];
+  const hasTitle = nameParts.length > 0 && TITLES.includes(nameParts[0]);
+  const displayName = hasTitle
+    ? nameParts.slice(0, 3).join(" ")
+    : nameParts.slice(0, 2).join(" ");
+  const initials = hasTitle
+    ? (nameParts[1]?.[0] ?? "") + (nameParts[2]?.[0] ?? "")
+    : nameParts.slice(0, 2).map((w: string) => w[0]).join("");
+  const initialsUpper = (initials || "U").toUpperCase();
 
   return (
     <header
@@ -127,11 +134,11 @@ export function TopHeader() {
                   className="h-7 w-7 rounded-lg flex items-center justify-center text-[11px] font-bold text-white shrink-0"
                   style={{ background: "linear-gradient(135deg, #01411C, #16A34A)" }}
                 >
-                  {initials}
+                  {initialsUpper}
                 </div>
                 <div className="text-left hidden sm:block">
                   <p className="text-[12px] font-semibold text-[#0F172A] leading-tight">
-                    {user.fullName?.split(" ")[0] ?? "User"}
+                    {displayName}
                   </p>
                   <p className="text-[10px] leading-tight" style={{ color: "#64748B" }}>
                     {ROLE_SHORT[user.role] ?? "User"}
@@ -147,7 +154,7 @@ export function TopHeader() {
                     className="h-9 w-9 rounded-lg flex items-center justify-center text-[12px] font-bold text-white shrink-0"
                     style={{ background: "linear-gradient(135deg, #01411C, #16A34A)" }}
                   >
-                    {initials}
+                    {initialsUpper}
                   </div>
                   <div>
                     <p className="text-[13px] font-semibold text-[#0F172A]">{user.fullName}</p>
