@@ -330,8 +330,8 @@ function PrintChallanWindow({ app, challan, profile, user }: { app: any; challan
     win.document.close();
   };
   return (
-    <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white gap-1.5" onClick={handlePrint}>
-      <Printer className="h-3.5 w-3.5" /> Print Challan
+    <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white gap-1 h-7 px-2 text-[11px]" onClick={handlePrint}>
+      <Printer className="h-3 w-3" /> Print Challan
     </Button>
   );
 }
@@ -452,8 +452,8 @@ ${challan ? `
   };
 
   return (
-    <Button size="sm" className="gap-1.5 text-white" style={{ background: "#01411C" }} onClick={handlePrint}>
-      <FileCheck2 className="h-3.5 w-3.5" /> Print Application
+    <Button size="sm" className="gap-1 h-7 px-2 text-[11px] text-white" style={{ background: "#01411C" }} onClick={handlePrint}>
+      <FileCheck2 className="h-3 w-3" /> Print App
     </Button>
   );
 }
@@ -474,9 +474,9 @@ function SubmitChallanDialog({ app, challan, onUploadComplete, onFinalSubmit, is
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) { setBankReceiptNo(""); setReceiptError(""); } }}>
       <DialogTrigger asChild>
-        <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white gap-1.5">
-          <UploadCloud className="h-3.5 w-3.5" />
-          {app.status === "slip_uploaded" ? "Submit Application" : "Submit Challan"}
+        <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white gap-1 h-7 px-2 text-[11px]">
+          <UploadCloud className="h-3 w-3" />
+          {app.status === "slip_uploaded" ? "Submit App" : "Submit Challan"}
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -1336,7 +1336,7 @@ export default function StudentApplications() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex flex-wrap items-center gap-1.5">
+                        <div className="flex flex-nowrap items-center gap-1">
                           <ViewApplicationDialog app={app} challan={challan} profile={profileData} user={userData} />
                           <EditApplicationDialog app={app} programs={programs ?? []} quotas={quotas ?? []} onSuccess={refreshApps} />
                           <DeleteApplicationButton app={app} onSuccess={refreshApps} />
