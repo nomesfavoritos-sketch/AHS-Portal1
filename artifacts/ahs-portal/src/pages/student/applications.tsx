@@ -66,7 +66,7 @@ function getStatusBadge(status: string) {
   }
 }
 
-const G = "#01411C";
+const G = "#01722C";
 
 const FLOW_STEPS = [
   { icon: FileCheck2, label: "Apply", desc: "Create application" },
@@ -242,7 +242,7 @@ function PrintChallanWindow({ app, challan, profile, user }: { app: any; challan
     /* top bar */
     .top-bar { display: flex; justify-content: center; gap: 12px; margin-bottom: 14px; }
     .btn { padding: 6px 16px; border: 1px solid #ccc; background: #f5f5f5; border-radius: 4px; cursor: pointer; font-size: 12px; }
-    .btn.primary { background: #01411C; color: #fff; border-color: #01411C; }
+    .btn.primary { background: #01722C; color: #fff; border-color: #01722C; }
     @media print { .top-bar { display: none; } }
 
     /* three copies */
@@ -250,11 +250,11 @@ function PrintChallanWindow({ app, challan, profile, user }: { app: any; challan
     .copy { flex: 1; border-right: 1px dashed #aaa; padding: 8px 9px; min-height: 460px; }
     .copy:last-child { border-right: none; }
 
-    .copy-label { text-align: center; font-weight: bold; font-size: 12px; border-bottom: 1px solid #ccc; padding-bottom: 4px; margin-bottom: 4px; color: #01411C; }
+    .copy-label { text-align: center; font-weight: bold; font-size: 12px; border-bottom: 1px solid #ccc; padding-bottom: 4px; margin-bottom: 4px; color: #01722C; }
     .copy-title { text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 7px; }
 
     .logo-block { display: flex; align-items: center; gap: 7px; justify-content: center; margin-bottom: 6px; }
-    .logo-badge { width: 36px; height: 36px; background: #01411C; color: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; letter-spacing: -0.5px; flex-shrink: 0; }
+    .logo-badge { width: 36px; height: 36px; background: #01722C; color: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; letter-spacing: -0.5px; flex-shrink: 0; }
     .logo-text { text-align: left; }
     .inst-name { font-size: 10px; font-weight: bold; line-height: 1.3; }
     .inst-sub { font-size: 9px; color: #555; }
@@ -402,7 +402,7 @@ function SubmitChallanDialog({ app, challan, onUploadComplete, onFinalSubmit, is
   );
 }
 
-const G_COLOR = "#01411C";
+const G_COLOR = "#01722C";
 
 function AppSectionHead({ icon, title }: { icon: React.ReactNode; title: string }) {
   return (
@@ -445,15 +445,15 @@ function ViewApplicationDialog({ app, challan, profile, user }: {
     win.document.write(`<!DOCTYPE html><html><head><title>Application Form — ${app.applicationNumber}</title>
 <style>
   body{font-family:Arial,sans-serif;font-size:12px;color:#111;margin:0;padding:20px;}
-  .header{background:#01411C;color:white;padding:12px 16px;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;align-items:center;}
+  .header{background:#01722C;color:white;padding:12px 16px;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;align-items:center;}
   .header h1{margin:0;font-size:14px;font-weight:700;letter-spacing:.5px;}
   .header p{margin:0;font-size:11px;opacity:.8;}
-  .section-head{background:#01411C;color:white;padding:6px 12px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:14px 0 10px;}
+  .section-head{background:#01722C;color:white;padding:6px 12px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:14px 0 10px;}
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 20px;margin-bottom:10px;}
   .field label{display:block;font-size:9px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
   .field span{font-size:12px;font-weight:600;color:#111;}
   .photo-row{display:flex;gap:16px;align-items:flex-start;}
-  .photo{width:80px;height:96px;border:2px solid #01411C;object-fit:cover;border-radius:4px;background:#eee;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .photo{width:80px;height:96px;border:2px solid #01722C;object-fit:cover;border-radius:4px;background:#eee;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   table{width:100%;border-collapse:collapse;font-size:12px;}
   th{background:#f3f4f6;text-align:left;padding:7px 10px;font-size:10px;font-weight:700;text-transform:uppercase;color:#555;border:1px solid #e5e7eb;}
   td{padding:7px 10px;border:1px solid #e5e7eb;color:#111;}

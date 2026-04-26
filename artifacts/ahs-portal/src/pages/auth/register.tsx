@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Building2, Loader2, ArrowLeft, CreditCard } from "lucide-react";
+import { Shield, Loader2, ArrowLeft, CreditCard, Lock, GraduationCap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const cnicRegex = /^\d{5}-?\d{7}-?\d{1}$/;
@@ -83,13 +83,41 @@ export default function Register() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary">
-            <Building2 className="h-8 w-8 text-primary-foreground" />
+    <div className="flex min-h-screen">
+      {/* Left Panel - Branding */}
+      <div className="hidden lg:flex lg:w-1/2 gov-gradient relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.03%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50" />
+        <div className="relative z-10 flex flex-col justify-center px-16">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="h-14 w-14 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/10">
+              <GraduationCap className="h-7 w-7 text-gold" />
+            </div>
           </div>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-4xl font-bold text-white leading-tight mb-4">
+            Start Your<br />Academic Journey
+          </h1>
+          <p className="text-lg text-white/60 leading-relaxed max-w-md mb-8">
+            Register as a student to apply for Allied Health Sciences programs at Nishtar Medical University, Multan.
+          </p>
+          <div className="flex items-center gap-6 text-white/40 text-sm">
+            <div className="flex items-center gap-2">
+              <Lock className="h-4 w-4" />
+              <span>Secure Registration</span>
+            </div>
+            <div className="h-4 w-px bg-white/20" />
+            <span>Government Portal</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Panel - Form */}
+      <div className="flex-1 flex items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center lg:hidden">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-pakistan-green shadow-lg">
+            <Shield className="h-8 w-8 text-white" />
+          </div>
+          <h2 className="mt-5 text-2xl font-bold tracking-tight text-foreground">
             Student Registration
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -97,7 +125,12 @@ export default function Register() {
           </p>
         </div>
 
-        <Card className="shadow-lg border-border/50">
+        <div className="hidden lg:block">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">Create your account</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Register to start your admission application</p>
+        </div>
+
+        <Card className="shadow-lg border-border/40">
           <CardHeader>
             <CardTitle>Account Details</CardTitle>
             <CardDescription>
@@ -213,10 +246,10 @@ export default function Register() {
               </form>
             </Form>
           </CardContent>
-          <CardFooter className="flex flex-col gap-4 border-t p-6">
+          <CardFooter className="flex flex-col gap-4 border-t p-5">
             <p className="text-sm text-center text-muted-foreground">
               Already have an account?{" "}
-              <Link href="/login" className="font-medium text-primary hover:underline">
+              <Link href="/login" className="font-semibold text-primary hover:underline">
                 Sign in
               </Link>
             </p>
@@ -225,6 +258,11 @@ export default function Register() {
             </Link>
           </CardFooter>
         </Card>
+
+        <p className="text-center text-xs text-muted-foreground/60">
+          &copy; {new Date().getFullYear()} Allied Health Sciences College, NMU Multan
+        </p>
+      </div>
       </div>
     </div>
   );

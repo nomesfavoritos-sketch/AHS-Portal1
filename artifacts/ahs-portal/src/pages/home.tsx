@@ -15,7 +15,7 @@ import universityPhoto from "@assets/jjjlllji_1775576930917.webp";
 import nmuLogo from "@assets/logo_(1)_1775576288927.webp";
 
 /* ─── Color tokens ─── */
-const G = "#01411C";       // Pakistan institutional green
+const G = "#01722C";       // Pakistan institutional green
 const GA = "#16a34a";      // light accent green
 const Y = "#EAB308";       // yellow accent
 const YL = "#FEF9C3";      // yellow light
@@ -190,12 +190,12 @@ export default function Home() {
 
         <nav className="hidden lg:flex items-center gap-8 text-[13px] font-medium">
           {[["Programs", "#programs"], ["How to Apply", "#how-to-apply"], ["Notices", "#notices"], ["FAQ", "#faq"]].map(([label, href]) => (
-            <a key={label} href={href} className="text-slate-600 hover:text-[#01411C] transition-colors">
+            <a key={label} href={href} className="text-slate-600 hover:text-[#01722C] transition-colors">
               {label}
             </a>
           ))}
           <Link href="/merit-search">
-            <span className="text-slate-600 hover:text-[#01411C] transition-colors cursor-pointer">Merit Search</span>
+            <span className="text-slate-600 hover:text-[#01722C] transition-colors cursor-pointer">Merit Search</span>
           </Link>
         </nav>
 
@@ -235,12 +235,12 @@ export default function Home() {
           <nav className="flex flex-col px-4 py-4 gap-1">
             {[["Programs", "#programs"], ["How to Apply", "#how-to-apply"], ["Notices", "#notices"], ["FAQ", "#faq"], ["Merit Search", "/merit-search"]].map(([label, href]) => (
               href.startsWith("#") ? (
-                <a key={label} href={href} onClick={closeMobile} className="px-3 py-2.5 rounded-lg text-[14px] font-medium text-slate-700 hover:bg-slate-50 hover:text-[#01411C] transition-colors">
+                <a key={label} href={href} onClick={closeMobile} className="px-3 py-2.5 rounded-lg text-[14px] font-medium text-slate-700 hover:bg-slate-50 hover:text-[#01722C] transition-colors">
                   {label}
                 </a>
               ) : (
                 <Link key={label} href={href}>
-                  <span onClick={closeMobile} className="block px-3 py-2.5 rounded-lg text-[14px] font-medium text-slate-700 hover:bg-slate-50 hover:text-[#01411C] transition-colors cursor-pointer">
+                  <span onClick={closeMobile} className="block px-3 py-2.5 rounded-lg text-[14px] font-medium text-slate-700 hover:bg-slate-50 hover:text-[#01722C] transition-colors cursor-pointer">
                     {label}
                   </span>
                 </Link>
@@ -871,7 +871,7 @@ export default function Home() {
                     className="border border-slate-200/80 rounded-2xl overflow-hidden bg-white shadow-sm"
                     style={{ borderLeft: `3px solid ${G}` }}
                   >
-                    <AccordionTrigger className="px-6 py-4 text-[14px] font-semibold text-slate-900 hover:no-underline hover:text-[#01411C] text-left">
+                    <AccordionTrigger className="px-6 py-4 text-[14px] font-semibold text-slate-900 hover:no-underline hover:text-[#01722C] text-left">
                       {item.q}
                     </AccordionTrigger>
                     <AccordionContent className="px-6 pb-5 text-[13px] text-slate-500 leading-relaxed">

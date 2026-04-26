@@ -1,13 +1,13 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation } from "wouter";
+import { useLogout } from "@workspace/api-client-react";
 import { TopHeader } from "./top-header";
 import {
   LayoutDashboard, User, FileText, CreditCard,
-  FileUp, Award, Bell, Menu,
+  FileUp, Award, Bell, Menu, LogOut, Loader2,
+  X, GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const G = "#01411C";
 
 interface StudentLayoutProps { children: ReactNode; }
 
@@ -37,48 +37,62 @@ const NAV_GROUPS = [
 ];
 
 function SidebarContent({ onClose }: { onClose?: () => void }) {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
+  const logout = useLogout();
+
+  const handleLogout = () => {
+    logout.mutate(undefined, {
+      onSuccess: () => setLocation("/login"),
+      onError: () => setLocation("/login"),
+    });
+  };
 
   return (
-    <div className="flex flex-col h-full bg-white border-r select-none">
+    <div className="flex flex-col h-full gov-gradient select-none">
       {/* Logo */}
-      <div className="px-4 py-4 border-b shrink-0">
+      <div className="px-5 py-5 border-b border-white/10 shrink-0">
         <div className="flex items-center gap-3">
-          <div
-            className="h-10 w-10 rounded-lg flex items-center justify-center shrink-0"
-            style={{ background: G }}
-          >
-            <span className="text-white font-black text-sm tracking-tight">AHS</span>
+          <div className="h-10 w-10 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center shrink-0 border border-white/10">
+            <GraduationCap className="h-5 w-5 text-gold" />
           </div>
-          <div className="min-w-0">
-            <p className="text-sm font-bold text-gray-900 leading-tight truncate">Allied Health Sciences</p>
-            <p className="text-[11px] text-gray-400 leading-tight">NMU · Student Portal v1.0</p>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold text-white leading-tight truncate">Allied Health Sciences</p>
+            <p className="text-[11px] text-white/50 leading-tight font-medium">Student Portal v1.0</p>
           </div>
+          {onClose && (
+            <button onClick={onClose} className="md:hidden text-white/60 hover:text-white">
+              <X className="h-5 w-5" />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Nav — scrollable */}
-      <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-4">
+      {/* Nav */}
+      <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-5">
         {NAV_GROUPS.map((group) => (
           <div key={group.label}>
-            <p className="px-2 pb-1 text-[10px] font-bold text-gray-400 tracking-widest uppercase">{group.label}</p>
-            <div className="space-y-0.5">
+            <p className="px-3 pb-2 text-[10px] font-bold text-white/40 tracking-widest uppercase">{group.label}</p>
+            <div className="space-y-1">
               {group.items.map((item) => {
                 const isActive = location === item.href || location.startsWith(item.href + "/");
                 return (
                   <Link key={item.name} href={item.href} onClick={onClose}>
                     <div
                       className={cn(
-                        "flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all duration-150 group",
-                        isActive ? "text-white" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        "flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-200 group",
+                        isActive
+                          ? "bg-white/15 shadow-lg shadow-black/10 backdrop-blur-sm"
+                          : "hover:bg-white/8"
                       )}
-                      style={isActive ? { background: G } : {}}
                     >
-                      <item.icon className={cn("h-4 w-4 shrink-0", isActive ? "text-green-200" : "text-gray-400 group-hover:text-gray-600")} />
+                      <item.icon className={cn("h-4.5 w-4.5 shrink-0", isActive ? "text-gold" : "text-white/50 group-hover:text-white/70")} />
                       <div className="min-w-0 flex-1">
-                        <p className={cn("text-sm font-semibold leading-tight", isActive ? "text-white" : "")}>{item.name}</p>
-                        <p className={cn("text-[11px] leading-tight truncate", isActive ? "text-green-200" : "text-gray-400")}>{item.sub}</p>
+                        <p className={cn("text-sm font-semibold leading-tight", isActive ? "text-white" : "text-white/70 group-hover:text-white")}>{item.name}</p>
+                        <p className={cn("text-[11px] leading-tight truncate", isActive ? "text-white/50" : "text-white/30")}>{item.sub}</p>
                       </div>
+                      {isActive && (
+                        <div className="ml-auto h-1.5 w-1.5 rounded-full bg-gold shrink-0" />
+                      )}
                     </div>
                   </Link>
                 );
@@ -88,12 +102,26 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         ))}
       </nav>
 
-      {/* Footer status */}
-      <div className="px-4 py-3 border-t bg-gray-50 shrink-0">
+      {/* Logout + Footer */}
+      <div className="px-3 pb-2 shrink-0">
+        <button
+          onClick={() => { handleLogout(); onClose?.(); }}
+          disabled={logout.isPending}
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-red-300 hover:bg-red-500/15 hover:text-red-200 transition-all duration-200"
+        >
+          {logout.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <LogOut className="h-4 w-4" />
+          )}
+          Logout
+        </button>
+      </div>
+      <div className="px-4 py-3 border-t border-white/10 shrink-0">
         <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-xs text-gray-500 font-medium">System Online</span>
-          <span className="ml-auto text-[10px] text-gray-400">AHS-NMU</span>
+          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-xs text-white/50 font-medium">System Online</span>
+          <span className="ml-auto text-[10px] text-white/30">AHS-NMU</span>
         </div>
       </div>
     </div>
@@ -104,46 +132,26 @@ export function StudentLayout({ children }: StudentLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    /* Full-screen app shell — no gaps */
-    <div className="flex h-screen w-screen overflow-hidden bg-white">
-
-      {/* ── Desktop Sidebar (fixed height, no scroll on page) ── */}
-      <aside className="w-60 h-full shrink-0 hidden md:block">
+    <div className="flex h-screen bg-background">
+      {/* Desktop Sidebar */}
+      <aside className="w-[270px] shrink-0 hidden md:flex flex-col shadow-xl z-20">
         <SidebarContent />
       </aside>
 
-      {/* ── Mobile overlay sidebar ── */}
+      {/* Mobile Sidebar Overlay */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-50 flex md:hidden">
-          <div className="w-60 h-full">
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+          <aside className="relative w-[270px] h-full shadow-2xl">
             <SidebarContent onClose={() => setMobileOpen(false)} />
-          </div>
-          <div className="flex-1 bg-black/40" onClick={() => setMobileOpen(false)} />
+          </aside>
         </div>
       )}
 
-      {/* ── Right panel: header + scrollable content ── */}
-      <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
-
-        {/* Mobile top bar */}
-        <div className="md:hidden flex items-center h-12 px-4 bg-white border-b gap-3 shrink-0">
-          <button onClick={() => setMobileOpen(true)} className="text-gray-600">
-            <Menu className="h-5 w-5" />
-          </button>
-          <div className="h-6 w-6 rounded flex items-center justify-center" style={{ background: G }}>
-            <span className="text-white text-[9px] font-black">AHS</span>
-          </div>
-          <span className="text-sm font-bold text-gray-800">Student Portal</span>
-        </div>
-
-        <TopHeader />
-
-        {/* Scrollable main content */}
-        <main className="flex-1 overflow-y-auto bg-slate-50">
-          <div className="p-4 md:p-5">
-            {children}
-          </div>
-        </main>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <TopHeader onMenuClick={() => setMobileOpen(true)} />
+        <main className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );

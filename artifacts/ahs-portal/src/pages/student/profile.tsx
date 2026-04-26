@@ -22,7 +22,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
 import { ObjectUploader } from "@workspace/object-storage-web";
 
-const G = "#01411C";
+const G = "#01722C";
 
 const PUNJAB_DISTRICTS = [
   "Ahmadpur East","Attock","Bahawalnagar","Bahawalpur","Bhakkar","Chakwal",
