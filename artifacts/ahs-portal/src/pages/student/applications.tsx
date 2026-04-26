@@ -221,12 +221,6 @@ function PrintChallanWindow({ app, challan, profile, user }: { app: any; challan
     <div><strong>A/C No:</strong> 0001-7939840154 <em>(only posted thru AHS Portal)</em></div>
   </div>
 
-  <div class="section-head">For Online Payment</div>
-  <div class="bank-info">
-    <div><strong>JazzCash / EasyPaisa:</strong> 0300-1234567</div>
-    <div><strong>Reference:</strong> CNIC No. (without dashes)</div>
-  </div>
-
   <div class="challan-no-row">Challan No: <strong>${challanNo}</strong></div>
 
   <table class="info-table">
@@ -322,11 +316,9 @@ function PrintChallanWindow({ app, challan, profile, user }: { app: any; challan
     <strong>Instructions:</strong>
     <ol>
       <li>Application Processing Fee can be deposited at any branch of Habib Bank Limited (HBL).</li>
-      <li>Fee can also be paid via JazzCash or EasyPaisa using the mobile number provided above. Enter your CNIC as reference.</li>
       <li>In case of Direct transfer / IBFT / RTGS, payment traceability issues may cause failure to verify your application.</li>
       <li>Due to missing information and non-traceable payment, a candidate may not be able to complete the admissions process.</li>
       <li>After payment, upload the bank-stamped deposit slip on the AHS Student Portal immediately.</li>
-      <li>In case of payment through Mobile/Digital Banking App, please share your payment proof at <strong>admissions@ahscollege.edu.pk</strong></li>
     </ol>
   </div>
   <div class="footer-cr">© All Rights Reserved – Allied Health Sciences College, NMU ${new Date().getFullYear()}</div>
