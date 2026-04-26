@@ -15,3 +15,4 @@ export * from "./systemSettings";
 export * from "./seatMatrix";
 export * from "./verificationChecklists";
 export * from "./joiningDecisions";
+export * from "./notifications";

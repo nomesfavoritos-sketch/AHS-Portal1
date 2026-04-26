@@ -1,9 +1,10 @@
 import { Router, type IRouter } from "express";
-import { db, applicationsTable, usersTable, programsTable, admissionSessionsTable, studentProfilesTable, documentsTable, paymentChallansTable, meritListEntriesTable, meritListsTable, verificationChecklistsTable, joiningDecisionsTable, joinedStudentsTable, quotaCategoriesTable } from "@workspace/db";
+import { db, applicationsTable, usersTable, programsTable, admissionSessionsTable, studentProfilesTable, documentsTable, paymentChallansTable, meritListEntriesTable, meritListsTable, verificationChecklistsTable, joiningDecisionsTable, joinedStudentsTable, quotaCategoriesTable, notificationsTable } from "@workspace/db";
 import { eq, and, or, desc } from "drizzle-orm";
 import { DEFAULT_CHECKLIST_ITEMS } from "@workspace/db";
 import { requireAuth, requireRoles } from "../middlewares/auth";
 import { logAudit } from "../lib/audit";
+import { sendEmail, buildDecisionEmail } from "../lib/email";
 
 const router: IRouter = Router();
 
@@ -246,6 +247,57 @@ router.post("/verification-desk/:applicationId/decision", requireAuth, requireRo
   }
 
   await logAudit({ userId: officerId, action: `joining_decision_${decision}`, entityType: "application", entityId: applicationId });
+
+  // --- In-app notification + email ---
+  try {
+    const [student] = await db.select().from(usersTable).where(eq(usersTable.id, app.userId));
+    const [prog] = await db.select().from(programsTable).where(eq(programsTable.id, app.programId));
+    const appNumber = app.applicationNumber ?? `APP-${app.id}`;
+    const programName = prog?.name ?? "Your Program";
+
+    const notifMap: Record<string, { title: string; message: string; type: string }> = {
+      accept_joining: {
+        title: "Joining Accepted — Congratulations!",
+        message: `Your joining documents for ${programName} (${appNumber}) have been verified and accepted. You are officially admitted.`,
+        type: "success",
+      },
+      reject_joining: {
+        title: "Application Rejected",
+        message: `Your application for ${programName} (${appNumber}) has been rejected after document verification.${remarks ? " Remarks: " + remarks : ""} Please contact the admissions office for further guidance.`,
+        type: "danger",
+      },
+      send_back: {
+        title: "Clarification Required on Your Application",
+        message: `Your application for ${programName} (${appNumber}) requires clarification.${remarks ? " Remarks: " + remarks : ""} Please log in and review your documents.`,
+        type: "warning",
+      },
+    };
+
+    const notif = notifMap[decision] ?? notifMap.send_back;
+
+    await db.insert(notificationsTable).values({
+      userId: app.userId,
+      title: notif.title,
+      message: notif.message,
+      type: notif.type,
+      relatedEntityType: "application",
+      relatedEntityId: applicationId,
+    });
+
+    if (student?.email) {
+      const emailContent = buildDecisionEmail({
+        studentName: student.fullName,
+        applicationNumber: appNumber,
+        program: programName,
+        decision,
+        remarks: remarks ?? null,
+      });
+      await sendEmail({ to: student.email, ...emailContent });
+    }
+  } catch (notifErr) {
+    console.error("[notification] Failed to send notification/email:", notifErr);
+  }
+  // --- end notification ---
 
   res.status(201).json({
     id: jd.id, decision: jd.decision, remarks: jd.remarks ?? null,

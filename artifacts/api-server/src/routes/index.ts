@@ -19,6 +19,7 @@ import settingsRouter from "./settings";
 import seatMatrixRouter from "./seatMatrix";
 import verificationDeskRouter from "./verificationDesk";
 import reportsRouter from "./reports";
+import notificationsRouter from "./notifications";
 
 const router: IRouter = Router();
 
@@ -42,5 +43,6 @@ router.use(settingsRouter);
 router.use(seatMatrixRouter);
 router.use(verificationDeskRouter);
 router.use(reportsRouter);
+router.use(notificationsRouter);
 
 export default router;
