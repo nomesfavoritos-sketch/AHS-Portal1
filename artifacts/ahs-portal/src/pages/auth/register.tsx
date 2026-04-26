@@ -94,22 +94,22 @@ export default function Register() {
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-10">
             <div
-              className="h-11 w-11 rounded-2xl flex items-center justify-center text-[12px] font-black text-white"
+              className="h-12 w-12 rounded-2xl flex items-center justify-center text-[13px] font-black text-white shrink-0"
               style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.20)" }}
             >
               AHS
             </div>
             <div>
-              <p className="text-white font-bold text-[14px] leading-tight">AHS Admissions Portal</p>
-              <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.50)" }}>Allied Health College · NMU</p>
+              <p className="text-white font-bold text-[17px] leading-tight">AHS Admissions Portal</p>
+              <p className="text-[12px]" style={{ color: "rgba(255,255,255,0.55)" }}>Allied Health College · NMU</p>
             </div>
           </div>
 
-          <h2 className="text-3xl font-black text-white leading-tight mb-3">
+          <h2 className="text-4xl font-black text-white leading-tight mb-3">
             Start Your<br />
             <span style={{ color: "#D4AF37" }}>Application</span>
           </h2>
-          <p className="text-[13px] mb-8 max-w-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.60)" }}>
+          <p className="text-[14px] mb-8 max-w-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
             Create your student account to apply for admission to one of 8 Allied Health Sciences programs.
           </p>
 
@@ -216,7 +216,7 @@ export default function Register() {
                 )}
               />
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <FormField
                   control={form.control}
                   name="email"

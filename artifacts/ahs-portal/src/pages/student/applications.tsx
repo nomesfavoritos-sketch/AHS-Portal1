@@ -569,7 +569,7 @@ ${challan ? `
               </div>
             </div>
             {/* Top fields */}
-            <div className="flex-1 grid grid-cols-3 gap-x-6 gap-y-4">
+            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
               <AppInfoField label="Applicant Name" value={u.fullName} />
               <AppInfoField label="Father's Name" value={p.fatherName} />
               <AppInfoField label="Mother's Name" value={p.motherName} />

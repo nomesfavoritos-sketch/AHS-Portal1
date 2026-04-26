@@ -383,7 +383,7 @@ export default function StudentDashboard() {
           <p className="font-bold text-gray-900 text-sm">Quick Access</p>
           <p className="text-xs text-gray-400">Jump to any section</p>
         </div>
-        <div className="p-4 grid grid-cols-3 md:grid-cols-6 gap-3">
+        <div className="p-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
           <QuickCard icon={FileText}  label="Applications"  sub="Apply for programs"  href="/student/applications" color="#4f46e5" />
           <QuickCard icon={User}      label="My Profile"    sub="Update your info"    href="/student/profile"      color={G} />
           <QuickCard icon={CreditCard}label="Fee Challans"  sub="Pay fees"            href="/student/challans"     color="#f97316" />

@@ -55,8 +55,8 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
             AHS
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-white font-bold text-[13px] leading-tight">Allied Health Sciences</p>
-            <p className="text-[11px] leading-tight" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <p className="text-white font-bold text-[15px] leading-tight">Allied Health Sciences</p>
+            <p className="text-[12px] leading-tight" style={{ color: "rgba(255,255,255,0.50)" }}>
               Student Portal · NMU
             </p>
           </div>
