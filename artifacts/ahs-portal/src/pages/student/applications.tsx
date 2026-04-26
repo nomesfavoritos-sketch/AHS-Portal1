@@ -30,7 +30,7 @@ import {
   Loader2, Plus, CheckCircle, UploadCloud, AlertTriangle,
   ClipboardCheck, PartyPopper, XCircle, Clock, UserCheck,
   Printer, Eye, FileCheck2, CreditCard, Send, Zap,
-  Pencil, Trash2, User, GraduationCap, BookOpen,
+  Pencil, Trash2, User, GraduationCap, BookOpen, FileUp,
 } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
@@ -69,38 +69,48 @@ function getStatusBadge(status: string) {
 const G = "#01411C";
 
 const FLOW_STEPS = [
-  { icon: FileCheck2, label: "Apply", desc: "Create application" },
-  { icon: CreditCard, label: "Challan", desc: "Generate fee challan" },
-  { icon: Printer, label: "Pay", desc: "Pay at HBL & upload slip" },
-  { icon: Send, label: "Submit", desc: "Submit for review" },
+  { icon: User,        label: "Profile",    desc: "Complete your profile" },
+  { icon: FileUp,      label: "Documents",  desc: "Upload required docs" },
+  { icon: FileCheck2,  label: "Apply",      desc: "Create application" },
+  { icon: CreditCard,  label: "Challan",    desc: "Generate fee challan" },
+  { icon: Printer,     label: "Pay",        desc: "Pay at HBL & upload slip" },
+  { icon: Send,        label: "Submit",     desc: "Submit for review" },
 ];
 
-function ApplicationFlowGuide({ currentStatus }: { currentStatus?: string }) {
-  const activeIdx = currentStatus === "draft" ? 0
-    : currentStatus === "challan_generated" ? 1
-    : currentStatus === "slip_uploaded" ? 2
-    : currentStatus === "submitted" || currentStatus === "under_review" ? 3 : 3;
+function ApplicationFlowGuide({ currentStatus, profileComplete, hasApp }: {
+  currentStatus?: string;
+  profileComplete?: boolean;
+  hasApp?: boolean;
+}) {
+  const activeIdx =
+    !profileComplete                                                          ? 0
+    : !hasApp                                                                 ? 1
+    : currentStatus === "draft"                                               ? 2
+    : currentStatus === "challan_generated"                                   ? 3
+    : currentStatus === "slip_uploaded"                                       ? 4
+    : (currentStatus === "submitted" || currentStatus === "under_review")     ? 5
+    : 5;
 
   return (
     <div className="rounded-xl border bg-white p-4 mb-4">
       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Application Process</p>
-      <div className="flex items-center">
+      <div className="flex items-center overflow-x-auto pb-1">
         {FLOW_STEPS.map((step, i) => {
           const done = i < activeIdx;
           const active = i === activeIdx;
           return (
-            <div key={i} className="flex items-center flex-1">
+            <div key={i} className="flex items-center flex-1 min-w-fit">
               <div className="flex flex-col items-center gap-1.5">
-                <div className={`h-9 w-9 rounded-full flex items-center justify-center transition-all
+                <div className={`h-9 w-9 rounded-full flex items-center justify-center transition-all shrink-0
                   ${done ? "bg-green-500 text-white" : active ? "text-white" : "bg-gray-100 text-gray-400"}`}
                   style={active ? { background: G } : {}}>
                   <step.icon className="h-4 w-4" />
                 </div>
-                <span className={`text-xs font-semibold ${done ? "text-green-600" : active ? "text-gray-900" : "text-gray-400"}`}>{step.label}</span>
-                <span className="text-[10px] text-gray-400 hidden sm:block text-center">{step.desc}</span>
+                <span className={`text-xs font-semibold whitespace-nowrap ${done ? "text-green-600" : active ? "text-gray-900" : "text-gray-400"}`}>{step.label}</span>
+                <span className="text-[10px] text-gray-400 hidden sm:block text-center whitespace-nowrap">{step.desc}</span>
               </div>
               {i < FLOW_STEPS.length - 1 && (
-                <div className={`h-0.5 flex-1 mx-2 mb-5 rounded-full ${done ? "bg-green-400" : "bg-gray-200"}`} />
+                <div className={`h-0.5 flex-1 mx-2 mb-5 rounded-full min-w-[12px] ${done ? "bg-green-400" : "bg-gray-200"}`} />
               )}
             </div>
           );
@@ -1048,8 +1058,12 @@ export default function StudentApplications() {
         </Dialog>
       </div>
 
-      {/* Application Flow Guide */}
-      {apps.length > 0 && <ApplicationFlowGuide currentStatus={latestApp?.status} />}
+      {/* Application Flow Guide — always visible */}
+      <ApplicationFlowGuide
+        currentStatus={latestApp?.status}
+        profileComplete={profileComplete}
+        hasApp={apps.length > 0}
+      />
 
       {/* Applications Table */}
       {isLoadingApps ? (

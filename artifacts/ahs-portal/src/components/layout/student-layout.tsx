@@ -20,8 +20,8 @@ const NAV_GROUPS = [
     items: [
       { name: "Dashboard",    href: "/student/dashboard",    icon: LayoutDashboard, sub: "Overview & Metrics" },
       { name: "My Profile",   href: "/student/profile",      icon: User,            sub: "Personal Information" },
-      { name: "Applications", href: "/student/applications", icon: FileText,        sub: "Program Applications" },
       { name: "Documents",    href: "/student/documents",    icon: FileUp,          sub: "Upload Documents" },
+      { name: "Applications", href: "/student/applications", icon: FileText,        sub: "Program Applications" },
       { name: "Fee Challans", href: "/student/challans",     icon: CreditCard,      sub: "Payment History" },
     ],
   },
