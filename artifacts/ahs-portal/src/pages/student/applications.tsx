@@ -49,7 +49,7 @@ const applicationSchema = z.object({
 });
 
 const PRIORITY_LABELS: Record<number, { label: string; color: string }> = {
-  1: { label: "1st Choice",  color: "bg-green-600 text-white" },
+  1: { label: "1st Choice",  color: "bg-yellow-500 text-white" },
   2: { label: "2nd Choice",  color: "bg-blue-500 text-white" },
   3: { label: "3rd Choice",  color: "bg-amber-500 text-white" },
   4: { label: "4th Choice",  color: "bg-orange-500 text-white" },
@@ -63,14 +63,14 @@ function getStatusBadge(status: string) {
     case "draft": return <Badge variant="secondary">Draft</Badge>;
     case "challan_generated": return <Badge className="bg-amber-500 text-white">Challan Generated</Badge>;
     case "slip_uploaded": return <Badge className="bg-blue-500 text-white">Slip Uploaded</Badge>;
-    case "submitted": return <Badge className="bg-green-600 text-white">Submitted</Badge>;
+    case "submitted": return <Badge className="bg-yellow-500 text-white">Submitted</Badge>;
     case "under_review": return <Badge className="bg-amber-600 text-white">Under Review</Badge>;
-    case "verified": return <Badge className="bg-emerald-500 text-white">Verified</Badge>;
+    case "verified": return <Badge className="bg-yellow-500 text-white">Verified</Badge>;
     case "rejected": return <Badge variant="destructive">Rejected</Badge>;
     case "merit_listed": return <Badge className="bg-purple-500 text-white">Merit Listed</Badge>;
     case "selected_for_verification": return <Badge className="bg-sky-600 text-white">For Verification</Badge>;
     case "clarification_required": return <Badge className="bg-orange-500 text-white">Clarification Needed</Badge>;
-    case "admitted": return <Badge className="bg-green-700 text-white">Admitted</Badge>;
+    case "admitted": return <Badge className="bg-yellow-600 text-white">Admitted</Badge>;
     default: return <Badge variant="outline">{status.replace(/_/g, " ")}</Badge>;
   }
 }
@@ -111,15 +111,15 @@ function ApplicationFlowGuide({ currentStatus, profileComplete, hasApp }: {
             <div key={i} className="flex items-center flex-1 min-w-fit">
               <div className="flex flex-col items-center gap-1.5">
                 <div className={`h-9 w-9 rounded-full flex items-center justify-center transition-all shrink-0
-                  ${done ? "bg-green-500 text-white" : active ? "text-white" : "bg-gray-100 text-gray-400"}`}
+                  ${done ? "bg-yellow-500 text-white" : active ? "text-white" : "bg-gray-100 text-gray-400"}`}
                   style={active ? { background: G } : {}}>
                   <step.icon className="h-4 w-4" />
                 </div>
-                <span className={`text-xs font-semibold whitespace-nowrap ${done ? "text-green-600" : active ? "text-gray-900" : "text-gray-400"}`}>{step.label}</span>
+                <span className={`text-xs font-semibold whitespace-nowrap ${done ? "text-yellow-600" : active ? "text-gray-900" : "text-gray-400"}`}>{step.label}</span>
                 <span className="text-[10px] text-gray-400 hidden sm:block text-center whitespace-nowrap">{step.desc}</span>
               </div>
               {i < FLOW_STEPS.length - 1 && (
-                <div className={`h-0.5 flex-1 mx-2 mb-5 rounded-full min-w-[12px] ${done ? "bg-green-400" : "bg-gray-200"}`} />
+                <div className={`h-0.5 flex-1 mx-2 mb-5 rounded-full min-w-[12px] ${done ? "bg-yellow-400" : "bg-gray-200"}`} />
               )}
             </div>
           );
@@ -331,7 +331,7 @@ function PrintChallanWindow({ app, challan, profile, user }: { app: any; challan
     win.document.close();
   };
   return (
-    <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white gap-1 h-7 px-2 text-[11px]" onClick={handlePrint}>
+    <Button size="sm" className="bg-yellow-500 hover:bg-yellow-600 text-white gap-1 h-7 px-2 text-[11px]" onClick={handlePrint}>
       <Printer className="h-3 w-3" /> Print Challan
     </Button>
   );
@@ -362,7 +362,7 @@ function PrintApplicationButton({ app, challan, profile, user }: { app: any; cha
   .header{background:#01411C;color:white;padding:14px 18px;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;align-items:flex-start;}
   .header h1{margin:0;font-size:15px;font-weight:700;letter-spacing:.5px;}
   .header p{margin:2px 0 0;font-size:11px;opacity:.8;}
-  .stamp{display:inline-block;padding:3px 10px;border:2px solid #16a34a;color:#16a34a;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:6px;}
+  .stamp{display:inline-block;padding:3px 10px;border:2px solid #F0B429;color:#F0B429;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:6px;}
   .section-head{background:#01411C;color:white;padding:6px 12px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:16px 0 10px;}
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 20px;margin-bottom:10px;}
   .field label{display:block;font-size:9px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
@@ -1037,7 +1037,7 @@ function StatusMessage({ app }: { app: any }) {
     case "clarification_required":
       return <div className="flex items-center gap-1.5 text-orange-700 text-xs"><AlertTriangle className="h-3.5 w-3.5" /> Contact Admissions Office</div>;
     case "admitted":
-      return <div className="flex items-center gap-1.5 text-green-700 text-xs"><PartyPopper className="h-3.5 w-3.5" /> Admitted – collect joining letter</div>;
+      return <div className="flex items-center gap-1.5 text-yellow-700 text-xs"><PartyPopper className="h-3.5 w-3.5" /> Admitted – collect joining letter</div>;
     case "rejected":
       return <div className="flex items-center gap-1.5 text-red-700 text-xs"><XCircle className="h-3.5 w-3.5" /> Application not successful</div>;
     case "submitted":

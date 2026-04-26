@@ -220,9 +220,9 @@ export default function AdminStudents() {
         </Card>
         <Card>
           <CardContent className="pt-4 pb-3 flex items-start gap-3">
-            <ShieldCheck className="h-5 w-5 text-emerald-500 mt-0.5" />
+            <ShieldCheck className="h-5 w-5 text-yellow-500 mt-0.5" />
             <div>
-              <div className="text-2xl font-bold text-emerald-600">
+              <div className="text-2xl font-bold text-yellow-600">
                 {studentsData?.filter((s: any) => s.verifierName).length ?? 0}
               </div>
               <div className="text-xs text-muted-foreground">Desk Verified</div>
@@ -334,7 +334,7 @@ export default function AdminStudents() {
                       </TableCell>
                       <TableCell className="text-sm">
                         {student.verifierName ? (
-                          <span className="flex items-center gap-1.5 text-emerald-700">
+                          <span className="flex items-center gap-1.5 text-yellow-700">
                             <ShieldCheck className="h-3.5 w-3.5" />
                             {student.verifierName}
                           </span>

@@ -177,7 +177,7 @@ export default function AdminUsers() {
       case "super_admin": return <Badge variant="default" className="bg-primary hover:bg-primary/90">Super Admin</Badge>;
       case "admission_admin": return <Badge variant="default" className="bg-blue-600 hover:bg-blue-700">Admissions</Badge>;
       case "verification_officer": return <Badge variant="outline" className="text-purple-600 border-purple-300">Verifier</Badge>;
-      case "finance_verifier": return <Badge variant="outline" className="text-emerald-600 border-emerald-300">Finance</Badge>;
+      case "finance_verifier": return <Badge variant="outline" className="text-yellow-600 border-yellow-300">Finance</Badge>;
       case "student": return <Badge variant="secondary">Student</Badge>;
       default: return <Badge variant="outline">{role}</Badge>;
     }
@@ -366,7 +366,7 @@ export default function AdminUsers() {
                       <TableCell>{getRoleBadge(user.role)}</TableCell>
                       <TableCell className="text-center">
                         {user.isActive ? (
-                          <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">Active</Badge>
+                          <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50">Active</Badge>
                         ) : (
                           <Badge variant="outline" className="text-red-600 border-red-200 bg-red-50">Inactive</Badge>
                         )}

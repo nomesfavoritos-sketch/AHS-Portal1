@@ -205,7 +205,7 @@
 
 /* ── Green gradient button utility ── */
 .btn-green-gradient {
-  background: linear-gradient(135deg, #01411C 0%, #006C35 50%, #16A34A 100%);
+  background: linear-gradient(135deg, #01411C 0%, #006C35 50%, #F0B429 100%);
   box-shadow: 0 4px 15px rgba(1, 65, 28, 0.35);
 }
 .btn-green-gradient:hover {

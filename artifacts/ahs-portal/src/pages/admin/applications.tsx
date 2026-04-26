@@ -50,7 +50,7 @@ function getStatusBadge(status: string) {
     case "under_review":
       return <Badge variant="outline" className="border-amber-500 text-amber-600">Under Review</Badge>;
     case "verified":
-      return <Badge variant="default" className="bg-emerald-500">Verified</Badge>;
+      return <Badge variant="default" className="bg-yellow-500">Verified</Badge>;
     case "rejected":
       return <Badge variant="destructive">Rejected</Badge>;
     case "merit_listed":
@@ -60,7 +60,7 @@ function getStatusBadge(status: string) {
     case "clarification_required":
       return <Badge variant="outline" className="border-orange-500 text-orange-600 bg-orange-50">Clarification Req.</Badge>;
     case "admitted":
-      return <Badge variant="default" className="bg-green-600">Admitted</Badge>;
+      return <Badge variant="default" className="bg-yellow-500">Admitted</Badge>;
     default:
       return <Badge variant="outline">{status.replace(/_/g, " ")}</Badge>;
   }
@@ -73,7 +73,7 @@ const PIPELINE_ACTIONS: Record<string, Array<{ label: string; status: string; cl
   ],
   under_review: [
     { label: "Reject", status: "rejected", className: "border-red-500 text-red-600", needsRemarks: true },
-    { label: "Verify", status: "verified", className: "bg-emerald-600 hover:bg-emerald-700 text-white" },
+    { label: "Verify", status: "verified", className: "bg-yellow-500 hover:bg-yellow-600 text-white" },
   ],
   verified: [
     { label: "Reject", status: "rejected", className: "border-red-500 text-red-600", needsRemarks: true },
@@ -81,7 +81,7 @@ const PIPELINE_ACTIONS: Record<string, Array<{ label: string; status: string; cl
   ],
   merit_listed: [
     { label: "Route to Verification Desk", status: "selected_for_verification", className: "bg-sky-600 hover:bg-sky-700 text-white" },
-    { label: "Mark Admitted", status: "admitted", className: "bg-green-600 hover:bg-green-700 text-white" },
+    { label: "Mark Admitted", status: "admitted", className: "bg-yellow-500 hover:bg-yellow-600 text-white" },
   ],
   selected_for_verification: [
     { label: "Send Back (Clarification)", status: "clarification_required", className: "border-orange-500 text-orange-600", needsRemarks: true },

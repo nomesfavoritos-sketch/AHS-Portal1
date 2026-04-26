@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 function MeritScoreCard({ score, rank }: { score?: number | null; rank?: number | null }) {
   if (!score && !rank) return null;
   const pct = score ?? 0;
-  const color = pct >= 85 ? "text-green-600" : pct >= 70 ? "text-blue-600" : pct >= 60 ? "text-amber-600" : "text-red-600";
+  const color = pct >= 85 ? "text-yellow-600" : pct >= 70 ? "text-blue-600" : pct >= 60 ? "text-amber-600" : "text-red-600";
   return (
     <div className="flex flex-col items-center gap-1">
       <div className={`text-5xl font-extrabold ${color}`}>{pct.toFixed(2)}%</div>
@@ -54,7 +54,7 @@ function MeritEntry({ entry, canConfirmIntent, applicationId, onIntentConfirmed 
   const isSelected = entry.status === "selected";
 
   return (
-    <div className={`rounded-lg border p-4 space-y-3 ${isSelected ? "border-green-300 bg-green-50/40 dark:bg-green-950/10" : ""}`}>
+    <div className={`rounded-lg border p-4 space-y-3 ${isSelected ? "border-yellow-300 bg-yellow-50/40 dark:bg-yellow-950/10" : ""}`}>
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="font-semibold">{entry.application?.program?.name ?? "Program"}</p>
@@ -62,7 +62,7 @@ function MeritEntry({ entry, canConfirmIntent, applicationId, onIntentConfirmed 
         </div>
         <div className="text-right">
           <div className="text-2xl font-bold text-primary">{(entry.meritScoreNormalized ?? entry.meritScore).toFixed(2)}%</div>
-          <Badge variant={isSelected ? "default" : "secondary"} className={isSelected ? "bg-green-600 hover:bg-green-700 mt-1" : "mt-1"}>
+          <Badge variant={isSelected ? "default" : "secondary"} className={isSelected ? "bg-yellow-500 hover:bg-yellow-600 mt-1" : "mt-1"}>
             {entry.status}
           </Badge>
         </div>
@@ -96,7 +96,7 @@ function MeritEntry({ entry, canConfirmIntent, applicationId, onIntentConfirmed 
       {isSelected && canConfirmIntent && !intentConfirmed && (
         <div className="pt-2">
           <Button
-            className="w-full bg-green-600 hover:bg-green-700"
+            className="w-full bg-yellow-500 hover:bg-yellow-600"
             onClick={handleConfirmIntent}
             disabled={confirming}
           >
@@ -110,7 +110,7 @@ function MeritEntry({ entry, canConfirmIntent, applicationId, onIntentConfirmed 
       )}
 
       {(isSelected && intentConfirmed) && (
-        <div className="flex items-center gap-2 pt-2 text-green-700 text-sm">
+        <div className="flex items-center gap-2 pt-2 text-yellow-700 text-sm">
           <CheckCircle className="h-4 w-4 flex-shrink-0" />
           <span className="font-medium">Intent to join confirmed!</span>
         </div>
@@ -165,7 +165,7 @@ function MeritListCard({ id, name, studentId, joiningIntentConfirmed, onIntentCo
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base">{name}</CardTitle>
-          <Badge className="bg-green-500 hover:bg-green-600">Published</Badge>
+          <Badge className="bg-yellow-500 hover:bg-yellow-500">Published</Badge>
         </div>
         <CardDescription>{allEntries.length} candidates ranked</CardDescription>
       </CardHeader>
@@ -222,13 +222,13 @@ export default function StudentMerit() {
       </div>
 
       {joiningIntentConfirmed && (
-        <Card className="border-green-200 bg-green-50 dark:bg-green-950/20 dark:border-green-800">
+        <Card className="border-yellow-200 bg-yellow-50 dark:bg-yellow-950/20 dark:border-yellow-800">
           <CardContent className="pt-4 pb-4">
             <div className="flex items-center gap-3">
-              <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0" />
+              <CheckCircle className="h-6 w-6 text-yellow-600 flex-shrink-0" />
               <div>
-                <p className="font-semibold text-green-800 dark:text-green-200">Intent to Join Confirmed</p>
-                <p className="text-sm text-green-700 dark:text-green-400">
+                <p className="font-semibold text-yellow-800 dark:text-green-200">Intent to Join Confirmed</p>
+                <p className="text-sm text-yellow-700 dark:text-yellow-400">
                   The admissions office has been notified. You will be contacted regarding the formal joining process and fee submission.
                 </p>
               </div>
@@ -237,7 +237,7 @@ export default function StudentMerit() {
         </Card>
       )}
 
-      <Card className={summary?.meritRank ? "border-green-200 bg-green-50/30" : ""}>
+      <Card className={summary?.meritRank ? "border-yellow-200 bg-yellow-50/30" : ""}>
         <CardHeader className="text-center pb-2">
           <CardTitle className="text-xl">Overall Merit Position</CardTitle>
           <CardDescription>Based on your academic profile and applied programs</CardDescription>
@@ -254,7 +254,7 @@ export default function StudentMerit() {
               </div>
               <MeritScoreCard score={summary.meritScore} rank={summary.meritRank} />
               {summary.meritRank && summary.meritRank <= 10 && (
-                <p className="mt-3 text-sm text-green-700 font-medium">You are in the top 10 candidates!</p>
+                <p className="mt-3 text-sm text-yellow-700 font-medium">You are in the top 10 candidates!</p>
               )}
             </>
           ) : (

@@ -78,8 +78,8 @@ function AppTimeline({ status }: { status: string }) {
                 <div
                   className="h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all"
                   style={{
-                    background: warn ? "#f97316" : done ? "#16a34a" : active ? G : "#f3f4f6",
-                    borderColor: warn ? "#f97316" : done ? "#16a34a" : active ? G : "#e5e7eb",
+                    background: warn ? "#f97316" : done ? "#F0B429" : active ? G : "#f3f4f6",
+                    borderColor: warn ? "#f97316" : done ? "#F0B429" : active ? G : "#e5e7eb",
                     color: done || active || warn ? "white" : "#9ca3af",
                   }}
                 >
@@ -87,7 +87,7 @@ function AppTimeline({ status }: { status: string }) {
                 </div>
                 <span
                   className="text-[9px] whitespace-nowrap font-semibold"
-                  style={{ color: warn ? "#f97316" : done ? "#16a34a" : active ? G : "#9ca3af" }}
+                  style={{ color: warn ? "#f97316" : done ? "#F0B429" : active ? G : "#9ca3af" }}
                 >
                   {step.label}
                 </span>
@@ -95,7 +95,7 @@ function AppTimeline({ status }: { status: string }) {
               {idx < STEPS.length - 1 && (
                 <div
                   className="h-0.5 w-7 mb-4 mx-0.5 rounded"
-                  style={{ background: idx < cur ? "#16a34a" : "#e5e7eb" }}
+                  style={{ background: idx < cur ? "#F0B429" : "#e5e7eb" }}
                 />
               )}
             </div>
@@ -164,33 +164,33 @@ export default function StudentDashboard() {
         <div className="px-4 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between gap-3">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5 mb-0.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse shrink-0" />
-              <span className="text-[8px] sm:text-[9px] font-bold tracking-widest text-green-300 uppercase">Live Portal</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-yellow-400 animate-pulse shrink-0" />
+              <span className="text-[8px] sm:text-[9px] font-bold tracking-widest text-yellow-300 uppercase">Live Portal</span>
             </div>
             <h1 className="text-sm sm:text-base font-black text-white leading-tight">Admission Overview</h1>
-            <p className="text-green-300 text-[9px] sm:text-[10px] mt-0.5 truncate">
+            <p className="text-yellow-300 text-[9px] sm:text-[10px] mt-0.5 truncate">
               {greeting}, {user?.fullName?.split(" ")[0]} &nbsp;·&nbsp; {format(now, "EEE, d MMM yyyy")}
             </p>
           </div>
           <div className="text-right shrink-0">
             <p className="text-lg sm:text-2xl font-black text-white tracking-tight leading-none">
-              {format(now, "hh:mm")} <span className="text-green-300 text-sm sm:text-base">{format(now, "a")}</span>
+              {format(now, "hh:mm")} <span className="text-yellow-300 text-sm sm:text-base">{format(now, "a")}</span>
             </p>
-            <p className="text-green-300 text-[8px] sm:text-[9px] mt-0.5">{greeting}</p>
+            <p className="text-yellow-300 text-[8px] sm:text-[9px] mt-0.5">{greeting}</p>
           </div>
         </div>
       </div>
 
       {/* ── Alert Banners ── */}
       {isAdmitted && (
-        <div className="flex items-center gap-4 rounded-xl border border-green-200 bg-green-50 px-5 py-4">
-          <PartyPopper className="h-7 w-7 text-green-600 shrink-0" />
+        <div className="flex items-center gap-4 rounded-xl border border-yellow-200 bg-yellow-50 px-5 py-4">
+          <PartyPopper className="h-7 w-7 text-yellow-600 shrink-0" />
           <div className="flex-1">
-            <p className="font-bold text-green-800">Congratulations! You have been Admitted</p>
-            <p className="text-xs text-green-700 mt-0.5">Collect your joining letter from the college office and complete enrollment by the joining deadline.</p>
+            <p className="font-bold text-yellow-800">Congratulations! You have been Admitted</p>
+            <p className="text-xs text-yellow-700 mt-0.5">Collect your joining letter from the college office and complete enrollment by the joining deadline.</p>
           </div>
           <Link href="/student/applications">
-            <Button size="sm" variant="outline" className="border-green-300 text-green-700 hover:bg-green-100 shrink-0">
+            <Button size="sm" variant="outline" className="border-yellow-300 text-yellow-700 hover:bg-yellow-100 shrink-0">
               View <ChevronRight className="h-3 w-3 ml-1" />
             </Button>
           </Link>
@@ -254,7 +254,7 @@ export default function StudentDashboard() {
           value={`${completion}%`}
           sub={completion >= 100 ? "Fully complete ✓" : `${14 - Math.round(completion * 14 / 100)} fields remaining`}
           icon={User}
-          bg="bg-emerald-50" border="border-emerald-100" text="text-emerald-700" iconBg="bg-emerald-100"
+          bg="bg-yellow-50" border="border-yellow-100" text="text-yellow-700" iconBg="bg-yellow-100"
           href="/student/profile"
         />
         <StatCard
@@ -294,8 +294,8 @@ export default function StudentDashboard() {
                 <AppTimeline status={latestApp.status} />
                 {latestApp.status === "draft" && (
                   <div className="mt-4 p-3 rounded-lg text-sm" style={{ background: "#f0fdf4", borderLeft: `3px solid ${G}` }}>
-                    <p className="font-semibold text-green-900">Next Step: Generate Fee Challan</p>
-                    <p className="text-green-700 text-xs mt-0.5">Go to Applications page and click <strong>Generate Challan</strong> to proceed.</p>
+                    <p className="font-semibold text-yellow-900">Next Step: Generate Fee Challan</p>
+                    <p className="text-yellow-700 text-xs mt-0.5">Go to Applications page and click <strong>Generate Challan</strong> to proceed.</p>
                   </div>
                 )}
                 {latestApp.status === "challan_generated" && (
@@ -402,7 +402,7 @@ export default function StudentDashboard() {
           { label: "Portal",         value: "Active & Secure", ok: true },
         ].map(({ label, value, ok }) => (
           <div key={label} className="bg-white rounded-xl border px-4 py-3 flex items-center gap-3">
-            <span className={`h-2.5 w-2.5 rounded-full shrink-0 ${ok ? "bg-green-400" : "bg-amber-400"}`} />
+            <span className={`h-2.5 w-2.5 rounded-full shrink-0 ${ok ? "bg-yellow-400" : "bg-amber-400"}`} />
             <div className="min-w-0">
               <p className="text-[11px] text-gray-400 font-medium">{label}</p>
               <p className="text-xs font-bold text-gray-800 truncate capitalize">{value}</p>

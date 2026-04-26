@@ -31,7 +31,7 @@ function getStatusBadge(status: string) {
     under_review: <Badge className="bg-amber-500 hover:bg-amber-600 text-white">Under Review</Badge>,
     verified: <Badge className="bg-blue-500 hover:bg-blue-600 text-white">Verified</Badge>,
     merit_listed: <Badge className="bg-purple-500 hover:bg-purple-600 text-white">Merit Listed</Badge>,
-    admitted: <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white">Admitted</Badge>,
+    admitted: <Badge className="bg-yellow-500 hover:bg-yellow-500 text-white">Admitted</Badge>,
     selected_for_verification: <Badge className="bg-cyan-500 hover:bg-cyan-600 text-white">For Verification</Badge>,
     clarification_required: <Badge className="bg-orange-500 hover:bg-orange-600 text-white">Clarification Reqd.</Badge>,
     rejected: <Badge variant="destructive">Rejected</Badge>,
@@ -42,7 +42,7 @@ function getStatusBadge(status: string) {
 function getDecisionBadge(decision: string | null) {
   if (!decision) return null;
   const map: Record<string, JSX.Element> = {
-    accept_joining: <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">Accepted</Badge>,
+    accept_joining: <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Accepted</Badge>,
     reject_joining: <Badge className="bg-red-100 text-red-800 border-red-200">Rejected</Badge>,
     send_back: <Badge className="bg-amber-100 text-amber-800 border-amber-200">Sent Back</Badge>,
   };
@@ -56,7 +56,7 @@ function ChecklistProgress({ verified, total }: { verified: number; total: numbe
       <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full transition-all ${
-            pct === 100 ? "bg-emerald-500" : pct >= 50 ? "bg-amber-500" : "bg-muted-foreground/30"
+            pct === 100 ? "bg-yellow-500" : pct >= 50 ? "bg-amber-500" : "bg-muted-foreground/30"
           }`}
           style={{ width: `${pct}%` }}
         />
@@ -105,7 +105,7 @@ export default function AdminVerification() {
       <div className="grid gap-3 grid-cols-2 md:grid-cols-4">
         {[
           { label: "Awaiting Decision", count: pendingCount, icon: Clock, cls: "text-amber-600" },
-          { label: "Accepted", count: acceptedCount, icon: CheckCircle, cls: "text-emerald-600" },
+          { label: "Accepted", count: acceptedCount, icon: CheckCircle, cls: "text-yellow-600" },
           { label: "Rejected", count: rejectedCount, icon: XCircle, cls: "text-red-600" },
           { label: "Sent Back", count: sentBackCount, icon: AlertCircle, cls: "text-orange-600" },
         ].map(({ label, count, icon: Icon, cls }) => (
@@ -195,7 +195,7 @@ export default function AdminVerification() {
                             <span>Merit Score: {Number(c.meritScore).toFixed(2)}</span>
                           )}
                           {c.joiningIntentAt && (
-                            <span className="text-emerald-600">Intent confirmed</span>
+                            <span className="text-yellow-600">Intent confirmed</span>
                           )}
                         </div>
                         <div className="mt-2 max-w-xs">

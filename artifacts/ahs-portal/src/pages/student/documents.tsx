@@ -72,12 +72,12 @@ export default function StudentDocuments() {
           const isUploaded = !!uploadedDoc;
 
           return (
-            <Card key={docType.id} className={isUploaded ? "border-emerald-200 dark:border-emerald-900" : "border-amber-200 dark:border-amber-900"}>
+            <Card key={docType.id} className={isUploaded ? "border-yellow-200 dark:border-yellow-900" : "border-amber-200 dark:border-amber-900"}>
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center justify-between">
                   <span className="truncate pr-2" title={docType.label}>{docType.label}</span>
                   {isUploaded ? (
-                    <CheckCircle className="h-5 w-5 text-emerald-500 shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-yellow-500 shrink-0" />
                   ) : (
                     <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
                   )}
@@ -91,7 +91,7 @@ export default function StudentDocuments() {
               <CardContent>
                 <div className="flex items-center gap-2 mb-2">
                   {isUploaded ? (
-                    <Badge variant="default" className="bg-emerald-500">Uploaded</Badge>
+                    <Badge variant="default" className="bg-yellow-500">Uploaded</Badge>
                   ) : (
                     <Badge variant="outline" className="border-amber-500 text-amber-600">Required</Badge>
                   )}

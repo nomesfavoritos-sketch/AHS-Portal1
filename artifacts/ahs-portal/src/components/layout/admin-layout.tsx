@@ -25,9 +25,9 @@ import {
 import { cn } from "@/lib/utils";
 
 const SIDEBAR_BG = "#013220";
-const ACTIVE_BG = "rgba(22,163,74,0.22)";
-const ACTIVE_BORDER = "#16A34A";
-const HOVER_BG = "rgba(22,163,74,0.15)";
+const ACTIVE_BG = "rgba(240,180,41,0.22)";
+const ACTIVE_BORDER = "#F0B429";
+const HOVER_BG = "rgba(240,180,41,0.15)";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -162,10 +162,10 @@ function SidebarContent({ user, onClose }: { user: any; onClose?: () => void }) 
         {/* Admissions session badge */}
         <div
           className="mt-3 flex items-center gap-2 rounded-lg px-3 py-1.5"
-          style={{ background: "rgba(22,163,74,0.15)", border: "1px solid rgba(22,163,74,0.25)" }}
+          style={{ background: "rgba(240,180,41,0.15)", border: "1px solid rgba(240,180,41,0.25)" }}
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-          <span className="text-[11px] font-semibold" style={{ color: "#4ade80" }}>
+          <span className="h-1.5 w-1.5 rounded-full bg-yellow-400 animate-pulse shrink-0" />
+          <span className="text-[11px] font-semibold" style={{ color: "#F0B429" }}>
             Admissions 2025–26 Active
           </span>
         </div>
@@ -232,7 +232,7 @@ function SidebarContent({ user, onClose }: { user: any; onClose?: () => void }) 
           <div className="flex items-center gap-3">
             <div
               className="h-8 w-8 rounded-lg flex items-center justify-center text-[12px] font-bold text-white shrink-0"
-              style={{ background: "linear-gradient(135deg, #006C35, #16A34A)" }}
+              style={{ background: "linear-gradient(135deg, #006C35, #F0B429)" }}
             >
               {user.fullName?.charAt(0)?.toUpperCase() ?? "A"}
             </div>

@@ -330,7 +330,7 @@ export default function AdminNotices() {
                         {format(new Date(notice.createdAt), "MMM d, yyyy")}
                       </TableCell>
                       <TableCell className="text-center">
-                        <Badge variant={notice.isActive ? "default" : "secondary"} className={notice.isActive ? "bg-green-500 hover:bg-green-600" : ""}>
+                        <Badge variant={notice.isActive ? "default" : "secondary"} className={notice.isActive ? "bg-yellow-500 hover:bg-yellow-500" : ""}>
                           {notice.isActive ? "Published" : "Draft"}
                         </Badge>
                       </TableCell>

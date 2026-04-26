@@ -92,14 +92,14 @@ interface DecisionHistory {
 }
 
 const STATUS_BADGE: Record<string, string> = {
-  verified: "bg-emerald-500 hover:bg-emerald-600 text-white",
+  verified: "bg-yellow-500 hover:bg-yellow-500 text-white",
   missing: "bg-red-500 hover:bg-red-600 text-white",
   mismatch: "bg-amber-500 hover:bg-amber-600 text-white",
   pending: "bg-muted text-muted-foreground",
 };
 
 const STATUS_ICON: Record<ChecklistStatus, JSX.Element> = {
-  verified: <CheckCircle className="h-4 w-4 text-emerald-600" />,
+  verified: <CheckCircle className="h-4 w-4 text-yellow-600" />,
   missing: <XCircle className="h-4 w-4 text-red-500" />,
   mismatch: <AlertTriangle className="h-4 w-4 text-amber-500" />,
   pending: <Clock className="h-4 w-4 text-muted-foreground" />,
@@ -111,7 +111,7 @@ function getAppStatusBadge(status: string) {
     under_review: <Badge className="bg-amber-500 text-white">Under Review</Badge>,
     verified: <Badge className="bg-blue-500 text-white">Verified</Badge>,
     merit_listed: <Badge className="bg-purple-500 text-white">Merit Listed</Badge>,
-    admitted: <Badge className="bg-emerald-500 text-white">Admitted</Badge>,
+    admitted: <Badge className="bg-yellow-500 text-white">Admitted</Badge>,
     rejected: <Badge variant="destructive">Rejected</Badge>,
     clarification_required: <Badge className="bg-orange-500 text-white">Clarification Reqd.</Badge>,
     selected_for_verification: <Badge className="bg-cyan-500 text-white">For Verification</Badge>,
@@ -133,7 +133,7 @@ function getChallanStatusBadge(status: string) {
     pending: <Badge variant="secondary">Pending</Badge>,
     slip_uploaded: <Badge className="bg-blue-500 text-white">Slip Uploaded</Badge>,
     paid: <Badge className="bg-blue-500 text-white">Paid</Badge>,
-    verified: <Badge className="bg-emerald-500 text-white">Verified</Badge>,
+    verified: <Badge className="bg-yellow-500 text-white">Verified</Badge>,
     rejected: <Badge variant="destructive">Rejected</Badge>,
   };
   return map[status] ?? <Badge variant="outline">{status}</Badge>;
@@ -278,7 +278,7 @@ export default function AdminVerificationDesk() {
             </h1>
             {getAppStatusBadge(data.application.status)}
             {data.application.joiningIntentAt && (
-              <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
+              <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
                 Intent Confirmed
               </Badge>
             )}
@@ -308,7 +308,7 @@ export default function AdminVerificationDesk() {
         <div
           className={`rounded-lg border p-3 text-sm flex items-center gap-3 ${
             data.latestDecision.decision === "accept_joining"
-              ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+              ? "bg-yellow-50 border-yellow-200 text-yellow-800"
               : data.latestDecision.decision === "reject_joining"
               ? "bg-red-50 border-red-200 text-red-800"
               : "bg-amber-50 border-amber-200 text-amber-800"
@@ -557,14 +557,14 @@ export default function AdminVerificationDesk() {
               <div className="mt-4 p-3 bg-muted/30 rounded-lg">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">Mandatory items verified</span>
-                  <span className={allMandatoryVerified ? "text-emerald-600 font-bold" : "text-muted-foreground"}>
+                  <span className={allMandatoryVerified ? "text-yellow-600 font-bold" : "text-muted-foreground"}>
                     {mandatoryVerified} / {mandatoryItems.length}
                   </span>
                 </div>
                 <div className="mt-2 h-2 bg-muted rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all ${
-                      allMandatoryVerified ? "bg-emerald-500" : "bg-primary"
+                      allMandatoryVerified ? "bg-yellow-500" : "bg-primary"
                     }`}
                     style={{ width: `${(mandatoryVerified / mandatoryItems.length) * 100}%` }}
                   />
@@ -598,7 +598,7 @@ export default function AdminVerificationDesk() {
             <div className="p-3 bg-muted/30 rounded-lg text-sm space-y-1.5">
               <div><span className="text-muted-foreground">Candidate:</span> <strong>{data.user?.fullName}</strong></div>
               <div><span className="text-muted-foreground">Checklist:</span> <strong>{verifiedCount}/{items.length}</strong> items verified</div>
-              <div><span className="text-muted-foreground">Mandatory:</span> <strong className={allMandatoryVerified ? "text-emerald-600" : "text-red-500"}>{mandatoryVerified}/{mandatoryItems.length}</strong></div>
+              <div><span className="text-muted-foreground">Mandatory:</span> <strong className={allMandatoryVerified ? "text-yellow-600" : "text-red-500"}>{mandatoryVerified}/{mandatoryItems.length}</strong></div>
             </div>
 
             <div className="space-y-1.5">

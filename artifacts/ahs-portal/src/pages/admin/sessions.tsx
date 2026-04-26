@@ -187,7 +187,7 @@ export default function AdminSessions() {
 
   const statusBadge = (status: string) => {
     switch (status) {
-      case "open": return <Badge className="bg-green-500 hover:bg-green-600">Open</Badge>;
+      case "open": return <Badge className="bg-yellow-500 hover:bg-yellow-500">Open</Badge>;
       case "closed": return <Badge variant="secondary">Closed</Badge>;
       case "processing": return <Badge variant="outline" className="text-amber-600 border-amber-400">Processing</Badge>;
       default: return <Badge>{status}</Badge>;
@@ -263,7 +263,7 @@ export default function AdminSessions() {
                       <TableCell className="text-center">{statusBadge(s.status)}</TableCell>
                       <TableCell className="text-center">
                         {s.isActive
-                          ? <Badge variant="outline" className="text-green-600 border-green-400">Yes</Badge>
+                          ? <Badge variant="outline" className="text-yellow-600 border-yellow-400">Yes</Badge>
                           : <Badge variant="outline" className="text-muted-foreground">No</Badge>}
                       </TableCell>
                       <TableCell className="text-right">

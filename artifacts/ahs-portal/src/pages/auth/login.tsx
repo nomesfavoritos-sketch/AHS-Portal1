@@ -75,7 +75,7 @@ export default function Login() {
         {/* Decorative circles */}
         <div
           className="absolute -top-24 -right-24 h-72 w-72 rounded-full opacity-10"
-          style={{ background: "radial-gradient(circle, #16A34A, transparent)" }}
+          style={{ background: "radial-gradient(circle, #F0B429, transparent)" }}
         />
         <div
           className="absolute bottom-20 -left-16 h-64 w-64 rounded-full opacity-10"
@@ -110,8 +110,8 @@ export default function Login() {
               className="flex items-center gap-4 rounded-xl p-4"
               style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
             >
-              <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(22,163,74,0.25)" }}>
-                <Users className="h-4 w-4" style={{ color: "#4ade80" }} />
+              <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(240,180,41,0.25)" }}>
+                <Users className="h-4 w-4" style={{ color: "#F0B429" }} />
               </div>
               <div>
                 <p className="text-white font-black text-[18px] leading-none">1200+</p>
@@ -122,8 +122,8 @@ export default function Login() {
               className="flex items-center gap-4 rounded-xl p-4"
               style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
             >
-              <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(22,163,74,0.25)" }}>
-                <Award className="h-4 w-4" style={{ color: "#4ade80" }} />
+              <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: "rgba(240,180,41,0.25)" }}>
+                <Award className="h-4 w-4" style={{ color: "#F0B429" }} />
               </div>
               <div>
                 <p className="text-white font-bold text-[14px] leading-none">NMU</p>

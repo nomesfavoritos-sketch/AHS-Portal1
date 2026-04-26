@@ -47,7 +47,7 @@ export default function StudentChallans() {
     switch (status) {
       case "pending": return <Badge variant="secondary">Pending Payment</Badge>;
       case "paid": return <Badge variant="default" className="bg-blue-500">Paid (Unverified)</Badge>;
-      case "verified": return <Badge variant="default" className="bg-emerald-500">Payment Verified</Badge>;
+      case "verified": return <Badge variant="default" className="bg-yellow-500">Payment Verified</Badge>;
       case "overdue": return <Badge variant="destructive">Overdue</Badge>;
       default: return <Badge variant="outline">{status}</Badge>;
     }

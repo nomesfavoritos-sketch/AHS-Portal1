@@ -56,7 +56,7 @@ function ActionBadge({ action }: { action: string }) {
     return <Badge variant="outline" className="text-xs border-red-300 text-red-700 bg-red-50">{action.replace(/_/g, " ")}</Badge>;
   }
   if (action.includes("verified") || action.includes("admitted") || action.includes("joined") || action.includes("published")) {
-    return <Badge variant="outline" className="text-xs border-green-300 text-green-700 bg-green-50">{action.replace(/_/g, " ")}</Badge>;
+    return <Badge variant="outline" className="text-xs border-yellow-300 text-yellow-700 bg-yellow-50">{action.replace(/_/g, " ")}</Badge>;
   }
   if (action.includes("merit") || action.includes("generated")) {
     return <Badge variant="outline" className="text-xs border-purple-300 text-purple-700 bg-purple-50">{action.replace(/_/g, " ")}</Badge>;

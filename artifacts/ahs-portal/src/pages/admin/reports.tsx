@@ -26,11 +26,11 @@ const STATUS_COLORS: Record<string, string> = {
   merit_listed: "#8b5cf6",
   selected_for_verification: "#0ea5e9",
   clarification_required: "#f97316",
-  admitted: "#16a34a",
+  admitted: "#F0B429",
   rejected: "#ef4444",
 };
 
-const PIE_COLORS = ["#2563eb", "#16a34a", "#8b5cf6", "#f59e0b", "#ef4444", "#0ea5e9", "#f97316", "#10b981", "#94a3b8", "#ec4899"];
+const PIE_COLORS = ["#2563eb", "#F0B429", "#8b5cf6", "#f59e0b", "#ef4444", "#0ea5e9", "#f97316", "#10b981", "#94a3b8", "#ec4899"];
 
 function exportCSV(data: any[], filename: string) {
   if (!data.length) return;
@@ -108,7 +108,7 @@ export default function AdminReports() {
       <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
         {[
           { label: "Total Applications", value: totals.total, icon: BarChart3, color: "text-blue-600" },
-          { label: "Admitted", value: totals.admitted, icon: GraduationCap, color: "text-green-600" },
+          { label: "Admitted", value: totals.admitted, icon: GraduationCap, color: "text-yellow-600" },
           { label: "Rejected", value: totals.rejected, icon: TrendingUp, color: "text-red-600" },
           { label: "Merit Listed", value: totals.meritListed, icon: TrendingUp, color: "text-purple-600" },
           { label: "Joined Students", value: totals.totalJoined, icon: Users, color: "text-sky-600" },
@@ -147,7 +147,7 @@ export default function AdminReports() {
                     }}
                   />
                   <Bar dataKey="Total" fill="#2563eb" radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="Admitted" fill="#16a34a" radius={[3, 3, 0, 0]} />
+                  <Bar dataKey="Admitted" fill="#F0B429" radius={[3, 3, 0, 0]} />
                   <Bar dataKey="Rejected" fill="#ef4444" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -166,7 +166,7 @@ export default function AdminReports() {
                   <PieChart>
                     <Pie data={paymentPieData} cx="50%" cy="50%" innerRadius={35} outerRadius={55} paddingAngle={2} dataKey="value">
                       {paymentPieData.map((_, i) => (
-                        <Cell key={i} fill={["#16a34a", "#f59e0b", "#ef4444"][i]} />
+                        <Cell key={i} fill={["#F0B429", "#f59e0b", "#ef4444"][i]} />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -176,7 +176,7 @@ export default function AdminReports() {
               </div>
               <div className="grid grid-cols-3 gap-2 mt-2 text-center">
                 <div>
-                  <p className="text-lg font-bold text-green-600">{challanSummary.paid}</p>
+                  <p className="text-lg font-bold text-yellow-600">{challanSummary.paid}</p>
                   <p className="text-xs text-muted-foreground">Paid</p>
                 </div>
                 <div>
@@ -252,7 +252,7 @@ export default function AdminReports() {
                     <TableCell className="text-center text-blue-600">{(p as any).submitted ?? 0}</TableCell>
                     <TableCell className="text-center text-amber-600">{(p as any).under_review ?? 0}</TableCell>
                     <TableCell className="text-center text-purple-600">{p.merit_listed ?? 0}</TableCell>
-                    <TableCell className="text-center text-green-600 font-medium">{p.admitted ?? 0}</TableCell>
+                    <TableCell className="text-center text-yellow-600 font-medium">{p.admitted ?? 0}</TableCell>
                     <TableCell className="text-center text-red-600">{p.rejected ?? 0}</TableCell>
                   </TableRow>
                 ))}

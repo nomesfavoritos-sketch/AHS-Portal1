@@ -16,7 +16,7 @@ import nmuLogo from "@assets/logo_(1)_1775576288927.webp";
 
 /* ─── Color tokens ─── */
 const G = "#01411C";       // Pakistan institutional green
-const GA = "#16a34a";      // light accent green
+const GA = "#F0B429";      // light accent green
 const Y = "#EAB308";       // yellow accent
 const YL = "#FEF9C3";      // yellow light
 const CREAM = "#FDFBF4";   // hero cream background
@@ -124,8 +124,8 @@ const FAQ = [
 ];
 const CAT_STYLES: Record<string, string> = {
   general: "bg-slate-100 text-slate-700 border-slate-200",
-  admission: "bg-green-50 text-green-800 border-green-200",
-  merit: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  admission: "bg-yellow-50 text-yellow-800 border-yellow-200",
+  merit: "bg-yellow-50 text-yellow-800 border-yellow-200",
   payment: "bg-amber-50 text-amber-800 border-amber-200",
   urgent: "bg-red-50 text-red-700 border-red-200 font-semibold",
 };
@@ -648,7 +648,7 @@ export default function Home() {
                         <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: `rgba(1,65,28,0.07)` }}>
                           <Icon className="h-5 w-5" style={{ color: G }} />
                         </div>
-                        <ChevronRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-green-600 group-hover:translate-x-0.5 transition-all duration-200 mt-0.5" />
+                        <ChevronRight className="h-3.5 w-3.5 text-slate-300 group-hover:text-yellow-600 group-hover:translate-x-0.5 transition-all duration-200 mt-0.5" />
                       </div>
                       {/* name */}
                       <div>
@@ -697,7 +697,7 @@ export default function Home() {
                   variants={fadeUp}
                   whileHover={{ y: -5 }}
                   transition={{ type: "spring", stiffness: 280 }}
-                  className="relative border border-slate-200 rounded-2xl p-6 bg-white hover:border-green-200 hover:shadow-lg transition-all duration-200"
+                  className="relative border border-slate-200 rounded-2xl p-6 bg-white hover:border-yellow-200 hover:shadow-lg transition-all duration-200"
                 >
                   {/* step number watermark */}
                   <span className="absolute top-4 right-4 text-6xl font-black select-none leading-none" style={{ color: "rgba(1,65,28,0.06)" }}>
@@ -749,7 +749,7 @@ export default function Home() {
                   variants={scaleIn}
                   whileHover={{ y: -4 }}
                   transition={{ type: "spring", stiffness: 280 }}
-                  className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-7 hover:shadow-md hover:border-green-200 transition-all duration-200"
+                  className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-7 hover:shadow-md hover:border-yellow-200 transition-all duration-200"
                 >
                   <div className="flex items-center gap-2 mb-3 sm:mb-5">
                     <div className="h-8 w-8 sm:h-11 sm:w-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(1,65,28,0.08)" }}>
@@ -804,7 +804,7 @@ export default function Home() {
                     variants={scaleIn}
                     whileHover={{ y: -5, boxShadow: "0 12px 40px rgba(0,0,0,0.08)" }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="bg-white border border-slate-200/80 rounded-2xl p-6 flex flex-col hover:border-green-200 transition-all duration-200 shadow-sm"
+                    className="bg-white border border-slate-200/80 rounded-2xl p-6 flex flex-col hover:border-yellow-200 transition-all duration-200 shadow-sm"
                   >
                     <div className="flex justify-between items-start mb-3">
                       <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${CAT_STYLES[notice.category] ?? CAT_STYLES.general}`}>
@@ -908,7 +908,7 @@ export default function Home() {
                   variants={scaleIn}
                   whileHover={{ y: -5 }}
                   transition={{ type: "spring", stiffness: 280 }}
-                  className="text-center bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-8 hover:shadow-md hover:border-green-200 transition-all duration-200"
+                  className="text-center bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-8 hover:shadow-md hover:border-yellow-200 transition-all duration-200"
                 >
                   <div className="h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-5" style={{ background: "rgba(1,65,28,0.08)" }}>
                     <Icon className="h-6 w-6" style={{ color: G }} />

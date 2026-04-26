@@ -75,11 +75,11 @@ export default function ForgotPassword() {
           </CardHeader>
           <CardContent>
             {isSubmitted ? (
-              <div className="rounded-md bg-green-50 p-4 mb-4 dark:bg-green-900/20">
+              <div className="rounded-md bg-yellow-50 p-4 mb-4 dark:bg-yellow-900/20">
                 <div className="flex">
                   <div className="ml-3">
-                    <h3 className="text-sm font-medium text-green-800 dark:text-green-200">Reset instructions sent!</h3>
-                    <div className="mt-2 text-sm text-green-700 dark:text-green-300">
+                    <h3 className="text-sm font-medium text-yellow-800 dark:text-green-200">Reset instructions sent!</h3>
+                    <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
                       <p>Please check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.</p>
                     </div>
                   </div>

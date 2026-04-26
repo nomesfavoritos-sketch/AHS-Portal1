@@ -118,7 +118,7 @@ export function TopHeader() {
           <Bell className="h-4 w-4 text-[#64748B]" />
           <span
             className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full"
-            style={{ background: "#16A34A", boxShadow: "0 0 0 2px white" }}
+            style={{ background: "#F0B429", boxShadow: "0 0 0 2px white" }}
           />
         </button>
 
@@ -132,7 +132,7 @@ export function TopHeader() {
               >
                 <div
                   className="h-7 w-7 rounded-lg flex items-center justify-center text-[11px] font-bold text-white shrink-0"
-                  style={{ background: "linear-gradient(135deg, #01411C, #16A34A)" }}
+                  style={{ background: "linear-gradient(135deg, #01411C, #F0B429)" }}
                 >
                   {initialsUpper}
                 </div>
@@ -152,7 +152,7 @@ export function TopHeader() {
                 <div className="flex items-center gap-2.5">
                   <div
                     className="h-9 w-9 rounded-lg flex items-center justify-center text-[12px] font-bold text-white shrink-0"
-                    style={{ background: "linear-gradient(135deg, #01411C, #16A34A)" }}
+                    style={{ background: "linear-gradient(135deg, #01411C, #F0B429)" }}
                   >
                     {initialsUpper}
                   </div>

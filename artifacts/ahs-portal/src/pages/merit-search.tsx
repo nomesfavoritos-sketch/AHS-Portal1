@@ -42,7 +42,7 @@ export default function PublicMeritSearch() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "selected": return <Badge className="bg-green-500 hover:bg-green-600">Selected</Badge>;
+      case "selected": return <Badge className="bg-yellow-500 hover:bg-yellow-500">Selected</Badge>;
       case "waiting": return <Badge variant="outline" className="text-amber-600 border-amber-400">Waiting</Badge>;
       case "rejected": return <Badge variant="destructive">Not Selected</Badge>;
       default: return <Badge variant="secondary">{status}</Badge>;
@@ -130,7 +130,7 @@ export default function PublicMeritSearch() {
                   Found <strong>{(results as any[]).length}</strong> result(s) for <span className="font-mono">{searchValue}</span>
                 </p>
                 {(results as any[]).map((r, idx) => (
-                  <Card key={idx} className={r.status === "selected" ? "border-green-200 bg-green-50/30" : ""}>
+                  <Card key={idx} className={r.status === "selected" ? "border-yellow-200 bg-yellow-50/30" : ""}>
                     <CardContent className="pt-5 pb-4">
                       <div className="flex items-start justify-between gap-4">
                         <div className="space-y-1">
@@ -166,7 +166,7 @@ export default function PublicMeritSearch() {
                         </div>
                       </div>
                       {r.status === "selected" && (
-                        <div className="mt-3 text-sm text-green-700 font-medium flex items-center gap-1.5 bg-green-100 rounded-lg px-3 py-2">
+                        <div className="mt-3 text-sm text-yellow-700 font-medium flex items-center gap-1.5 bg-yellow-100 rounded-lg px-3 py-2">
                           <Trophy className="h-4 w-4 flex-shrink-0" />
                           Congratulations! You have been selected. Please check the joining instructions on the portal or contact the admissions office.
                         </div>

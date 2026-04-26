@@ -8,9 +8,9 @@ import {
 import { cn } from "@/lib/utils";
 
 const SIDEBAR_BG = "#013220";
-const ACTIVE_BG = "rgba(22,163,74,0.22)";
-const ACTIVE_BORDER = "#16A34A";
-const HOVER_BG = "rgba(22,163,74,0.15)";
+const ACTIVE_BG = "rgba(240,180,41,0.22)";
+const ACTIVE_BORDER = "#F0B429";
+const HOVER_BG = "rgba(240,180,41,0.15)";
 
 interface StudentLayoutProps { children: ReactNode; }
 
@@ -56,10 +56,10 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         {/* Session badge */}
         <div
           className="mt-3 flex items-center gap-2 rounded-lg px-3 py-1.5"
-          style={{ background: "rgba(22,163,74,0.15)", border: "1px solid rgba(22,163,74,0.25)" }}
+          style={{ background: "rgba(240,180,41,0.15)", border: "1px solid rgba(240,180,41,0.25)" }}
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-          <span className="text-[11px] font-semibold" style={{ color: "#4ade80" }}>
+          <span className="h-1.5 w-1.5 rounded-full bg-yellow-400 animate-pulse shrink-0" />
+          <span className="text-[11px] font-semibold" style={{ color: "#F0B429" }}>
             Admissions 2025–26 Open
           </span>
         </div>
@@ -136,7 +136,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
       >
         <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="h-2 w-2 rounded-full bg-yellow-400 animate-pulse" />
           <span className="text-[11px] font-medium" style={{ color: "rgba(255,255,255,0.45)" }}>
             System Online
           </span>

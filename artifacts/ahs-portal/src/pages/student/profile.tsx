@@ -220,7 +220,7 @@ export default function StudentProfile() {
   ];
 
   const pct = Math.round(livePercent);
-  const pctColor = pct < 40 ? "#ef4444" : pct < 80 ? "#f59e0b" : "#16a34a";
+  const pctColor = pct < 40 ? "#ef4444" : pct < 80 ? "#f59e0b" : "#F0B429";
 
   return (
     <div className="w-full space-y-5 pb-10">
@@ -262,7 +262,7 @@ export default function StudentProfile() {
                   <div
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-all duration-200"
                     style={{
-                      background: done ? "#16a34a" : active ? G : "#f3f4f6",
+                      background: done ? "#F0B429" : active ? G : "#f3f4f6",
                       color: done || active ? "white" : "#9ca3af",
                       boxShadow: active ? `0 0 0 4px ${G}22` : "none",
                     }}
@@ -271,7 +271,7 @@ export default function StudentProfile() {
                   </div>
                   <span
                     className="text-xs font-semibold text-center hidden sm:block transition-colors"
-                    style={{ color: done ? "#16a34a" : active ? G : "#9ca3af" }}
+                    style={{ color: done ? "#F0B429" : active ? G : "#9ca3af" }}
                   >
                     {s.label}
                   </span>
@@ -279,7 +279,7 @@ export default function StudentProfile() {
                 {i < STEPS.length - 1 && (
                   <div
                     className="h-0.5 flex-1 mx-2 rounded-full transition-all duration-300"
-                    style={{ background: step > s.n ? "#16a34a" : "#e5e7eb" }}
+                    style={{ background: step > s.n ? "#F0B429" : "#e5e7eb" }}
                   />
                 )}
               </div>

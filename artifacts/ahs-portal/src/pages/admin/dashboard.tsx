@@ -13,7 +13,7 @@ const STATUS_COLORS: Record<string, string> = {
   draft: "#94a3b8",
   submitted: "#3b82f6",
   under_review: "#f59e0b",
-  verified: "#16A34A",
+  verified: "#F0B429",
   merit_listed: "#8b5cf6",
   admitted: "#01411C",
   rejected: "#ef4444",
@@ -33,7 +33,7 @@ const STATUS_LABELS: Record<string, string> = {
   rejected: "Rejected",
 };
 
-const CHART_COLORS = ["#01411C", "#006C35", "#16A34A", "#22c55e", "#4ade80", "#86efac", "#bbf7d0", "#dcfce7"];
+const CHART_COLORS = ["#01411C", "#006C35", "#F0B429", "#22c55e", "#F0B429", "#86efac", "#bbf7d0", "#dcfce7"];
 
 function StatCard({ title, value, sub, icon: Icon, accent, iconBg }: { title: string; value: number | string; sub?: string; icon: any; accent?: string; iconBg?: string }) {
   return (
@@ -87,7 +87,7 @@ export default function AdminDashboard() {
           className="hidden sm:flex items-center gap-2 rounded-xl px-4 py-2"
           style={{ background: "rgba(1,65,28,0.08)", border: "1px solid rgba(1,65,28,0.15)" }}
         >
-          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="h-2 w-2 rounded-full bg-yellow-500 animate-pulse" />
           <span className="text-[12px] font-semibold" style={{ color: "#01411C" }}>Portal Live</span>
         </div>
       </div>
@@ -97,13 +97,13 @@ export default function AdminDashboard() {
         <StatCard title="Total Applications" value={summary?.totalApplications ?? 0} sub={`${summary?.pendingApplications ?? 0} pending review`} icon={FileText} />
         <StatCard title="Registered Students" value={summary?.totalStudents ?? 0} sub={`Across ${summary?.totalPrograms ?? 0} programs`} icon={Users} accent="text-primary" />
         <StatCard title="Pending Payments" value={summary?.pendingPayments ?? 0} sub="Awaiting challan verification" icon={CreditCard} accent="text-amber-500" />
-        <StatCard title="Joining Intents" value={(summary as any)?.joiningIntents ?? 0} sub="Students who confirmed intent" icon={LogIn} accent="text-green-600" />
+        <StatCard title="Joining Intents" value={(summary as any)?.joiningIntents ?? 0} sub="Students who confirmed intent" icon={LogIn} accent="text-yellow-600" />
       </div>
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <StatCard title="Pending Verifications" value={summary?.pendingVerifications ?? 0} sub="Documents to review" icon={AlertCircle} accent="text-amber-500" />
         <StatCard title="Merit Listed" value={(summary as any)?.meritListedCount ?? 0} sub="In active merit lists" icon={Trophy} accent="text-violet-500" />
-        <StatCard title="Admitted" value={summary?.approvedApplications ?? 0} sub="Fully admitted" icon={CheckCircle} accent="text-green-600" />
+        <StatCard title="Admitted" value={summary?.approvedApplications ?? 0} sub="Fully admitted" icon={CheckCircle} accent="text-yellow-600" />
         <StatCard title="Rejected" value={summary?.rejectedApplications ?? 0} sub="Applications rejected" icon={AlertCircle} accent="text-red-500" />
       </div>
 

@@ -44,7 +44,7 @@ type CreateValues = z.infer<typeof createSchema>;
 
 function statusBadge(ml: { isPublished: boolean; isFrozen: boolean }) {
   if (ml.isFrozen) return <Badge className="bg-slate-500 hover:bg-slate-600">Frozen</Badge>;
-  if (ml.isPublished) return <Badge className="bg-green-500 hover:bg-green-600">Published</Badge>;
+  if (ml.isPublished) return <Badge className="bg-yellow-500 hover:bg-yellow-500">Published</Badge>;
   return <Badge variant="outline" className="text-amber-600 border-amber-400">Draft</Badge>;
 }
 

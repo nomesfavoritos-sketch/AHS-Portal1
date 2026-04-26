@@ -84,7 +84,7 @@ export default function Register() {
       >
         <div
           className="absolute -top-20 -right-20 h-56 w-56 rounded-full opacity-10"
-          style={{ background: "radial-gradient(circle, #16A34A, transparent)" }}
+          style={{ background: "radial-gradient(circle, #F0B429, transparent)" }}
         />
         <div
           className="absolute bottom-20 -left-16 h-64 w-64 rounded-full opacity-10"
@@ -120,9 +120,9 @@ export default function Register() {
               <div key={req} className="flex items-start gap-2.5">
                 <div
                   className="h-5 w-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                  style={{ background: "rgba(22,163,74,0.25)" }}
+                  style={{ background: "rgba(240,180,41,0.25)" }}
                 >
-                  <CheckCircle className="h-3 w-3" style={{ color: "#4ade80" }} />
+                  <CheckCircle className="h-3 w-3" style={{ color: "#F0B429" }} />
                 </div>
                 <p className="text-[13px]" style={{ color: "rgba(255,255,255,0.70)" }}>{req}</p>
               </div>

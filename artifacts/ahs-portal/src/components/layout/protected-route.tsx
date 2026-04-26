@@ -35,7 +35,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
         <div className="flex flex-col items-center gap-3">
           <div
             className="h-12 w-12 rounded-xl flex items-center justify-center font-black text-[13px] text-white"
-            style={{ background: "linear-gradient(135deg, #01411C, #16A34A)" }}
+            style={{ background: "linear-gradient(135deg, #01411C, #F0B429)" }}
           >
             AHS
           </div>

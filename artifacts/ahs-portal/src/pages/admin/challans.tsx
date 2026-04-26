@@ -47,7 +47,7 @@ function getStatusBadge(status: string) {
     case "paid":
       return <Badge className="bg-blue-500 hover:bg-blue-600 text-white">Paid (Unverified)</Badge>;
     case "verified":
-      return <Badge className="bg-emerald-500 hover:bg-emerald-600 text-white">Verified</Badge>;
+      return <Badge className="bg-yellow-500 hover:bg-yellow-500 text-white">Verified</Badge>;
     case "rejected":
       return <Badge variant="destructive">Rejected</Badge>;
     case "overdue":
@@ -305,7 +305,7 @@ export default function AdminChallans() {
         {[
           { label: "Pending", status: "pending", cls: "text-muted-foreground" },
           { label: "Slip Uploaded", status: "slip_uploaded", cls: "text-blue-600" },
-          { label: "Verified", status: "verified", cls: "text-emerald-600" },
+          { label: "Verified", status: "verified", cls: "text-yellow-600" },
           { label: "Rejected", status: "rejected", cls: "text-red-600" },
         ].map(({ label, status, cls }) => (
           <Card
@@ -419,7 +419,7 @@ export default function AdminChallans() {
                             <>
                               <Button
                                 size="sm"
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                className="bg-yellow-500 hover:bg-yellow-600 text-white"
                                 onClick={() => setActionDialog({ challan, action: "verify" })}
                               >
                                 <CheckCircle className="h-3.5 w-3.5 mr-1" />
@@ -436,7 +436,7 @@ export default function AdminChallans() {
                             </>
                           )}
                           {challan.status === "verified" && (
-                            <span className="text-xs text-emerald-600 font-medium">✓ Verified</span>
+                            <span className="text-xs text-yellow-600 font-medium">✓ Verified</span>
                           )}
                           {challan.status === "rejected" && (
                             <span className="text-xs text-red-500 font-medium">✗ Rejected</span>
