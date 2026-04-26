@@ -16,15 +16,15 @@ function StatCard({
   href?: string;
 }) {
   const inner = (
-    <div className={`rounded-xl p-4 border cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-md ${bg} ${border}`}>
-      <div className="flex items-start justify-between gap-2">
+    <div className={`rounded-xl p-3 sm:p-4 border cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-md ${bg} ${border}`}>
+      <div className="flex items-start justify-between gap-1.5">
         <div className="min-w-0 flex-1">
-          <p className={`text-[10px] font-bold uppercase tracking-widest mb-2 ${text} opacity-60`}>{label}</p>
-          <p className={`text-2xl font-black leading-none truncate ${text}`}>{value}</p>
-          <p className={`text-[11px] mt-1.5 leading-tight ${text} opacity-55`}>{sub}</p>
+          <p className={`text-[9px] sm:text-[10px] font-bold uppercase tracking-widest mb-1.5 ${text} opacity-60`}>{label}</p>
+          <p className={`text-base sm:text-2xl font-black leading-none truncate ${text}`}>{value}</p>
+          <p className={`text-[10px] sm:text-[11px] mt-1 sm:mt-1.5 leading-tight ${text} opacity-55`}>{sub}</p>
         </div>
-        <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${iconBg}`}>
-          <Icon className={`h-4 w-4 ${text}`} />
+        <div className={`h-7 w-7 sm:h-9 sm:w-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${iconBg}`}>
+          <Icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${text}`} />
         </div>
       </div>
     </div>
@@ -161,22 +161,22 @@ export default function StudentDashboard() {
 
       {/* ── Hero Banner ── */}
       <div className="rounded-xl overflow-hidden shadow-sm" style={{ background: G }}>
-        <div className="px-6 py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs font-bold tracking-widest text-green-300 uppercase">Live Portal</span>
+        <div className="px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse shrink-0" />
+              <span className="text-[10px] sm:text-xs font-bold tracking-widest text-green-300 uppercase">Live Portal</span>
             </div>
-            <h1 className="text-2xl font-black text-white leading-tight">Admission Overview</h1>
-            <p className="text-green-300 text-sm mt-0.5">
+            <h1 className="text-lg sm:text-2xl font-black text-white leading-tight">Admission Overview</h1>
+            <p className="text-green-300 text-xs sm:text-sm mt-0.5 truncate">
               {greeting}, {user?.fullName?.split(" ")[0]} &nbsp;·&nbsp; {format(now, "EEE, d MMM yyyy")}
             </p>
           </div>
           <div className="text-right shrink-0">
-            <p className="text-4xl font-black text-white tracking-tight">
-              {format(now, "hh:mm")} <span className="text-green-300 text-2xl">{format(now, "a")}</span>
+            <p className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-none">
+              {format(now, "hh:mm")} <span className="text-green-300 text-base sm:text-2xl">{format(now, "a")}</span>
             </p>
-            <p className="text-green-300 text-xs">{greeting}</p>
+            <p className="text-green-300 text-[10px] sm:text-xs mt-0.5">{greeting}</p>
           </div>
         </div>
       </div>
