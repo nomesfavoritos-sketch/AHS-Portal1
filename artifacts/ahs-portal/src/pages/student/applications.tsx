@@ -1277,7 +1277,7 @@ export default function StudentApplications() {
                 {apps.map((app, idx) => {
                   const challan = challansData?.find(c => c.applicationId === app.id);
                   const showGenerate = app.status === "draft";
-                  const showPrint = challan && (app.status === "challan_generated" || app.status === "slip_uploaded" || app.status === "submitted" || app.status === "under_review" || app.status === "verified" || app.status === "admitted");
+                  const showPrint = challan && (app.status === "challan_generated" || app.status === "slip_uploaded");
                   const showPrintApp = ["submitted","under_review","verified","merit_listed","selected_for_verification","admitted","rejected"].includes(app.status);
                   const showSubmit = app.status === "challan_generated" || app.status === "slip_uploaded";
 
