@@ -30,7 +30,10 @@ export function TopHeader() {
   const meta = PAGE_META[location] ?? { title: "Portal", subtitle: "Allied Health Sciences College" };
 
   const handleLogout = () => {
-    logout.mutate(undefined, { onSuccess: () => setLocation("/login") });
+    logout.mutate(undefined, {
+      onSuccess: () => setLocation("/login"),
+      onError: () => setLocation("/login"),
+    });
   };
 
   const now = new Date();

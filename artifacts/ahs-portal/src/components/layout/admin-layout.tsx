@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { useGetMe } from "@workspace/api-client-react";
+import { useGetMe, useLogout } from "@workspace/api-client-react";
 import { TopHeader } from "./top-header";
 import {
   LayoutDashboard,
@@ -18,6 +18,7 @@ import {
   UserCog,
   Loader2,
   BarChart3,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,10 +27,18 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
+  const logout = useLogout();
   // MOCK FOR PREVIEW MODE
   const user = { id: 1, email: "superadmin@ahscollege.edu.pk", fullName: "Dr. Muhammad Tariq", role: "super_admin" };
   const isLoading = false;
+
+  const handleLogout = () => {
+    logout.mutate(undefined, {
+      onSuccess: () => setLocation("/login"),
+      onError: () => setLocation("/login"),
+    });
+  };
 
   const navigation = [
     {
@@ -163,6 +172,20 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 </Link>
               );
             })}
+            <div className="mt-auto pt-4 border-t">
+              <button
+                onClick={handleLogout}
+                disabled={logout.isPending}
+                className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
+              >
+                {logout.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <LogOut className="h-4 w-4" />
+                )}
+                Logout
+              </button>
+            </div>
           </nav>
         </aside>
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
