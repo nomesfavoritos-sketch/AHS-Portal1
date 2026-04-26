@@ -13,6 +13,7 @@ export const applicationsTable = pgTable("applications", {
   sessionId: integer("session_id").notNull().references(() => admissionSessionsTable.id),
   programId: integer("program_id").notNull().references(() => programsTable.id),
   quotaId: integer("quota_id").references(() => quotaCategoriesTable.id),
+  priority: integer("priority").notNull().default(1),
   status: text("status").notNull().default("draft"),
   remarks: text("remarks"),
   submittedAt: timestamp("submitted_at", { withTimezone: true }),

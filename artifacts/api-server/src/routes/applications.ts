@@ -29,6 +29,7 @@ async function formatApplication(app: typeof applicationsTable.$inferSelect) {
     sessionId: app.sessionId,
     programId: app.programId,
     quotaId: app.quotaId ?? null,
+    priority: app.priority ?? 1,
     status: app.status,
     remarks: app.remarks ?? null,
     submittedAt: app.submittedAt ? app.submittedAt.toISOString() : null,
@@ -262,6 +263,7 @@ router.patch("/applications/:id", requireAuth, async (req, res): Promise<void> =
   if (parsed.data.programId != null) updateData.programId = parsed.data.programId;
   if (parsed.data.quotaId !== undefined) updateData.quotaId = parsed.data.quotaId ?? undefined;
   if (parsed.data.remarks !== undefined) updateData.remarks = parsed.data.remarks ?? undefined;
+  if (parsed.data.priority != null) updateData.priority = parsed.data.priority;
 
   const [app] = await db.update(applicationsTable).set(updateData).where(eq(applicationsTable.id, id)).returning();
   res.json(await formatApplication(app));

@@ -45,7 +45,16 @@ const applicationSchema = z.object({
   sessionId: z.coerce.number().min(1, "Session is required"),
   programId: z.coerce.number().min(1, "Program is required"),
   quotaId: z.coerce.number().optional().nullable(),
+  priority: z.coerce.number().int().min(1).max(5).default(1),
 });
+
+const PRIORITY_LABELS: Record<number, { label: string; color: string }> = {
+  1: { label: "1st Choice",  color: "bg-green-600 text-white" },
+  2: { label: "2nd Choice",  color: "bg-blue-500 text-white" },
+  3: { label: "3rd Choice",  color: "bg-amber-500 text-white" },
+  4: { label: "4th Choice",  color: "bg-orange-500 text-white" },
+  5: { label: "5th Choice",  color: "bg-slate-500 text-white" },
+};
 
 type ApplicationFormValues = z.infer<typeof applicationSchema>;
 
@@ -698,11 +707,15 @@ function EditApplicationDialog({ app, programs, quotas, onSuccess }: {
     && app.status !== "merit_listed" && app.status !== "selected_for_verification"
     && app.status !== "admitted" && app.status !== "rejected";
 
-  const form = useForm<{ programId: string; quotaId: string }>({
-    defaultValues: { programId: String(app.program?.id ?? ""), quotaId: String(app.quota?.id ?? "none") },
+  const form = useForm<{ programId: string; quotaId: string; priority: string }>({
+    defaultValues: {
+      programId: String(app.program?.id ?? ""),
+      quotaId: String(app.quota?.id ?? "none"),
+      priority: String(app.priority ?? 1),
+    },
   });
 
-  const onSubmit = async (data: { programId: string; quotaId: string }) => {
+  const onSubmit = async (data: { programId: string; quotaId: string; priority: string }) => {
     setLoading(true);
     try {
       const res = await fetch(`${baseUrl}api/applications/${app.id}`, {
@@ -712,6 +725,7 @@ function EditApplicationDialog({ app, programs, quotas, onSuccess }: {
         body: JSON.stringify({
           programId: Number(data.programId),
           quotaId: data.quotaId === "none" ? null : Number(data.quotaId),
+          priority: Number(data.priority),
         }),
       });
       if (!res.ok) {
@@ -770,6 +784,21 @@ function EditApplicationDialog({ app, programs, quotas, onSuccess }: {
                     {quotas?.filter(q => q.isActive).map(q => (
                       <SelectItem key={q.id} value={String(q.id)}>{q.name}</SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="priority" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Program Priority</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl><SelectTrigger><SelectValue placeholder="Select Priority" /></SelectTrigger></FormControl>
+                  <SelectContent>
+                    <SelectItem value="1">1st Choice (Highest)</SelectItem>
+                    <SelectItem value="2">2nd Choice</SelectItem>
+                    <SelectItem value="3">3rd Choice</SelectItem>
+                    <SelectItem value="4">4th Choice</SelectItem>
+                    <SelectItem value="5">5th Choice (Lowest)</SelectItem>
                   </SelectContent>
                 </Select>
               </FormItem>
@@ -892,7 +921,7 @@ export default function StudentApplications() {
 
   const form = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationSchema),
-    defaultValues: { sessionId: 0, programId: 0, quotaId: null },
+    defaultValues: { sessionId: 0, programId: 0, quotaId: null, priority: 1 },
   });
 
   const onSubmit = (data: ApplicationFormValues) => {
@@ -1046,6 +1075,26 @@ export default function StudentApplications() {
                       <FormMessage />
                     </FormItem>
                   )} />
+                <FormField control={form.control} name="priority"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Program Priority</FormLabel>
+                      <Select onValueChange={v => field.onChange(Number(v))} defaultValue={field.value?.toString() ?? "1"}>
+                        <FormControl><SelectTrigger><SelectValue placeholder="Select Priority" /></SelectTrigger></FormControl>
+                        <SelectContent>
+                          <SelectItem value="1">1st Choice (Highest)</SelectItem>
+                          <SelectItem value="2">2nd Choice</SelectItem>
+                          <SelectItem value="3">3rd Choice</SelectItem>
+                          <SelectItem value="4">4th Choice</SelectItem>
+                          <SelectItem value="5">5th Choice (Lowest)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground">
+                        Set your preference order across programs — used during merit list processing.
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
                 <DialogFooter>
                   <Button type="submit" disabled={createApplication.isPending}>
                     {createApplication.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -1104,6 +1153,7 @@ export default function StudentApplications() {
                   <TableHead className="w-10 pl-6">Sr#</TableHead>
                   <TableHead>Application #</TableHead>
                   <TableHead>Program Name</TableHead>
+                  <TableHead>Priority</TableHead>
                   <TableHead>Session</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
@@ -1123,6 +1173,13 @@ export default function StudentApplications() {
                       <TableCell>
                         <div className="font-medium text-sm">{app.program.name}</div>
                         {app.program.code && <div className="text-xs text-muted-foreground">{app.program.code}</div>}
+                      </TableCell>
+                      <TableCell>
+                        {(() => {
+                          const p = (app as any).priority ?? 1;
+                          const meta = PRIORITY_LABELS[p] ?? { label: `Choice ${p}`, color: "bg-slate-400 text-white" };
+                          return <Badge className={`${meta.color} text-xs`}>{meta.label}</Badge>;
+                        })()}
                       </TableCell>
                       <TableCell className="text-sm">{app.session.name}</TableCell>
                       <TableCell>

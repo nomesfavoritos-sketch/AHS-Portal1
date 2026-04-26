@@ -2,8 +2,8 @@ import { ReactNode, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { TopHeader } from "./top-header";
 import {
-  LayoutDashboard, User, FileText, CreditCard,
-  FileUp, Award, Bell, Menu, X, ChevronRight,
+  LayoutDashboard, User, FileText,
+  FileUp, Menu, X, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,19 +22,6 @@ const NAV_GROUPS = [
       { name: "My Profile",   href: "/student/profile",      icon: User,            sub: "Personal Information" },
       { name: "Documents",    href: "/student/documents",    icon: FileUp,          sub: "Upload Documents" },
       { name: "Applications", href: "/student/applications", icon: FileText,        sub: "Program Applications" },
-      { name: "Fee Challans", href: "/student/challans",     icon: CreditCard,      sub: "Payment History" },
-    ],
-  },
-  {
-    label: "ACADEMIC",
-    items: [
-      { name: "Merit Status", href: "/student/merit",        icon: Award,           sub: "Merit List Position" },
-    ],
-  },
-  {
-    label: "INFO",
-    items: [
-      { name: "Notices",      href: "/student/notices",      icon: Bell,            sub: "Announcements" },
     ],
   },
 ];

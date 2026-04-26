@@ -461,6 +461,7 @@ export const CreateApplicationBody = zod.object({
   sessionId: zod.number(),
   programId: zod.number(),
   quotaId: zod.number().nullish(),
+  priority: zod.number().int().min(1).max(5).default(1),
 });
 
 /**
@@ -529,6 +530,7 @@ export const UpdateApplicationBody = zod.object({
   programId: zod.number().nullish(),
   quotaId: zod.number().nullish(),
   remarks: zod.string().nullish(),
+  priority: zod.number().int().min(1).max(5).nullish(),
 });
 
 export const UpdateApplicationResponse = zod.object({
