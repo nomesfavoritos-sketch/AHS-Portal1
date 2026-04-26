@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
@@ -51,6 +51,11 @@
   --color-sidebar-accent-border: var(--sidebar-accent-border);
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
+  --color-gold: #D4AF37;
+  --color-gold-light: #F5E6B8;
+  --color-pakistan-green: #01411C;
+  --color-emerald: #16A34A;
+
   --font-sans: var(--app-font-sans);
   --font-serif: var(--app-font-serif);
   --font-mono: var(--app-font-mono);
@@ -59,9 +64,10 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
 }
 
-/* LIGHT MODE */
+/* LIGHT MODE - Pakistan Government Premium Theme */
 :root {
   --button-outline: rgba(0,0,0, .10);
   --badge-outline: rgba(0,0,0, .05);
@@ -71,55 +77,59 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  --background: 210 40% 98%;
+  --background: 210 20% 98%;
   --foreground: 222 47% 11%;
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --ring: 222 47% 11%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 152 97% 14%;
 
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
-  --card-border: 214 32% 91%;
+  --card-border: 220 13% 91%;
 
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
-  --popover-border: 214 32% 91%;
+  --popover-border: 220 13% 91%;
 
-  --primary: 222 47% 11%;
-  --primary-foreground: 210 40% 98%;
-  
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222 47% 11%;
+  /* Primary = Pakistan Green #01411C */
+  --primary: 152 97% 14%;
+  --primary-foreground: 0 0% 100%;
 
-  --muted: 210 40% 96%;
+  /* Secondary = Soft gray-green */
+  --secondary: 150 10% 95%;
+  --secondary-foreground: 152 97% 14%;
+
+  --muted: 210 20% 96%;
   --muted-foreground: 215 16% 47%;
 
-  --accent: 43 74% 49%;
+  /* Accent = Gold #D4AF37 */
+  --accent: 43 65% 52%;
   --accent-foreground: 0 0% 100%;
 
   --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
+  --destructive-foreground: 0 0% 100%;
 
-  --sidebar: 0 0% 100%;
-  --sidebar-foreground: 222 47% 11%;
-  --sidebar-border: 214 32% 91%;
-  --sidebar-primary: 222 47% 11%;
-  --sidebar-primary-foreground: 210 40% 98%;
-  --sidebar-accent: 210 40% 96%;
-  --sidebar-accent-foreground: 222 47% 11%;
-  --sidebar-ring: 222 47% 11%;
+  /* Sidebar = Deep Pakistan Green */
+  --sidebar: 152 97% 10%;
+  --sidebar-foreground: 0 0% 100%;
+  --sidebar-border: 152 60% 18%;
+  --sidebar-primary: 0 0% 100%;
+  --sidebar-primary-foreground: 152 97% 10%;
+  --sidebar-accent: 152 60% 16%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-ring: 43 65% 52%;
 
-  --chart-1: 222 47% 11%;
-  --chart-2: 43 74% 49%;
-  --chart-3: 199 89% 48%;
-  --chart-4: 160 84% 39%;
+  --chart-1: 152 97% 14%;
+  --chart-2: 43 65% 52%;
+  --chart-3: 142 76% 36%;
+  --chart-4: 199 89% 48%;
   --chart-5: 27 87% 67%;
 
-  --app-font-sans: 'Plus Jakarta Sans', sans-serif;
+  --app-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --app-font-serif: Georgia, serif;
-  --app-font-mono: Menlo, monospace;
-  
-  --radius: 0.5rem;
+  --app-font-mono: 'JetBrains Mono', Menlo, monospace;
+
+  --radius: 0.75rem;
 }
 
 .dark {
@@ -135,7 +145,7 @@
   --foreground: 210 40% 98%;
   --border: 217 33% 17%;
   --input: 217 33% 17%;
-  --ring: 212 100% 48%;
+  --ring: 152 97% 14%;
 
   --card: 222 47% 11%;
   --card-foreground: 210 40% 98%;
@@ -145,32 +155,32 @@
   --popover-foreground: 210 40% 98%;
   --popover-border: 217 33% 17%;
 
-  --primary: 210 40% 98%;
-  --primary-foreground: 222 47% 11%;
-  
+  --primary: 142 76% 36%;
+  --primary-foreground: 0 0% 100%;
+
   --secondary: 217 33% 17%;
   --secondary-foreground: 210 40% 98%;
 
   --muted: 217 33% 17%;
   --muted-foreground: 215 20% 65%;
 
-  --accent: 43 74% 49%;
+  --accent: 43 65% 52%;
   --accent-foreground: 0 0% 100%;
 
   --destructive: 0 62% 30%;
   --destructive-foreground: 210 40% 98%;
 
-  --sidebar: 222 47% 11%;
+  --sidebar: 222 47% 8%;
   --sidebar-foreground: 210 40% 98%;
   --sidebar-border: 217 33% 17%;
   --sidebar-primary: 210 40% 98%;
   --sidebar-primary-foreground: 222 47% 11%;
   --sidebar-accent: 217 33% 17%;
   --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-ring: 212 100% 48%;
+  --sidebar-ring: 43 65% 52%;
 
-  --chart-1: 210 40% 98%;
-  --chart-2: 43 74% 49%;
+  --chart-1: 142 76% 36%;
+  --chart-2: 43 65% 52%;
   --chart-3: 199 89% 48%;
   --chart-4: 160 84% 39%;
   --chart-5: 27 87% 67%;
@@ -183,5 +193,60 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* Premium utility classes */
+.premium-shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+}
+
+.premium-shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+}
+
+.premium-shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+}
+
+.gold-accent {
+  border-left: 3px solid #D4AF37;
+}
+
+.gov-gradient {
+  background: linear-gradient(135deg, #01411C 0%, #02612a 100%);
+}
+
+.premium-card {
+  background: hsl(var(--card));
+  border-radius: 1rem;
+  border: 1px solid hsl(var(--border) / 0.6);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  transition: all 200ms;
+}
+
+.premium-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
 }
