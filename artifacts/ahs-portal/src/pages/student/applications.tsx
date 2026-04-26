@@ -460,15 +460,19 @@ ${challan ? `
 
 function SubmitChallanDialog({ app, challan, onUploadComplete, onFinalSubmit, isSubmitting }: {
   app: any; challan: any;
-  onUploadComplete: (result: any, challanId: number, appId: number) => Promise<void>;
+  onUploadComplete: (result: any, challanId: number, appId: number, bankReceiptNo: string) => Promise<void>;
   onFinalSubmit: (appId: number) => void;
   isSubmitting: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const [bankReceiptNo, setBankReceiptNo] = useState("");
+  const [receiptError, setReceiptError] = useState("");
   const baseUrl = import.meta.env.BASE_URL;
 
+  const canUpload = bankReceiptNo.trim().length >= 4;
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) { setBankReceiptNo(""); setReceiptError(""); } }}>
       <DialogTrigger asChild>
         <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white gap-1.5">
           <UploadCloud className="h-3.5 w-3.5" />
@@ -490,13 +494,37 @@ function SubmitChallanDialog({ app, challan, onUploadComplete, onFinalSubmit, is
         {app.status === "challan_generated" && challan && (
           <div className="space-y-4">
             <div className="rounded-md border bg-amber-50 p-3 text-sm text-amber-800">
-              <strong>Instructions:</strong> Print the challan, deposit the fee at HBL, then upload the bank-stamped slip here.
+              <strong>Instructions:</strong> Print the challan, deposit the fee at HBL, then enter the bank receipt number and upload the stamped slip here.
             </div>
+
+            {/* Bank Receipt Number Input */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-semibold text-gray-700">
+                Bank Deposit Receipt / Transaction Number <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={bankReceiptNo}
+                onChange={(e) => { setBankReceiptNo(e.target.value); setReceiptError(""); }}
+                placeholder="e.g. HBL-20260426-123456"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+              {receiptError && <p className="text-xs text-red-600">{receiptError}</p>}
+              {!canUpload && bankReceiptNo.length > 0 && (
+                <p className="text-xs text-amber-600">Receipt number must be at least 4 characters.</p>
+              )}
+              <p className="text-xs text-gray-400">Enter the receipt/transaction number shown on your HBL bank deposit slip.</p>
+            </div>
+
             <ObjectUploader
               maxNumberOfFiles={1}
               maxFileSize={5242880}
               buttonClassName="w-full"
               onGetUploadParameters={async (file) => {
+                if (!canUpload) {
+                  setReceiptError("Please enter the bank receipt number before uploading.");
+                  throw new Error("Receipt number required");
+                }
                 const res = await fetch(`${baseUrl}api/storage/uploads/request-url`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -507,11 +535,13 @@ function SubmitChallanDialog({ app, challan, onUploadComplete, onFinalSubmit, is
                 return { method: "PUT" as const, url: data.uploadURL, headers: { "Content-Type": file.type || "application/octet-stream" } };
               }}
               onComplete={async (result) => {
-                await onUploadComplete(result, challan.id, app.id);
+                if (!canUpload) { setReceiptError("Please enter the bank receipt number."); return; }
+                await onUploadComplete(result, challan.id, app.id, bankReceiptNo.trim());
                 setOpen(false);
               }}
             >
-              <div className="flex items-center justify-center gap-2 h-10 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors cursor-pointer w-full">
+              <div className={`flex items-center justify-center gap-2 h-10 px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer w-full
+                ${canUpload ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}>
                 <UploadCloud className="h-4 w-4" /> Upload Paid Slip
               </div>
             </ObjectUploader>
@@ -1075,20 +1105,22 @@ export default function StudentApplications() {
     }
   };
 
-  const handleUploadComplete = async (result: any, challanId: number, appId: number) => {
+  const handleUploadComplete = async (result: any, challanId: number, appId: number, bankReceiptNo: string) => {
     const successful = result.successful?.[0];
     if (successful) {
       const objectPath = successful.response?.uploadURL?.split("?")[0]?.split("/").slice(-2).join("/") ?? "";
       try {
         const response = await fetch(`${import.meta.env.BASE_URL}api/challans/${challanId}/paid-slip`, {
-          method: "POST", body: JSON.stringify({ paidSlipPath: objectPath }),
+          method: "POST",
+          body: JSON.stringify({ paidSlipPath: objectPath, bankReceiptNo: bankReceiptNo.trim() }),
           headers: { "Content-Type": "application/json" }, credentials: "include"
         });
         if (response.ok) {
           toast({ title: "Paid slip uploaded successfully" });
           refreshAll();
         } else {
-          throw new Error("Failed to update paid slip");
+          const err = await response.json().catch(() => ({}));
+          toast({ title: "Upload failed", description: err.error || "Failed to update paid slip", variant: "destructive" });
         }
       } catch (e: any) {
         toast({ title: "Upload error", description: e.message || "An error occurred", variant: "destructive" });

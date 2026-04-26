@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db, paymentChallansTable, applicationsTable } from "@workspace/db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, ne } from "drizzle-orm";
 import { UpdateChallanStatusBody } from "@workspace/api-zod";
 import { requireAuth, requireAdminRole } from "../middlewares/auth";
 
@@ -57,9 +57,12 @@ router.post("/challans/:id/paid-slip", requireAuth, async (req, res): Promise<vo
   const userId = sess.userId as number;
   const userRole = sess.userRole as string;
   const id = parseInt(req.params.id as string, 10);
-  const { paidSlipPath } = req.body as { paidSlipPath: string };
+  const { paidSlipPath, bankReceiptNo } = req.body as { paidSlipPath: string; bankReceiptNo?: string };
 
   if (!paidSlipPath) { res.status(400).json({ error: "paidSlipPath is required" }); return; }
+  if (!bankReceiptNo || bankReceiptNo.trim().length < 4) {
+    res.status(400).json({ error: "Bank receipt/transaction number is required (minimum 4 characters)." }); return;
+  }
 
   const [challan] = await db.select().from(paymentChallansTable).where(eq(paymentChallansTable.id, id));
   if (!challan) { res.status(404).json({ error: "Challan not found" }); return; }
@@ -70,9 +73,20 @@ router.post("/challans/:id/paid-slip", requireAuth, async (req, res): Promise<vo
     if (!app || app.userId !== userId) { res.status(403).json({ error: "Forbidden" }); return; }
   }
 
+  // Uniqueness check: ensure no other challan uses the same bank receipt number
+  const duplicate = await db
+    .select({ id: paymentChallansTable.id })
+    .from(paymentChallansTable)
+    .where(and(eq(paymentChallansTable.transactionRef, bankReceiptNo.trim()), ne(paymentChallansTable.id, id)))
+    .limit(1);
+  if (duplicate.length > 0) {
+    res.status(409).json({ error: "This bank receipt number has already been used for another application. Please verify the number and try again." });
+    return;
+  }
+
   const [updated] = await db
     .update(paymentChallansTable)
-    .set({ paidSlipPath, paidSlipUploadedAt: new Date(), status: "submitted", updatedAt: new Date() })
+    .set({ paidSlipPath, paidSlipUploadedAt: new Date(), status: "submitted", transactionRef: bankReceiptNo.trim(), updatedAt: new Date() })
     .where(eq(paymentChallansTable.id, id))
     .returning();
 
